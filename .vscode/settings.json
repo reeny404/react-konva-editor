@@ -1,0 +1,53 @@
+{
+  "css.lint.unknownAtRules": "ignore",
+  "editor.formatOnSave": true,
+  "editor.formatOnSaveMode": "file",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "never",
+    "source.fixAll.eslint": "always",
+    "source.organizeImports": "never"
+  },
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
+  "files.trimTrailingWhitespace": true,
+  "files.trimFinalNewlines": true,
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "tailwindCSS.experimental.classRegex": [
+    ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
+    ["cn\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"]
+  ],
+  "tailwindCSS.files.exclude": ["**/src/components/modules/Editor/index.tsx"],
+  "files.exclude": { "**/src/components/layout/Editor.tsx": false },
+  "files.associations": { "**/src/components/layout/Editor.tsx": "typescriptreact" },
+  "prettier.ignorePath": ".prettierignore",
+  "prettier.requireConfig": true,
+  "prettier.enable": true,
+  "cSpell.words": [
+    "dtsp",
+    "sonner",
+    "tieins",
+    "tiein",
+    "RLPA",
+    "SPA",
+    "RLBA",
+    "SBA",
+    "Linelist",
+    "linelist",
+    "linelists",
+    "VITE",
+    "actived"
+  ],
+  "cSpell.ignorePaths": [
+    "src/components/modules/Editor/index.tsx",
+    ".vscode"
+  ],
+  "todo-tree.tree.scanMode": "open files",
+  "search.exclude": { "**/*.bak": true }
+}
