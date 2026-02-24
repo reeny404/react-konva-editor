@@ -1,11 +1,11 @@
 import { Canvas } from './editor/ui/Canvas';
-import { EditorLayout } from './editor/ui/EditorLayout';
+import { Layout } from './editor/ui/Layout';
 
 function App() {
   return (
-    <EditorLayout>
+    <Layout>
       <Canvas />
-    </EditorLayout>
+    </Layout>
   );
 }
 
