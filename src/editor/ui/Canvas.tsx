@@ -100,6 +100,7 @@ export function Canvas() {
                   y={node.y}
                   width={node.width}
                   height={node.height}
+                  rotation={node.rotation ?? 0}
                   fill={node.fill}
                   cornerRadius={0}
                   shadowColor='rgba(15, 23, 42, 0.35)'

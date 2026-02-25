@@ -33,6 +33,7 @@ export function SelectionTransformer() {
       y: node.y(),
       width: node.width() * node.scaleX(),
       height: node.height() * node.scaleY(),
+      rotation: node.rotation(),
     });
 
     node.scaleX(1);

@@ -8,6 +8,7 @@ export type RectNode = {
   y: number;
   width: number;
   height: number;
+  rotation: number;
   fill: string;
   stroke?: string;
 };
