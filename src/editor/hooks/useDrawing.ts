@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { getRelativePointerPosition } from '../utils/canvas';
+import { getRelativePointerPosition } from '../utils/coordinate';
 import { documentCommands } from '../commands/documentCommands';
 
 export function useDrawing(nodesCount: number) {

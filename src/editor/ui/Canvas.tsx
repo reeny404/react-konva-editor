@@ -99,7 +99,7 @@ export function Canvas() {
                   width={node.width}
                   height={node.height}
                   fill={node.fill}
-                  cornerRadius={12}
+                  cornerRadius={0}
                   shadowColor='rgba(15, 23, 42, 0.35)'
                   shadowBlur={10}
                   shadowOffset={{ x: 0, y: 6 }}
