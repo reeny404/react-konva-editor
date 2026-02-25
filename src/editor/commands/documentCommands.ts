@@ -3,16 +3,24 @@ import { executeCommand } from './history';
 import { documentStore } from '../stores/documentStore';
 
 export const documentCommands = {
-  moveNode(id: NodeId, next: { x: number; y: number }) {
+  moveNode(id: NodeId, next: Partial<SceneNode>) {
     const prev = documentStore.getState().getNodeById(id);
     if (!prev) return;
+
+    // 1. 변화가 일어날 속성(next의 키값들)에 대해서만 이전 값을 추출
+    const prevValues = Object.keys(next).reduce((acc, key) => {
+      const k = key as keyof SceneNode;
+      (acc as any)[k] = prev[k];
+      return acc;
+    }, {} as Partial<SceneNode>);
 
     executeCommand({
       do: () => {
         documentStore.getState().updateNode(id, next);
       },
       undo: () => {
-        documentStore.getState().updateNode(id, { x: prev.x, y: prev.y });
+        // 2. 추출해둔 prevValues를 그대로 적용
+        documentStore.getState().updateNode(id, prevValues);
       },
     });
   },

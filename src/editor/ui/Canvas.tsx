@@ -6,6 +6,7 @@ import { useDocumentStore } from '../stores/documentStore';
 import { useSelectionStore } from '../stores/selectionStore';
 import { useViewportStore } from '../stores/viewportStore';
 import { useDrawing } from '../hooks/useDrawing';
+import { SelectionTransformer } from '../components/SelectionTransformer';
 
 export function Canvas() {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -94,6 +95,7 @@ export function Canvas() {
               return (
                 <Rect
                   key={node.id}
+                  id={node.id}
                   x={node.x}
                   y={node.y}
                   width={node.width}
@@ -111,7 +113,10 @@ export function Canvas() {
                       e.cancelBubble = true; // 이벤트 전파 방지 (Stage 클릭 방지)
                       selectOnly(node.id);
                     }}
-                  onDragStart={() => selectOnly(node.id)}
+                  onDragStart={(e) => {
+                    e.cancelBubble = true; // 이벤트 전파 방지
+                    selectOnly(node.id);
+                  }}
                   onDragEnd={(e) => {
                     documentCommands.moveNode(node.id, {
                       x: e.target.x(),
@@ -135,6 +140,7 @@ export function Canvas() {
                 dash={[4, 4]} // 점선 처리
               />
             )}
+            <SelectionTransformer />
           </Layer>
         </Stage>
       )}
