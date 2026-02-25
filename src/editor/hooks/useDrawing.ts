@@ -2,9 +2,12 @@ import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { getRelativePointerPosition } from '../utils/coordinate';
 import { documentCommands } from '../commands/documentCommands';
+import { documentStore, useDocumentStore } from '../stores/documentStore';
 
-export function useDrawing(nodesCount: number) {
+export function useDrawing() {
   // 드래그 중인 임시 사각형 상태 (UI 가이드용)
+  const nodes = useDocumentStore((state) => state.doc.nodes);
+  const nodesCount = nodes.length;
   const [tempRect, setTempRect] = useState<{ x: number; y: number; w: number; h: number } | null>(null);
 
   const onMouseDown = (e: any) => {
@@ -35,12 +38,16 @@ export function useDrawing(nodesCount: number) {
   const onMouseUp = () => {
     if (!tempRect) return;
 
+    const latestNodes = documentStore.getState().doc.nodes;
+    const latestCount = latestNodes.length;
+
     // 너무 작은 사각형(클릭 실수)은 생성하지 않음
     if (Math.abs(tempRect.w) > 5 && Math.abs(tempRect.h) > 5) {
       documentCommands.addNode({
         id: uuidv4(),
         type: 'rect',
-        name: `Rectangle ${nodesCount + 1}`,
+        name: `Rectangle ${latestCount + 1}`,
+        parentId: latestCount > 0 ? latestNodes[latestCount - 1].id : undefined, //테스트 용
         // 음수 방향(왼쪽/위쪽) 드래그 대응 로직
         x: tempRect.w < 0 ? tempRect.x + tempRect.w : tempRect.x,
         y: tempRect.h < 0 ? tempRect.y + tempRect.h : tempRect.y,

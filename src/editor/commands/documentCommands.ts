@@ -4,23 +4,53 @@ import { documentStore } from '../stores/documentStore';
 
 export const documentCommands = {
   moveNode(id: NodeId, next: Partial<SceneNode>) {
-    const prev = documentStore.getState().getNodeById(id);
+    const state = documentStore.getState();
+    const prev = state.getNodeById(id);
     if (!prev) return;
 
-    // 1. 변화가 일어날 속성(next의 키값들)에 대해서만 이전 값을 추출
+    // 1. 부모 노드의 변화량(Delta) 계산 -> 자식도 그만큼 옮기기 위해
+    const dx = next.x !== undefined ? next.x - prev.x : 0;
+    const dy = next.y !== undefined ? next.y - prev.y : 0;
+    const dRotation = next.rotation !== undefined ? next.rotation - prev.rotation : 0;
+
+    // Scale 변화량 계산 (이전 너비 대비 새 너비의 비율)
+    const dWidth = next.width !== undefined ? next.width - prev.width : 0;
+    const dHeight = next.height !== undefined ? next.height - prev.height : 0;
+
+    // 2. 부모의 이전 값 백업(undo용)
     const prevValues = Object.keys(next).reduce((acc, key) => {
       const k = key as keyof SceneNode;
       (acc as any)[k] = prev[k];
       return acc;
     }, {} as Partial<SceneNode>);
 
+  // 3. 자식 노드들 찾기, 전체 상태 백업
+    const children = state.doc.nodes.filter((n) => n.parentId === id);
+    const childrenSnapshots = children.map(child => ({ ...child }));
+
     executeCommand({
       do: () => {
-        documentStore.getState().updateNode(id, next);
+        // 부모 업데이트
+        state.updateNode(id, next);
+        // 자식 노드들에 대해 dx, dy 만큼 이동
+        children.forEach((child) => {
+          state.updateNode(child.id, {
+            x: child.x + dx,
+            y: child.y + dy,
+            rotation: (child.rotation || 0) + dRotation,
+            width: (child.width || 0) + dWidth,
+            height: (child.height || 0) + dHeight,
+          });
+        });
       },
       undo: () => {
-        // 2. 추출해둔 prevValues를 그대로 적용
-        documentStore.getState().updateNode(id, prevValues);
+        // 부모 복구
+        state.updateNode(id, prevValues);
+
+        // 자식들도 반대로 이동해서 복구
+        childrenSnapshots.forEach((oldChild) => {
+          state.updateNode(oldChild.id, oldChild);
+        });
       },
     });
   },

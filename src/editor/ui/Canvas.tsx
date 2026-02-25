@@ -25,7 +25,7 @@ export function Canvas() {
 
   const selectedNode = useSelectedNode();
 
-  const { tempRect, onMouseDown: startDrawing, onMouseMove, onMouseUp } = useDrawing(nodes.length);
+  const { tempRect, onMouseDown: startDrawing, onMouseMove, onMouseUp } = useDrawing();
 
   useEffect(() => {
     const element = containerRef.current;

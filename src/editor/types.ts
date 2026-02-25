@@ -3,6 +3,7 @@ export type NodeId = string;
 export type RectNode = {
   id: NodeId;
   type: 'rect';
+  parentId?: NodeId;
   name: string;
   x: number;
   y: number;
