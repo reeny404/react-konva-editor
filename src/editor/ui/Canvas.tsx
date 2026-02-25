@@ -5,6 +5,8 @@ import { useSelectedNode } from '../selectors/documentSelectors';
 import { useDocumentStore } from '../stores/documentStore';
 import { useSelectionStore } from '../stores/selectionStore';
 import { useViewportStore } from '../stores/viewportStore';
+import { useDrawing } from '../hooks/useDrawing';
+import { SelectionTransformer } from '../components/SelectionTransformer';
 
 export function Canvas() {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -22,6 +24,8 @@ export function Canvas() {
   const panY = useViewportStore((state) => state.panY);
 
   const selectedNode = useSelectedNode();
+
+  const { tempRect, onMouseDown: startDrawing, onMouseMove, onMouseUp } = useDrawing();
 
   useEffect(() => {
     const element = containerRef.current;
@@ -41,6 +45,14 @@ export function Canvas() {
 
     return () => observer.disconnect();
   }, []);
+
+  // 마우스 다운 핸들러: 배경 클릭 시 선택 해제 + 그리기 시작
+  const handleMouseDown = (e: any) => {
+    if (e.target === e.target.getStage()) {
+      clearSelection(); // 기존 배경 클릭 시 선택 해제
+      startDrawing(e);  // 그리기 시작 로직 호출
+    }
+  };
 
   return (
     <div ref={containerRef} className='relative h-full w-full bg-slate-50'>
@@ -63,11 +75,9 @@ export function Canvas() {
           y={panY}
           scaleX={zoom}
           scaleY={zoom}
-          onMouseDown={(e) => {
-            if (e.target === e.target.getStage()) {
-              clearSelection();
-            }
-          }}
+          onMouseDown={handleMouseDown}
+          onMouseMove={onMouseMove}      // 그리기 이동
+          onMouseUp={onMouseUp}
         >
           <Layer>
             <Text
@@ -85,12 +95,14 @@ export function Canvas() {
               return (
                 <Rect
                   key={node.id}
+                  id={node.id}
                   x={node.x}
                   y={node.y}
                   width={node.width}
                   height={node.height}
+                  rotation={node.rotation ?? 0}
                   fill={node.fill}
-                  cornerRadius={12}
+                  cornerRadius={0}
                   shadowColor='rgba(15, 23, 42, 0.35)'
                   shadowBlur={10}
                   shadowOffset={{ x: 0, y: 6 }}
@@ -98,8 +110,14 @@ export function Canvas() {
                   stroke={isSelected ? '#111827' : (node.stroke ?? '#38bdf8')}
                   strokeWidth={isSelected ? 3 : 2}
                   draggable
-                  onClick={() => selectOnly(node.id)}
-                  onDragStart={() => selectOnly(node.id)}
+                  onClick={(e) => {
+                      e.cancelBubble = true; // 이벤트 전파 방지 (Stage 클릭 방지)
+                      selectOnly(node.id);
+                    }}
+                  onDragStart={(e) => {
+                    e.cancelBubble = true; // 이벤트 전파 방지
+                    selectOnly(node.id);
+                  }}
                   onDragEnd={(e) => {
                     documentCommands.moveNode(node.id, {
                       x: e.target.x(),
@@ -109,6 +127,21 @@ export function Canvas() {
                 />
               );
             })}
+
+            {/* 4. 그리는 중인 임시 가이드 사각형 시각화 */}
+            {tempRect && (
+              <Rect
+                x={tempRect.w < 0 ? tempRect.x + tempRect.w : tempRect.x}
+                y={tempRect.h < 0 ? tempRect.y + tempRect.h : tempRect.y}
+                width={Math.abs(tempRect.w)}
+                height={Math.abs(tempRect.h)}
+                fill="rgba(56, 189, 248, 0.1)" // 연한 파란색 채우기
+                stroke="#38bdf8"
+                strokeWidth={1}
+                dash={[4, 4]} // 점선 처리
+              />
+            )}
+            <SelectionTransformer />
           </Layer>
         </Stage>
       )}
