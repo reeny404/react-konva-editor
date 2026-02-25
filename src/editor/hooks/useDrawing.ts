@@ -46,6 +46,7 @@ export function useDrawing(nodesCount: number) {
         y: tempRect.h < 0 ? tempRect.y + tempRect.h : tempRect.y,
         width: Math.abs(tempRect.w),
         height: Math.abs(tempRect.h),
+        rotation:0,
         fill: '#0f172a',
         stroke: '#38bdf8',
       });

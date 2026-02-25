@@ -20,6 +20,7 @@ const initialDocument: DocumentModel = {
       y: 90,
       width: 180,
       height: 120,
+      rotation: 0,
       fill: '#0f172a',
       stroke: '#38bdf8',
     },
