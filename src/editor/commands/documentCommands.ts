@@ -1,4 +1,4 @@
-import type { NodeId } from '../types';
+import type { NodeId ,SceneNode} from '../types';
 import { executeCommand } from './history';
 import { documentStore } from '../stores/documentStore';
 
@@ -16,4 +16,22 @@ export const documentCommands = {
       },
     });
   },
+
+  addNode(node: SceneNode) {
+    executeCommand({
+      do: () => documentStore.getState().addNode(node),
+      undo: () => documentStore.getState().removeNode(node.id),
+    });
+  },
+
+  removeNode(id: NodeId) {
+    const node = documentStore.getState().getNodeById(id);
+    if (!node) return;
+    executeCommand({
+      do: () => documentStore.getState().removeNode(id),
+      undo: () => documentStore.getState().addNode(node),
+    });
+  },
+
+
 };
