@@ -1,14 +1,17 @@
+import { documentStore } from '@/common/stores/documentStore';
+import { getRelativePointerPosition } from '@/common/utils/coordinate';
 import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { getRelativePointerPosition } from '../utils/coordinate';
 import { documentCommands } from '../commands/documentCommands';
-import { documentStore, useDocumentStore } from '../stores/documentStore';
 
 export function useDrawing() {
   // 드래그 중인 임시 사각형 상태 (UI 가이드용)
-  const nodes = useDocumentStore((state) => state.doc.nodes);
-  const nodesCount = nodes.length;
-  const [tempRect, setTempRect] = useState<{ x: number; y: number; w: number; h: number } | null>(null);
+  const [tempRect, setTempRect] = useState<{
+    x: number;
+    y: number;
+    w: number;
+    h: number;
+  } | null>(null);
 
   const onMouseDown = (e: any) => {
     // Stage(배경)를 클릭했을 때만 그리기 시작 (도형 클릭 시 무시)
@@ -53,7 +56,7 @@ export function useDrawing() {
         y: tempRect.h < 0 ? tempRect.y + tempRect.h : tempRect.y,
         width: Math.abs(tempRect.w),
         height: Math.abs(tempRect.h),
-        rotation:0,
+        rotation: 0,
         fill: '#0f172a',
         stroke: '#38bdf8',
       });

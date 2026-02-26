@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import Konva from 'konva';
-import { useSelectedNode } from '../selectors/documentSelectors';
+import { useSelectedNode } from '@/common/selectors/documentSelectors';
 import { documentCommands } from '../commands/documentCommands';
 import { Transformer } from 'react-konva';
 
@@ -48,10 +48,10 @@ export function SelectionTransformer() {
     <Transformer
       ref={trRef}
       onTransformEnd={handleTransformEnd}
-      anchorFill="#ffffff"
-      anchorStroke="#2563eb"
+      anchorFill='#ffffff'
+      anchorStroke='#2563eb'
       anchorCornerRadius={2}
-      borderStroke="#2563eb"
+      borderStroke='#2563eb'
     />
   );
 }

@@ -1,6 +1,6 @@
-import type { NodeId ,SceneNode} from '../types';
-import { executeCommand } from './history';
-import { documentStore } from '../stores/documentStore';
+import type { NodeId, SceneNode } from '@/common/types';
+import { executeCommand } from '@/common/commands/history';
+import { documentStore } from '@/common/stores/documentStore';
 
 export const documentCommands = {
   moveNode(id: NodeId, next: Partial<SceneNode>) {
@@ -11,7 +11,8 @@ export const documentCommands = {
     // 1. 부모 노드의 변화량(Delta) 계산 -> 자식도 그만큼 옮기기 위해
     const dx = next.x !== undefined ? next.x - prev.x : 0;
     const dy = next.y !== undefined ? next.y - prev.y : 0;
-    const dRotation = next.rotation !== undefined ? next.rotation - prev.rotation : 0;
+    const dRotation =
+      next.rotation !== undefined ? next.rotation - prev.rotation : 0;
 
     // Scale 변화량 계산 (이전 너비 대비 새 너비의 비율)
     const dWidth = next.width !== undefined ? next.width - prev.width : 0;
@@ -24,9 +25,9 @@ export const documentCommands = {
       return acc;
     }, {} as Partial<SceneNode>);
 
-  // 3. 자식 노드들 찾기, 전체 상태 백업
+    // 3. 자식 노드들 찾기, 전체 상태 백업
     const children = state.doc.nodes.filter((n) => n.parentId === id);
-    const childrenSnapshots = children.map(child => ({ ...child }));
+    const childrenSnapshots = children.map((child) => ({ ...child }));
 
     executeCommand({
       do: () => {
@@ -70,6 +71,4 @@ export const documentCommands = {
       undo: () => documentStore.getState().addNode(node),
     });
   },
-
-
 };

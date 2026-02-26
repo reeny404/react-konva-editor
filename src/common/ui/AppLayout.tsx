@@ -9,7 +9,7 @@ type EditorLayoutProps = {
   children: ReactNode;
 };
 
-export function Layout({ children }: EditorLayoutProps) {
+export function AppLayout({ children }: EditorLayoutProps) {
   const nodes = useDocumentStore((state) => state.doc.nodes);
   const selectedIds = useSelectionStore((state) => state.selectedIds);
   const selectOnly = useSelectionStore((state) => state.selectOnly);

@@ -1,11 +1,16 @@
-import { Canvas } from '@/common/ui/Canvas';
-import { Layout } from '@/common/ui/Layout';
+import { AppLayout } from '@/common/ui/AppLayout';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import CanvasFeat1 from './features/01-rect/Canvas';
 
 function App() {
   return (
-    <Layout>
-      <Canvas />
-    </Layout>
+    <AppLayout>
+      <BrowserRouter>
+        <Routes>
+          <Route path='/' element={<CanvasFeat1 />} />
+        </Routes>
+      </BrowserRouter>
+    </AppLayout>
   );
 }
 
