@@ -5,14 +5,14 @@ import CanvasFeat2 from './features/02-maintainer/Canvas';
 
 function App() {
   return (
-    <AppLayout>
-      <BrowserRouter>
+    <BrowserRouter>
+      <AppLayout>
         <Routes>
           <Route path='/rect' element={<CanvasFeat1 />} />
           <Route path='/maintainer' element={<CanvasFeat2 />} />
         </Routes>
-      </BrowserRouter>
-    </AppLayout>
+      </AppLayout>
+    </BrowserRouter>
   );
 }
 

@@ -1,4 +1,6 @@
+import { featureRoutes } from '@/features/featureRoutes';
 import type { ReactNode } from 'react';
+import { NavLink } from 'react-router-dom';
 import { redoCommand, undoCommand } from '../commands/history';
 import { useSelectedNode } from '../selectors/documentSelectors';
 import { useDocumentStore } from '../stores/documentStore';
@@ -22,6 +24,26 @@ export function AppLayout({ children }: EditorLayoutProps) {
         className='hidden w-72 shrink-0 border-r border-slate-200 bg-slate-50 p-4 lg:block'
       >
         <div className='space-y-4'>
+          <SectionCard title='Features'>
+            <ul className='max-h-md space-y-2 overflow-y-auto text-sm'>
+              {featureRoutes.map(({ folder, path }) => (
+                <li key={folder}>
+                  <NavLink
+                    to={path}
+                    className={({ isActive }) =>
+                      `block w-full rounded-lg border px-3 py-2 text-left transition ${
+                        isActive
+                          ? 'border-sky-200 bg-sky-50 font-medium text-sky-800'
+                          : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+                      }`
+                    }
+                  >
+                    {folder}
+                  </NavLink>
+                </li>
+              ))}
+            </ul>
+          </SectionCard>
           <SectionCard title='Nodes'>
             <div className='space-y-2 text-sm text-slate-600'>
               <button
