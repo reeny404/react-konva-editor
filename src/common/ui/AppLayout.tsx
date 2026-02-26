@@ -156,13 +156,12 @@ export function AppLayout({ children }: EditorLayoutProps) {
             </div>
           </SectionCard>
 
-          <SectionCard title='memo'>
-            [v] draggable <br />
-            [ ] style: rounded-none <br />
-            [ ] size changeable with draggable <br />
-            [ ] rotation <br />
-            [ ] mode: select, create, c - 드래그로 생성 or 데이터 받아 추가 r -
-            db 데이터 wrapping 후 연결 u - panel/editor d - hot key <br />
+          <SectionCard title='selected node'>
+            <p className='mt-2 text-xs'>{selectedNode?.name ?? '-'}</p>
+            <p className='mt-1 space-x-2 text-xs'>
+              <span>x: {Math.round(selectedNode?.x ?? 0)},</span>
+              <span>y: {Math.round(selectedNode?.y ?? 0)}</span>
+            </p>
           </SectionCard>
         </div>
       </aside>
