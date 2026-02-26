@@ -1,4 +1,3 @@
-import { useSelectedNode } from '@/common/selectors/documentSelectors';
 import { useViewportStore } from '@/common/stores/viewportStore';
 import type { ComponentProps, RefObject } from 'react';
 import { Stage } from 'react-konva';
@@ -10,16 +9,10 @@ type Props = ComponentProps<typeof Stage> & {
   height: number;
 };
 
-export function CanvasContainer({
-  containerRef,
-  title,
-  children,
-  ...props
-}: Props) {
+export function CanvasContainer({ containerRef, children, ...props }: Props) {
   const zoom = useViewportStore((state) => state.zoom);
   const panX = useViewportStore((state) => state.panX);
   const panY = useViewportStore((state) => state.panY);
-  const selectedNode = useSelectedNode();
 
   return (
     <div ref={containerRef} className='relative size-full bg-slate-50'>
