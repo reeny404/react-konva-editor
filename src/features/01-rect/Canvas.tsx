@@ -1,6 +1,7 @@
 import { useDocumentStore } from '@/common/stores/documentStore';
 import { useSelectionStore } from '@/common/stores/selectionStore';
 import { CanvasLayout } from '@/common/ui/CanvasLayout';
+import type { KonvaPointerEvent } from 'konva/lib/PointerEvents';
 import { useEffect, useRef, useState } from 'react';
 import { Layer, Rect, Text } from 'react-konva';
 import { documentCommands } from './commands/documentCommands';
@@ -25,7 +26,9 @@ export default function Canvas() {
 
   useEffect(() => {
     const element = containerRef.current;
-    if (!element) return;
+    if (!element) {
+      return;
+    }
 
     const updateSize = () => {
       setStageSize({
@@ -43,7 +46,7 @@ export default function Canvas() {
   }, []);
 
   // 마우스 다운 핸들러: 배경 클릭 시 선택 해제 + 그리기 시작
-  const handleMouseDown = (e: any) => {
+  const handleMouseDown = (e: KonvaPointerEvent) => {
     if (e.target === e.target.getStage()) {
       clearSelection(); // 기존 배경 클릭 시 선택 해제
       startDrawing(e); // 그리기 시작 로직 호출
@@ -68,7 +71,9 @@ export default function Canvas() {
           fill='#64748b'
         />
         {nodes.map((node) => {
-          if (node.type !== 'rect') return null;
+          if (node.type !== 'rect') {
+            return null;
+          }
 
           const isSelected = selectedIds.includes(node.id);
 

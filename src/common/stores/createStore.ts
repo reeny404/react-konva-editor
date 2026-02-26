@@ -23,7 +23,9 @@ export function createStore<T>(
     const nextState =
       typeof next === 'function' ? (next as (prev: T) => T)(state) : next;
 
-    if (Object.is(nextState, state)) return;
+    if (Object.is(nextState, state)) {
+      return;
+    }
 
     state = nextState;
     listeners.forEach((listener) => listener());

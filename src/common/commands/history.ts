@@ -14,7 +14,9 @@ export function executeCommand(command: Command) {
 
 export function undoCommand() {
   const command = undoStack.pop();
-  if (!command) return;
+  if (!command) {
+    return;
+  }
 
   command.undo();
   redoStack.push(command);
@@ -22,7 +24,9 @@ export function undoCommand() {
 
 export function redoCommand() {
   const command = redoStack.pop();
-  if (!command) return;
+  if (!command) {
+    return;
+  }
 
   command.do();
   undoStack.push(command);

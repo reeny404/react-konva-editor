@@ -1,6 +1,6 @@
 import { useSelectedNode } from '@/common/selectors/documentSelectors';
 import { useViewportStore } from '@/common/stores/viewportStore';
-import { ComponentProps, RefObject } from 'react';
+import type { ComponentProps, RefObject } from 'react';
 import { Stage } from 'react-konva';
 
 type Props = ComponentProps<typeof Stage> & {

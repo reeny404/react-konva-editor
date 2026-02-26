@@ -1,5 +1,6 @@
 import { documentStore } from '@/common/stores/documentStore';
 import { getRelativePointerPosition } from '@/common/utils/coordinate';
+import type { KonvaPointerEvent } from 'konva/lib/PointerEvents';
 import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { documentCommands } from '../commands/documentCommands';
@@ -13,23 +14,35 @@ export function useDrawing() {
     h: number;
   } | null>(null);
 
-  const onMouseDown = (e: any) => {
+  const onMouseDown = (e: KonvaPointerEvent) => {
     // Stage(배경)를 클릭했을 때만 그리기 시작 (도형 클릭 시 무시)
-    if (e.target !== e.target.getStage()) return;
+    if (e.target !== e.target.getStage()) {
+      return;
+    }
 
     const stage = e.target.getStage();
     const pos = getRelativePointerPosition(stage);
-    if (!pos) return;
+    if (!pos) {
+      return;
+    }
 
     setTempRect({ x: pos.x, y: pos.y, w: 0, h: 0 });
   };
 
-  const onMouseMove = (e: any) => {
-    if (!tempRect) return;
+  const onMouseMove = (e: KonvaPointerEvent) => {
+    if (!tempRect) {
+      return;
+    }
 
     const stage = e.target.getStage();
+    if (!stage) {
+      return;
+    }
+
     const pos = getRelativePointerPosition(stage);
-    if (!pos) return;
+    if (!pos) {
+      return;
+    }
 
     setTempRect({
       ...tempRect,
@@ -38,8 +51,10 @@ export function useDrawing() {
     });
   };
 
-  const onMouseUp = () => {
-    if (!tempRect) return;
+  const onMouseUp = (e: KonvaPointerEvent) => {
+    if (!tempRect) {
+      return;
+    }
 
     const latestNodes = documentStore.getState().doc.nodes;
     const latestCount = latestNodes.length;

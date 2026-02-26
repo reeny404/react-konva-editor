@@ -60,7 +60,6 @@ export const documentStore = createStore<DocumentStoreState>((set, get) => ({
       },
     })),
   getNodeById: (id) => get().doc.nodes.find((node) => node.id === id),
-
 }));
 
 export const useDocumentStore = createStoreHook(documentStore);

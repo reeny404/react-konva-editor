@@ -29,18 +29,6 @@ const config: Linter.Config[] = [
     },
     rules: {
       'prettier/prettier': 'error',
-      'sortImports/exports': 'error',
-      'sortImports/imports': [
-        'error',
-        {
-          groups: [
-            ['^react$', '^react-', '^[^@./][^/]*$'],
-            ['^@/(.*)$'],
-            ['^\\.|\\.\\.'],
-            ['^.+\\.?(css|scss|sass)$'],
-          ],
-        },
-      ],
       'react/prop-types': 'off',
       'react/react-in-jsx-scope': 'off',
       'react/jsx-no-undef': 'error',
@@ -57,18 +45,8 @@ const config: Linter.Config[] = [
         },
       ],
       '@typescript-eslint/no-unused-vars': ['off'],
-      'unused-imports/no-unused-imports': 'error',
-      'unused-imports/no-unused-vars': [
-        'warn',
-        {
-          vars: 'all',
-          varsIgnorePattern: '^_',
-          args: 'after-used',
-          argsIgnorePattern: '^_',
-          ignoreRestSiblings: false,
-        },
-      ],
 
+      curly: ['error', 'all'],
       'no-eval': 'error',
       'no-implied-eval': 'error',
       'no-undef': 'error',

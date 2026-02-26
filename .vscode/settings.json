@@ -6,9 +6,9 @@
   "editor.tabSize": 2,
   "editor.insertSpaces": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll": "never",
+    "source.fixAll": "always",
     "source.fixAll.eslint": "always",
-    "source.organizeImports": "never"
+    "source.organizeImports": "always"
   },
   "eslint.validate": [
     "javascript",
