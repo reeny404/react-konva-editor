@@ -43,7 +43,7 @@ export function AppLayout({ children }: EditorLayoutProps) {
             ))}
           </ul>
         </SectionCard>
-        <SectionCard title='Nodes'>
+        <SectionCard title='Layers'>
           <div className='space-y-2 text-sm text-slate-600'>
             <button
               type='button'
@@ -54,7 +54,7 @@ export function AppLayout({ children }: EditorLayoutProps) {
           </div>
         </SectionCard>
 
-        <SectionCard title='Layers'>
+        <SectionCard title='Nodes'>
           <ul className='space-y-2 text-sm text-slate-700'>
             {nodes.map((node) => {
               const isSelected = selectedIds.includes(node.id);
