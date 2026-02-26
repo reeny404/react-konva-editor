@@ -5,11 +5,12 @@ import { Stage } from 'react-konva';
 
 type Props = ComponentProps<typeof Stage> & {
   containerRef: RefObject<HTMLDivElement | null>;
+  title: string;
   width: number;
   height: number;
 };
 
-export function CanvasLayout({ containerRef, ...props }: Props) {
+export function CanvasContainer({ containerRef, title, ...props }: Props) {
   const zoom = useViewportStore((state) => state.zoom);
   const panX = useViewportStore((state) => state.panX);
   const panY = useViewportStore((state) => state.panY);
@@ -18,7 +19,9 @@ export function CanvasLayout({ containerRef, ...props }: Props) {
   return (
     <div ref={containerRef} className='relative h-full w-full bg-slate-50'>
       <div className='absolute top-4 left-4 z-10 rounded-xl border border-slate-200 bg-white/90 px-4 py-3 shadow-sm backdrop-blur'>
-        <p className='text-sm font-semibold text-slate-800'>Rect Editor</p>
+        <p className='text-sm font-semibold text-slate-800'>
+          Rect Editor: {title}
+        </p>
         <p className='mt-2 text-xs text-slate-700'>
           selected: {selectedNode?.name ?? '-'}
         </p>

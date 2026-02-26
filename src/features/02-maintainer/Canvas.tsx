@@ -1,10 +1,10 @@
-import { documentCommands } from '@/common/commands/documentCommands';
 import { useDocumentStore } from '@/common/stores/documentStore';
 import { useSelectionStore } from '@/common/stores/selectionStore';
 import { CanvasContainer } from '@/common/ui/CanvasContainer';
 import type { KonvaPointerEvent } from 'konva/lib/PointerEvents';
 import { useEffect, useRef, useState } from 'react';
 import { Layer, Rect, Text } from 'react-konva';
+import { documentCommands } from './commands/documentCommands';
 import { SelectionTransformer } from './components/SelectionTransformer';
 import { useDrawing } from './hooks/useDrawing';
 
@@ -44,18 +44,17 @@ export default function Canvas() {
     return () => observer.disconnect();
   }, []);
 
-  // 마우스 다운 핸들러: 배경 클릭 시 선택 해제 + 그리기 시작
   const handleMouseDown = (e: KonvaPointerEvent) => {
     if (e.target === e.target.getStage()) {
-      clearSelection(); // 기존 배경 클릭 시 선택 해제
-      startDrawing(e); // 그리기 시작 로직 호출
+      clearSelection();
+      startDrawing(e);
     }
   };
 
   return (
     <CanvasContainer
-      title='rect'
       containerRef={containerRef}
+      title='maintainer'
       width={stageSize.width}
       height={stageSize.height}
       onMouseDown={handleMouseDown}
@@ -96,11 +95,11 @@ export default function Canvas() {
               strokeWidth={isSelected ? 3 : 2}
               draggable
               onClick={(e) => {
-                e.cancelBubble = true; // 이벤트 전파 방지 (Stage 클릭 방지)
+                e.cancelBubble = true;
                 selectOnly(node.id);
               }}
               onDragStart={(e) => {
-                e.cancelBubble = true; // 이벤트 전파 방지
+                e.cancelBubble = true;
                 selectOnly(node.id);
               }}
               onDragEnd={(e) => {
@@ -113,17 +112,16 @@ export default function Canvas() {
           );
         })}
 
-        {/* 4. 그리는 중인 임시 가이드 사각형 시각화 */}
         {tempRect && (
           <Rect
             x={tempRect.w < 0 ? tempRect.x + tempRect.w : tempRect.x}
             y={tempRect.h < 0 ? tempRect.y + tempRect.h : tempRect.y}
             width={Math.abs(tempRect.w)}
             height={Math.abs(tempRect.h)}
-            fill='rgba(56, 189, 248, 0.1)' // 연한 파란색 채우기
+            fill='rgba(56, 189, 248, 0.1)'
             stroke='#38bdf8'
             strokeWidth={1}
-            dash={[4, 4]} // 점선 처리
+            dash={[4, 4]}
           />
         )}
         <SelectionTransformer />

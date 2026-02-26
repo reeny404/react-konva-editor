@@ -1,12 +1,11 @@
-import { documentCommands } from '@/common/commands/documentCommands';
 import { documentStore } from '@/common/stores/documentStore';
 import { getRelativePointerPosition } from '@/common/utils/coordinate';
 import type { KonvaPointerEvent } from 'konva/lib/PointerEvents';
 import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import { documentCommands } from '../commands/documentCommands';
 
 export function useDrawing() {
-  // 드래그 중인 임시 사각형 상태 (UI 가이드용)
   const [tempRect, setTempRect] = useState<{
     x: number;
     y: number;
@@ -15,7 +14,6 @@ export function useDrawing() {
   } | null>(null);
 
   const onMouseDown = (e: KonvaPointerEvent) => {
-    // Stage(배경)를 클릭했을 때만 그리기 시작 (도형 클릭 시 무시)
     if (e.target !== e.target.getStage()) {
       return;
     }
@@ -59,14 +57,12 @@ export function useDrawing() {
     const latestNodes = documentStore.getState().doc.nodes;
     const latestCount = latestNodes.length;
 
-    // 너무 작은 사각형(클릭 실수)은 생성하지 않음
     if (Math.abs(tempRect.w) > 5 && Math.abs(tempRect.h) > 5) {
       documentCommands.addNode({
         id: uuidv4(),
         type: 'rect',
         name: `Rectangle ${latestCount + 1}`,
-        parentId: latestCount > 0 ? latestNodes[latestCount - 1].id : undefined, //테스트 용
-        // 음수 방향(왼쪽/위쪽) 드래그 대응 로직
+        parentId: latestCount > 0 ? latestNodes[latestCount - 1].id : undefined,
         x: tempRect.w < 0 ? tempRect.x + tempRect.w : tempRect.x,
         y: tempRect.h < 0 ? tempRect.y + tempRect.h : tempRect.y,
         width: Math.abs(tempRect.w),
@@ -76,7 +72,7 @@ export function useDrawing() {
         stroke: '#38bdf8',
       });
     }
-    setTempRect(null); // 임시 가이드 삭제
+    setTempRect(null);
   };
 
   return { tempRect, onMouseDown, onMouseMove, onMouseUp };

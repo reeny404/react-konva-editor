@@ -1,9 +1,9 @@
-import { documentCommands } from '@/common/commands/documentCommands';
 import { useSelectedNode } from '@/common/selectors/documentSelectors';
 import type Konva from 'konva';
 import type { KonvaPointerEvent } from 'konva/lib/PointerEvents';
 import { useEffect, useRef } from 'react';
 import { Transformer } from 'react-konva';
+import { documentCommands } from '../commands/documentCommands';
 
 export function SelectionTransformer() {
   const trRef = useRef<Konva.Transformer>(null);
@@ -20,7 +20,6 @@ export function SelectionTransformer() {
       return;
     }
 
-    // Canvas.tsx의 Rect에 넣은 id를 기반으로 노드 탐색
     const targetNode = stage.findOne('#' + selectedNodeData.id);
     if (targetNode) {
       trRef.current.nodes([targetNode]);
@@ -45,12 +44,10 @@ export function SelectionTransformer() {
     node.scaleY(1);
   };
 
-  // 선택된 노드가 없으면 아무것도 그리지 않음
   if (!selectedNodeData) {
     return null;
   }
 
-  // 실제 UI(Transformer)를 여기서 반환
   return (
     <Transformer
       ref={trRef}
