@@ -33,7 +33,6 @@
     "konva"
   ],
   "cSpell.ignorePaths": [
-    "src/components/modules/Editor/index.tsx",
     ".vscode"
   ],
   "todo-tree.tree.scanMode": "open files",
