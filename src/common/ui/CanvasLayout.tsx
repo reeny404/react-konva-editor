@@ -9,7 +9,7 @@ type Props = ComponentProps<typeof Stage> & {
   height: number;
 };
 
-export function CanvasLayout({ containerRef, width, height, ...props }: Props) {
+export function CanvasLayout({ containerRef, ...props }: Props) {
   const zoom = useViewportStore((state) => state.zoom);
   const panX = useViewportStore((state) => state.panX);
   const panY = useViewportStore((state) => state.panY);
