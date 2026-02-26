@@ -1,0 +1,131 @@
+import { useDocumentStore } from '@/common/stores/documentStore';
+import { useSelectionStore } from '@/common/stores/selectionStore';
+import { CanvasContainer } from '@/common/ui/CanvasContainer';
+import type { KonvaPointerEvent } from 'konva/lib/PointerEvents';
+import { useEffect, useRef, useState } from 'react';
+import { Layer, Rect, Text } from 'react-konva';
+import { documentCommands } from './commands/documentCommands';
+import { SelectionTransformer } from './components/SelectionTransformer';
+import { useDrawing } from './hooks/useDrawing';
+
+export default function Canvas() {
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [stageSize, setStageSize] = useState({ width: 0, height: 0 });
+
+  const {
+    tempRect,
+    onMouseDown: startDrawing,
+    onMouseMove,
+    onMouseUp,
+  } = useDrawing();
+  const nodes = useDocumentStore((state) => state.doc.nodes);
+  const selectedIds = useSelectionStore((state) => state.selectedIds);
+  const selectOnly = useSelectionStore((state) => state.selectOnly);
+  const clearSelection = useSelectionStore((state) => state.clearSelection);
+
+  useEffect(() => {
+    const element = containerRef.current;
+    if (!element) {
+      return;
+    }
+
+    const updateSize = () => {
+      setStageSize({
+        width: element.clientWidth,
+        height: element.clientHeight,
+      });
+    };
+
+    updateSize();
+
+    const observer = new ResizeObserver(updateSize);
+    observer.observe(element);
+
+    return () => observer.disconnect();
+  }, []);
+
+  const handleMouseDown = (e: KonvaPointerEvent) => {
+    if (e.target === e.target.getStage()) {
+      clearSelection();
+      startDrawing(e);
+    }
+  };
+
+  return (
+    <CanvasContainer
+      containerRef={containerRef}
+      title='maintainer'
+      width={stageSize.width}
+      height={stageSize.height}
+      onMouseDown={handleMouseDown}
+      onMouseMove={onMouseMove}
+      onMouseUp={onMouseUp}
+    >
+      <Layer>
+        <Text
+          x={20}
+          y={stageSize.height - 36}
+          text='react-konva editor (drag the rectangle)'
+          fontSize={14}
+          fill='#64748b'
+        />
+        {nodes.map((node) => {
+          if (node.type !== 'rect') {
+            return null;
+          }
+
+          const isSelected = selectedIds.includes(node.id);
+
+          return (
+            <Rect
+              key={node.id}
+              id={node.id}
+              x={node.x}
+              y={node.y}
+              width={node.width}
+              height={node.height}
+              rotation={node.rotation ?? 0}
+              fill={node.fill}
+              cornerRadius={0}
+              shadowColor='rgba(15, 23, 42, 0.35)'
+              shadowBlur={10}
+              shadowOffset={{ x: 0, y: 6 }}
+              shadowOpacity={0.35}
+              stroke={isSelected ? '#111827' : (node.stroke ?? '#38bdf8')}
+              strokeWidth={isSelected ? 3 : 2}
+              draggable
+              onClick={(e) => {
+                e.cancelBubble = true;
+                selectOnly(node.id);
+              }}
+              onDragStart={(e) => {
+                e.cancelBubble = true;
+                selectOnly(node.id);
+              }}
+              onDragEnd={(e) => {
+                documentCommands.moveNode(node.id, {
+                  x: e.target.x(),
+                  y: e.target.y(),
+                });
+              }}
+            />
+          );
+        })}
+
+        {tempRect && (
+          <Rect
+            x={tempRect.w < 0 ? tempRect.x + tempRect.w : tempRect.x}
+            y={tempRect.h < 0 ? tempRect.y + tempRect.h : tempRect.y}
+            width={Math.abs(tempRect.w)}
+            height={Math.abs(tempRect.h)}
+            fill='rgba(56, 189, 248, 0.1)'
+            stroke='#38bdf8'
+            strokeWidth={1}
+            dash={[4, 4]}
+          />
+        )}
+        <SelectionTransformer />
+      </Layer>
+    </CanvasContainer>
+  );
+}

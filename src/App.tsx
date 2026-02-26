@@ -1,11 +1,18 @@
-import { Canvas } from './editor/ui/Canvas';
-import { Layout } from './editor/ui/Layout';
+import { AppLayout } from '@/common/ui/AppLayout';
+import { routes } from '@/features/routes';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 function App() {
   return (
-    <Layout>
-      <Canvas />
-    </Layout>
+    <BrowserRouter>
+      <AppLayout>
+        <Routes>
+          {routes.map(({ path, Component }) => (
+            <Route key={path} path={path} element={<Component />} />
+          ))}
+        </Routes>
+      </AppLayout>
+    </BrowserRouter>
   );
 }
 

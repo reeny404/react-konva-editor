@@ -8,7 +8,7 @@
   "editor.codeActionsOnSave": {
     "source.fixAll": "never",
     "source.fixAll.eslint": "always",
-    "source.organizeImports": "never"
+    "source.organizeImports": "always"
   },
   "eslint.validate": [
     "javascript",
@@ -30,22 +30,9 @@
   "prettier.requireConfig": true,
   "prettier.enable": true,
   "cSpell.words": [
-    "dtsp",
-    "sonner",
-    "tieins",
-    "tiein",
-    "RLPA",
-    "SPA",
-    "RLBA",
-    "SBA",
-    "Linelist",
-    "linelist",
-    "linelists",
-    "VITE",
-    "actived"
+    "konva"
   ],
   "cSpell.ignorePaths": [
-    "src/components/modules/Editor/index.tsx",
     ".vscode"
   ],
   "todo-tree.tree.scanMode": "open files",
