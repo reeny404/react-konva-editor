@@ -21,64 +21,62 @@ export function AppLayout({ children }: EditorLayoutProps) {
     <div className='flex h-screen w-screen overflow-hidden bg-slate-100'>
       <aside
         role='LeftPanel'
-        className='hidden w-72 shrink-0 border-r border-slate-200 bg-slate-50 p-4 lg:block'
+        className='hidden w-72 shrink-0 space-y-4 border-r border-slate-200 bg-slate-50 p-4 lg:block'
       >
-        <div className='space-y-4'>
-          <SectionCard title='Features'>
-            <ul className='max-h-md space-y-2 overflow-y-auto text-sm'>
-              {featureRoutes.map(({ folder, path }) => (
-                <li key={folder}>
-                  <NavLink
-                    to={path}
-                    className={({ isActive }) =>
-                      `block w-full rounded-lg border px-3 py-2 text-left transition ${
-                        isActive
-                          ? 'border-sky-200 bg-sky-50 font-medium text-sky-800'
-                          : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
-                      }`
-                    }
+        <SectionCard title='Features'>
+          <ul className='max-h-md space-y-2 overflow-y-auto text-sm'>
+            {featureRoutes.map(({ folder, path }) => (
+              <li key={folder}>
+                <NavLink
+                  to={path}
+                  className={({ isActive }) =>
+                    `block w-full rounded-lg border px-3 py-2 text-left transition ${
+                      isActive
+                        ? 'border-sky-200 bg-sky-50 font-medium text-sky-800'
+                        : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+                    }`
+                  }
+                >
+                  {folder}
+                </NavLink>
+              </li>
+            ))}
+          </ul>
+        </SectionCard>
+        <SectionCard title='Nodes'>
+          <div className='space-y-2 text-sm text-slate-600'>
+            <button
+              type='button'
+              className='w-full rounded-lg border border-sky-200 bg-sky-50 px-3 py-2 text-left font-medium text-sky-800'
+            >
+              Rect
+            </button>
+          </div>
+        </SectionCard>
+
+        <SectionCard title='Layers'>
+          <ul className='space-y-2 text-sm text-slate-700'>
+            {nodes.map((node) => {
+              const isSelected = selectedIds.includes(node.id);
+
+              return (
+                <li key={node.id}>
+                  <button
+                    type='button'
+                    onClick={() => selectOnly(node.id)}
+                    className={`w-full rounded-lg border px-3 py-2 text-left transition ${
+                      isSelected
+                        ? 'border-sky-200 bg-sky-50 font-medium text-sky-800'
+                        : 'border-slate-200 bg-white text-slate-700'
+                    }`}
                   >
-                    {folder}
-                  </NavLink>
+                    {node.name}
+                  </button>
                 </li>
-              ))}
-            </ul>
-          </SectionCard>
-          <SectionCard title='Nodes'>
-            <div className='space-y-2 text-sm text-slate-600'>
-              <button
-                type='button'
-                className='w-full rounded-lg border border-sky-200 bg-sky-50 px-3 py-2 text-left font-medium text-sky-800'
-              >
-                Rect
-              </button>
-            </div>
-          </SectionCard>
-
-          <SectionCard title='Layers'>
-            <ul className='space-y-2 text-sm text-slate-700'>
-              {nodes.map((node) => {
-                const isSelected = selectedIds.includes(node.id);
-
-                return (
-                  <li key={node.id}>
-                    <button
-                      type='button'
-                      onClick={() => selectOnly(node.id)}
-                      className={`w-full rounded-lg border px-3 py-2 text-left transition ${
-                        isSelected
-                          ? 'border-sky-200 bg-sky-50 font-medium text-sky-800'
-                          : 'border-slate-200 bg-white text-slate-700'
-                      }`}
-                    >
-                      {node.name}
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
-          </SectionCard>
-        </div>
+              );
+            })}
+          </ul>
+        </SectionCard>
       </aside>
 
       <div className='flex min-w-0 flex-1 flex-col'>
@@ -110,60 +108,50 @@ export function AppLayout({ children }: EditorLayoutProps) {
 
       <aside
         role='RightPanel'
-        className='hidden w-80 shrink-0 border-l border-slate-200 bg-white p-4 xl:block'
+        className='hidden w-80 shrink-0 space-y-4 border-l border-slate-200 bg-white p-4 xl:block'
       >
-        <div className='space-y-4'>
-          <SectionCard title='properties panel'>
-            <div className='space-y-3 text-sm'>
-              <div>
-                <p className='text-xs text-slate-500'>선택 객체</p>
-                <p className='font-medium text-slate-800'>
-                  {selectedNode?.name ?? '선택 없음'}
+        <SectionCard title='properties'>
+          <div className='space-y-3 text-sm'>
+            <div>
+              <p className='text-xs text-slate-500'>선택 객체</p>
+              <p className='font-medium text-slate-800'>
+                {selectedNode?.name ?? '선택 없음'}
+              </p>
+            </div>
+            <div className='grid grid-cols-2 gap-2 text-xs'>
+              <div className='rounded-lg bg-slate-100 px-3 py-2'>
+                <p className='text-slate-500'>Fill</p>
+                <p className='mt-1 font-medium text-slate-700'>
+                  {selectedNode?.fill ?? '-'}
                 </p>
               </div>
-              <div className='grid grid-cols-2 gap-2 text-xs'>
-                <div className='rounded-lg bg-slate-100 px-3 py-2'>
-                  <p className='text-slate-500'>Fill</p>
-                  <p className='mt-1 font-medium text-slate-700'>
-                    {selectedNode?.fill ?? '-'}
-                  </p>
-                </div>
-                <div className='rounded-lg bg-slate-100 px-3 py-2'>
-                  <p className='text-slate-500'>Stroke</p>
-                  <p className='mt-1 font-medium text-slate-700'>
-                    {selectedNode?.stroke ?? '-'}
-                  </p>
-                </div>
-              </div>
-              <div className='grid grid-cols-2 gap-2 text-xs'>
-                <div className='rounded-lg bg-slate-100 px-3 py-2'>
-                  <p className='text-slate-500'>X / Y</p>
-                  <p className='mt-1 font-medium text-slate-700'>
-                    {selectedNode
-                      ? `${Math.round(selectedNode.x)} / ${Math.round(selectedNode.y)}`
-                      : '-'}
-                  </p>
-                </div>
-                <div className='rounded-lg bg-slate-100 px-3 py-2'>
-                  <p className='text-slate-500'>Size</p>
-                  <p className='mt-1 font-medium text-slate-700'>
-                    {selectedNode
-                      ? `${Math.round(selectedNode.width)} x ${Math.round(selectedNode.height)}`
-                      : '-'}
-                  </p>
-                </div>
+              <div className='rounded-lg bg-slate-100 px-3 py-2'>
+                <p className='text-slate-500'>Stroke</p>
+                <p className='mt-1 font-medium text-slate-700'>
+                  {selectedNode?.stroke ?? '-'}
+                </p>
               </div>
             </div>
-          </SectionCard>
-
-          <SectionCard title='selected node'>
-            <p className='mt-2 text-xs'>{selectedNode?.name ?? '-'}</p>
-            <p className='mt-1 space-x-2 text-xs'>
-              <span>x: {Math.round(selectedNode?.x ?? 0)},</span>
-              <span>y: {Math.round(selectedNode?.y ?? 0)}</span>
-            </p>
-          </SectionCard>
-        </div>
+            <div className='grid grid-cols-2 gap-2 text-xs'>
+              <div className='rounded-lg bg-slate-100 px-3 py-2'>
+                <p className='text-slate-500'>X / Y</p>
+                <p className='mt-1 font-medium text-slate-700'>
+                  {selectedNode
+                    ? `${Math.round(selectedNode.x)} / ${Math.round(selectedNode.y)}`
+                    : '-'}
+                </p>
+              </div>
+              <div className='rounded-lg bg-slate-100 px-3 py-2'>
+                <p className='text-slate-500'>Size</p>
+                <p className='mt-1 font-medium text-slate-700'>
+                  {selectedNode
+                    ? `${Math.round(selectedNode.width)} x ${Math.round(selectedNode.height)}`
+                    : '-'}
+                </p>
+              </div>
+            </div>
+          </div>
+        </SectionCard>
       </aside>
     </div>
   );
