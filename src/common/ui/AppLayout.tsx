@@ -1,4 +1,4 @@
-import { featureRoutes } from '@/features/featureRoutes';
+import { routes } from '@/features/routes';
 import type { ReactNode } from 'react';
 import { NavLink } from 'react-router-dom';
 import { redoCommand, undoCommand } from '../commands/history';
@@ -25,7 +25,7 @@ export function AppLayout({ children }: EditorLayoutProps) {
       >
         <SectionCard title='Features'>
           <ul className='max-h-md space-y-2 overflow-y-auto text-sm'>
-            {featureRoutes.map(({ folder, path }) => (
+            {routes.map(({ folder, path }) => (
               <li key={folder}>
                 <NavLink
                   to={path}
