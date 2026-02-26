@@ -1,5 +1,5 @@
-import { Canvas } from './editor/ui/Canvas';
-import { Layout } from './editor/ui/Layout';
+import { Canvas } from '@/common/ui/Canvas';
+import { Layout } from '@/common/ui/Layout';
 
 function App() {
   return (
