@@ -4,7 +4,6 @@ import { Stage } from 'react-konva';
 
 type Props = ComponentProps<typeof Stage> & {
   containerRef: RefObject<HTMLDivElement | null>;
-  title: string;
   width: number;
   height: number;
 };

@@ -54,7 +54,6 @@ export default function Canvas() {
   return (
     <CanvasContainer
       containerRef={containerRef}
-      title='maintainer'
       width={stageSize.width}
       height={stageSize.height}
       onMouseDown={handleMouseDown}
