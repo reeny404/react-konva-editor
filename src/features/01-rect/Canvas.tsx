@@ -54,7 +54,6 @@ export default function Canvas() {
 
   return (
     <CanvasContainer
-      title='rect'
       containerRef={containerRef}
       width={stageSize.width}
       height={stageSize.height}
