@@ -11,6 +11,7 @@
 
 - `src/editor/`: Core 영역 (Store, Command, type)
 - `src/editor/ui/`: 화면에 띄울 Layout, Components 들
+- 참고: [docs/architecture.md](docs/architecture.md)
 
 ## 필수 기능 (검토 중)
 
@@ -21,8 +22,8 @@
 | action/command | redo/undo 구현을 위한 action 단위 선언 |
 | object         | 하단의 상세 설명(d1) 참고              |
 
-
 ### 검토 내용
+
 https://github.com/reeny404/react-konva-editor/issues/4#issue-3993617843
 
 ### object (d1)
