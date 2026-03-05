@@ -12,11 +12,11 @@
 
 ```mermaid
 flowchart LR
-  DB[DB] --> COMMAND[Command]
+  DB --> COMMAND[Command]
   COMMAND --> STORE[Store]
   STORE --> TRANSLATOR[Translator]
   TRANSLATOR --> ADAPTER[Adapter]
-  ADAPTER --> CANVAS[Canvas(Render Only)]
+  ADAPTER --> CANVAS[Canvas]
 
   USER[User Input] --> COMMAND
   STORE --> VALIDATOR[Validator]
