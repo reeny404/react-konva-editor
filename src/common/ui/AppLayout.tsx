@@ -1,7 +1,9 @@
 import { routes } from '@/features/routes';
-import type { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import { NavLink } from 'react-router-dom';
+import { documentCommands } from '../commands/documentCommands';
 import { redoCommand, undoCommand } from '../commands/history';
+import { PropertyInput } from '../components/right-panel/PropertyInput';
 import { useSelectedNode } from '../selectors/documentSelectors';
 import { useDocumentStore } from '../stores/documentStore';
 import { useSelectionStore } from '../stores/selectionStore';
@@ -43,6 +45,7 @@ export function AppLayout({ children }: EditorLayoutProps) {
             ))}
           </ul>
         </SectionCard>
+
         <SectionCard title='Layers'>
           <div className='space-y-2 text-sm text-slate-600'>
             <button
@@ -118,36 +121,109 @@ export function AppLayout({ children }: EditorLayoutProps) {
                 {selectedNode?.name ?? '선택 없음'}
               </p>
             </div>
+
             <div className='grid grid-cols-2 gap-2 text-xs'>
               <div className='rounded-lg bg-slate-100 px-3 py-2'>
-                <p className='text-slate-500'>Fill</p>
-                <p className='mt-1 font-medium text-slate-700'>
-                  {selectedNode?.fill ?? '-'}
-                </p>
+                <PropertyInput
+                  label='X'
+                  type='number'
+                  value={selectedNode ? Math.round(selectedNode.x) : ''}
+                  disabled={!selectedNode}
+                  onUpdate={(val) => {
+                    if (!selectedNode) {
+                      return;
+                    }
+                    documentCommands.moveNode(selectedNode.id, {
+                      x: Number(val),
+                    });
+                  }}
+                />
               </div>
               <div className='rounded-lg bg-slate-100 px-3 py-2'>
-                <p className='text-slate-500'>Stroke</p>
-                <p className='mt-1 font-medium text-slate-700'>
-                  {selectedNode?.stroke ?? '-'}
-                </p>
+                <PropertyInput
+                  label='Y'
+                  type='number'
+                  value={selectedNode ? Math.round(selectedNode.y) : ''}
+                  disabled={!selectedNode}
+                  onUpdate={(val) => {
+                    if (!selectedNode) {
+                      return;
+                    }
+                    documentCommands.moveNode(selectedNode.id, {
+                      y: Number(val),
+                    });
+                  }}
+                />
               </div>
             </div>
+
             <div className='grid grid-cols-2 gap-2 text-xs'>
               <div className='rounded-lg bg-slate-100 px-3 py-2'>
-                <p className='text-slate-500'>X / Y</p>
-                <p className='mt-1 font-medium text-slate-700'>
-                  {selectedNode
-                    ? `${Math.round(selectedNode.x)} / ${Math.round(selectedNode.y)}`
-                    : '-'}
-                </p>
+                <PropertyInput
+                  label='Width'
+                  type='number'
+                  value={selectedNode ? Math.round(selectedNode.width) : ''}
+                  disabled={!selectedNode}
+                  onUpdate={(val) => {
+                    if (!selectedNode) {
+                      return;
+                    }
+                    documentCommands.moveNode(selectedNode.id, {
+                      width: Number(val),
+                    });
+                  }}
+                />
               </div>
               <div className='rounded-lg bg-slate-100 px-3 py-2'>
-                <p className='text-slate-500'>Size</p>
-                <p className='mt-1 font-medium text-slate-700'>
-                  {selectedNode
-                    ? `${Math.round(selectedNode.width)} x ${Math.round(selectedNode.height)}`
-                    : '-'}
-                </p>
+                <PropertyInput
+                  label='Height'
+                  type='number'
+                  value={selectedNode ? Math.round(selectedNode.height) : ''}
+                  disabled={!selectedNode}
+                  onUpdate={(val) => {
+                    if (!selectedNode) {
+                      return;
+                    }
+                    documentCommands.moveNode(selectedNode.id, {
+                      height: Number(val),
+                    });
+                  }}
+                />
+              </div>
+            </div>
+
+            <div className='grid grid-cols-2 gap-2 text-xs'>
+              <div className='rounded-lg bg-slate-100 px-3 py-2'>
+                <PropertyInput
+                  label='Fill'
+                  type='color'
+                  value={selectedNode?.fill || '#000000'}
+                  disabled={!selectedNode}
+                  onUpdate={(val) => {
+                    if (!selectedNode) {
+                      return;
+                    }
+                    documentCommands.moveNode(selectedNode.id, {
+                      fill: String(val),
+                    });
+                  }}
+                />
+              </div>
+              <div className='rounded-lg bg-slate-100 px-3 py-2'>
+                <PropertyInput
+                  label='Stroke'
+                  type='color'
+                  value={selectedNode?.stroke || '#000000'}
+                  disabled={!selectedNode}
+                  onUpdate={(val) => {
+                    if (!selectedNode) {
+                      return;
+                    }
+                    documentCommands.moveNode(selectedNode.id, {
+                      stroke: String(val),
+                    });
+                  }}
+                />
               </div>
             </div>
           </div>

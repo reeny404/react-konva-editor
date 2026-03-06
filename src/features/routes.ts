@@ -9,7 +9,7 @@ import type { ComponentType } from 'react';
  */
 function getFeatureRoutes() {
   return Object.entries(
-    import.meta.glob<{ default: ComponentType }>('@/features/*/Canvas.tsx', {
+    import.meta.glob<{ default: ComponentType }>(['@/features/*/Canvas.tsx'], {
       eager: true,
       import: 'default',
     }),
