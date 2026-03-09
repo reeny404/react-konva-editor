@@ -33,7 +33,7 @@ export function SelectionTransformer() {
     }
     const node = e.target;
 
-    documentCommands.moveNode(selectedNodeData.id, {
+    documentCommands.patchNode(selectedNodeData.id, {
       x: node.x(),
       y: node.y(),
       width: node.width() * node.scaleX(),

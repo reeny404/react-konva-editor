@@ -20,7 +20,6 @@ export function SelectionTransformer() {
       return;
     }
 
-    // Canvas.tsx의 Rect에 넣은 id를 기반으로 노드 탐색
     const targetNode = stage.findOne('#' + selectedNodeData.id);
     if (targetNode) {
       trRef.current.nodes([targetNode]);
@@ -33,7 +32,7 @@ export function SelectionTransformer() {
     }
     const node = e.target;
 
-    documentCommands.moveNode(selectedNodeData.id, {
+    documentCommands.patchNode(selectedNodeData.id, {
       x: node.x(),
       y: node.y(),
       width: node.width() * node.scaleX(),
@@ -45,12 +44,10 @@ export function SelectionTransformer() {
     node.scaleY(1);
   };
 
-  // 선택된 노드가 없으면 아무것도 그리지 않음
   if (!selectedNodeData) {
     return null;
   }
 
-  // 실제 UI(Transformer)를 여기서 반환
   return (
     <Transformer
       ref={trRef}

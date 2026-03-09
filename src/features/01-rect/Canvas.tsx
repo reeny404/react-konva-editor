@@ -103,7 +103,7 @@ export default function Canvas() {
                 selectOnly(node.id);
               }}
               onDragEnd={(e) => {
-                documentCommands.moveNode(node.id, {
+                documentCommands.patchNode(node.id, {
                   x: e.target.x(),
                   y: e.target.y(),
                 });

@@ -1,11 +1,11 @@
 import { documentCommands } from '@/common/commands/documentCommands';
+import { selectionCommands } from '@/common/commands/selectionCommands';
 import { useDocumentStore } from '@/common/stores/documentStore';
 import { useSelectionStore } from '@/common/stores/selectionStore';
 import { CanvasContainer } from '@/common/ui/CanvasContainer';
 import type Konva from 'konva';
 import { useEffect, useRef, useState } from 'react';
 import { Layer, Rect, Text } from 'react-konva';
-import { selectionCommands } from './commands/selectionCommands';
 import { SelectionTransformer } from './components/SelectionTransformer';
 
 export default function Canvas() {
@@ -85,7 +85,7 @@ export default function Canvas() {
                 selectionCommands.selectOnly(node.id);
               }}
               onDragEnd={(e) => {
-                documentCommands.moveNode(node.id, {
+                documentCommands.patchNode(node.id, {
                   x: e.target.x(),
                   y: e.target.y(),
                 });

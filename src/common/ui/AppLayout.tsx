@@ -3,10 +3,12 @@ import { type ReactNode } from 'react';
 import { NavLink } from 'react-router-dom';
 import { documentCommands } from '../commands/documentCommands';
 import { redoCommand, undoCommand } from '../commands/history';
+import { selectionCommands } from '../commands/selectionCommands';
 import { PropertyInput } from '../components/right-panel/PropertyInput';
 import { useSelectedNode } from '../selectors/documentSelectors';
 import { useDocumentStore } from '../stores/documentStore';
 import { useSelectionStore } from '../stores/selectionStore';
+import type { RectNode } from '../types';
 import SectionCard from './SectionCard';
 
 type EditorLayoutProps = {
@@ -16,8 +18,13 @@ type EditorLayoutProps = {
 export function AppLayout({ children }: EditorLayoutProps) {
   const nodes = useDocumentStore((state) => state.doc.nodes);
   const selectedIds = useSelectionStore((state) => state.selectedIds);
-  const selectOnly = useSelectionStore((state) => state.selectOnly);
   const selectedNode = useSelectedNode();
+  const updateSelectedNode = (patch: Partial<RectNode>) => {
+    if (!selectedNode) {
+      return;
+    }
+    documentCommands.patchNode(selectedNode.id, patch);
+  };
 
   return (
     <div className='flex h-screen w-screen overflow-hidden bg-slate-100'>
@@ -66,7 +73,7 @@ export function AppLayout({ children }: EditorLayoutProps) {
                 <li key={node.id}>
                   <button
                     type='button'
-                    onClick={() => selectOnly(node.id)}
+                    onClick={() => selectionCommands.selectOnly(node.id)}
                     className={`w-full rounded-lg border px-3 py-2 text-left transition ${
                       isSelected
                         ? 'border-sky-200 bg-sky-50 font-medium text-sky-800'
@@ -129,14 +136,7 @@ export function AppLayout({ children }: EditorLayoutProps) {
                   type='number'
                   value={selectedNode ? Math.round(selectedNode.x) : ''}
                   disabled={!selectedNode}
-                  onUpdate={(val) => {
-                    if (!selectedNode) {
-                      return;
-                    }
-                    documentCommands.moveNode(selectedNode.id, {
-                      x: Number(val),
-                    });
-                  }}
+                  onUpdate={(val) => updateSelectedNode({ x: Number(val) })}
                 />
               </div>
               <div className='rounded-lg bg-slate-100 px-3 py-2'>
@@ -145,14 +145,7 @@ export function AppLayout({ children }: EditorLayoutProps) {
                   type='number'
                   value={selectedNode ? Math.round(selectedNode.y) : ''}
                   disabled={!selectedNode}
-                  onUpdate={(val) => {
-                    if (!selectedNode) {
-                      return;
-                    }
-                    documentCommands.moveNode(selectedNode.id, {
-                      y: Number(val),
-                    });
-                  }}
+                  onUpdate={(val) => updateSelectedNode({ y: Number(val) })}
                 />
               </div>
             </div>
@@ -164,14 +157,7 @@ export function AppLayout({ children }: EditorLayoutProps) {
                   type='number'
                   value={selectedNode ? Math.round(selectedNode.width) : ''}
                   disabled={!selectedNode}
-                  onUpdate={(val) => {
-                    if (!selectedNode) {
-                      return;
-                    }
-                    documentCommands.moveNode(selectedNode.id, {
-                      width: Number(val),
-                    });
-                  }}
+                  onUpdate={(val) => updateSelectedNode({ width: Number(val) })}
                 />
               </div>
               <div className='rounded-lg bg-slate-100 px-3 py-2'>
@@ -180,14 +166,9 @@ export function AppLayout({ children }: EditorLayoutProps) {
                   type='number'
                   value={selectedNode ? Math.round(selectedNode.height) : ''}
                   disabled={!selectedNode}
-                  onUpdate={(val) => {
-                    if (!selectedNode) {
-                      return;
-                    }
-                    documentCommands.moveNode(selectedNode.id, {
-                      height: Number(val),
-                    });
-                  }}
+                  onUpdate={(val) =>
+                    updateSelectedNode({ height: Number(val) })
+                  }
                 />
               </div>
             </div>
@@ -199,14 +180,7 @@ export function AppLayout({ children }: EditorLayoutProps) {
                   type='color'
                   value={selectedNode?.fill || '#000000'}
                   disabled={!selectedNode}
-                  onUpdate={(val) => {
-                    if (!selectedNode) {
-                      return;
-                    }
-                    documentCommands.moveNode(selectedNode.id, {
-                      fill: String(val),
-                    });
-                  }}
+                  onUpdate={(val) => updateSelectedNode({ fill: String(val) })}
                 />
               </div>
               <div className='rounded-lg bg-slate-100 px-3 py-2'>
@@ -215,14 +189,9 @@ export function AppLayout({ children }: EditorLayoutProps) {
                   type='color'
                   value={selectedNode?.stroke || '#000000'}
                   disabled={!selectedNode}
-                  onUpdate={(val) => {
-                    if (!selectedNode) {
-                      return;
-                    }
-                    documentCommands.moveNode(selectedNode.id, {
-                      stroke: String(val),
-                    });
-                  }}
+                  onUpdate={(val) =>
+                    updateSelectedNode({ stroke: String(val) })
+                  }
                 />
               </div>
             </div>
