@@ -1,5 +1,6 @@
 import { CanvasContainer } from '@/common/ui/CanvasContainer';
 import BOX_ICON from '@/icons/box.svg';
+import CIRCLE_ICON from '@/icons/circle.svg';
 import { useRef } from 'react';
 import { Layer, Line, Rect } from 'react-konva';
 import CustomImage from './components/CustomImage';
@@ -70,8 +71,17 @@ export default function Canvas() {
           url={BOX_ICON}
           x={100}
           y={100}
-          width={50}
-          height={50}
+          width={200}
+          height={200}
+          draggable
+        />
+
+        <CustomImage
+          url={CIRCLE_ICON}
+          x={100}
+          y={400}
+          width={200}
+          height={200}
           draggable
         />
       </Layer>
