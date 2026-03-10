@@ -24,7 +24,7 @@ importers:
         specifier: ^19.2.2
         version: 19.2.2(@types/react@19.2.14)(konva@9.3.22)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       react-router-dom:
-        specifier: ^7.0.0
+        specifier: ^7.13.1
         version: 7.13.1(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       tailwindcss:
         specifier: ^4.1.8
@@ -52,7 +52,7 @@ importers:
         specifier: ^10.4.20
         version: 10.4.24(postcss@8.5.6)
       eslint:
-        specifier: ^9.15.0
+        specifier: ^9.39.3
         version: 9.39.3(jiti@2.6.1)
       eslint-config-prettier:
         specifier: ^10.1.8

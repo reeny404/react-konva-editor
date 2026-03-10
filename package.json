@@ -18,7 +18,7 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-konva": "^19.2.2",
-    "react-router-dom": "^7.0.0",
+    "react-router-dom": "^7.13.1",
     "tailwindcss": "^4.1.8",
     "uuid": "^13.0.0"
   },
@@ -29,7 +29,7 @@
     "@types/react-dom": "^19.0.0",
     "@vitejs/plugin-react": "^5.1.4",
     "autoprefixer": "^10.4.20",
-    "eslint": "^9.15.0",
+    "eslint": "^9.39.3",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
     "eslint-plugin-react": "^7.37.5",
@@ -43,6 +43,9 @@
     "vite": "^6.3.1"
   },
   "lint-staged": {
-    "**/*.{ts,tsx,json,css,md}": ["eslint --fix", "prettier --write"]
+    "**/*.{ts,tsx,json,css,md}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
   }
 }

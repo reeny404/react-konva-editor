@@ -1,10 +1,14 @@
 import { routes } from '@/features/routes';
-import type { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import { NavLink } from 'react-router-dom';
+import { documentCommands } from '../commands/documentCommands';
 import { redoCommand, undoCommand } from '../commands/history';
+import { selectionCommands } from '../commands/selectionCommands';
+import { PropertyInput } from '../components/right-panel/PropertyInput';
 import { useSelectedNode } from '../selectors/documentSelectors';
 import { useDocumentStore } from '../stores/documentStore';
 import { useSelectionStore } from '../stores/selectionStore';
+import type { RectNode } from '../types';
 import SectionCard from './SectionCard';
 
 type EditorLayoutProps = {
@@ -14,8 +18,13 @@ type EditorLayoutProps = {
 export function AppLayout({ children }: EditorLayoutProps) {
   const nodes = useDocumentStore((state) => state.doc.nodes);
   const selectedIds = useSelectionStore((state) => state.selectedIds);
-  const selectOnly = useSelectionStore((state) => state.selectOnly);
   const selectedNode = useSelectedNode();
+  const updateSelectedNode = (patch: Partial<RectNode>) => {
+    if (!selectedNode) {
+      return;
+    }
+    documentCommands.patchNode(selectedNode.id, patch);
+  };
 
   return (
     <div className='flex h-screen w-screen overflow-hidden bg-slate-100'>
@@ -43,6 +52,7 @@ export function AppLayout({ children }: EditorLayoutProps) {
             ))}
           </ul>
         </SectionCard>
+
         <SectionCard title='Layers'>
           <div className='space-y-2 text-sm text-slate-600'>
             <button
@@ -63,7 +73,7 @@ export function AppLayout({ children }: EditorLayoutProps) {
                 <li key={node.id}>
                   <button
                     type='button'
-                    onClick={() => selectOnly(node.id)}
+                    onClick={() => selectionCommands.selectOnly(node.id)}
                     className={`w-full rounded-lg border px-3 py-2 text-left transition ${
                       isSelected
                         ? 'border-sky-200 bg-sky-50 font-medium text-sky-800'
@@ -118,36 +128,71 @@ export function AppLayout({ children }: EditorLayoutProps) {
                 {selectedNode?.name ?? '선택 없음'}
               </p>
             </div>
+
             <div className='grid grid-cols-2 gap-2 text-xs'>
               <div className='rounded-lg bg-slate-100 px-3 py-2'>
-                <p className='text-slate-500'>Fill</p>
-                <p className='mt-1 font-medium text-slate-700'>
-                  {selectedNode?.fill ?? '-'}
-                </p>
+                <PropertyInput
+                  label='X'
+                  type='number'
+                  value={selectedNode ? Math.round(selectedNode.x) : ''}
+                  disabled={!selectedNode}
+                  onUpdate={(val) => updateSelectedNode({ x: Number(val) })}
+                />
               </div>
               <div className='rounded-lg bg-slate-100 px-3 py-2'>
-                <p className='text-slate-500'>Stroke</p>
-                <p className='mt-1 font-medium text-slate-700'>
-                  {selectedNode?.stroke ?? '-'}
-                </p>
+                <PropertyInput
+                  label='Y'
+                  type='number'
+                  value={selectedNode ? Math.round(selectedNode.y) : ''}
+                  disabled={!selectedNode}
+                  onUpdate={(val) => updateSelectedNode({ y: Number(val) })}
+                />
               </div>
             </div>
+
             <div className='grid grid-cols-2 gap-2 text-xs'>
               <div className='rounded-lg bg-slate-100 px-3 py-2'>
-                <p className='text-slate-500'>X / Y</p>
-                <p className='mt-1 font-medium text-slate-700'>
-                  {selectedNode
-                    ? `${Math.round(selectedNode.x)} / ${Math.round(selectedNode.y)}`
-                    : '-'}
-                </p>
+                <PropertyInput
+                  label='Width'
+                  type='number'
+                  value={selectedNode ? Math.round(selectedNode.width) : ''}
+                  disabled={!selectedNode}
+                  onUpdate={(val) => updateSelectedNode({ width: Number(val) })}
+                />
               </div>
               <div className='rounded-lg bg-slate-100 px-3 py-2'>
-                <p className='text-slate-500'>Size</p>
-                <p className='mt-1 font-medium text-slate-700'>
-                  {selectedNode
-                    ? `${Math.round(selectedNode.width)} x ${Math.round(selectedNode.height)}`
-                    : '-'}
-                </p>
+                <PropertyInput
+                  label='Height'
+                  type='number'
+                  value={selectedNode ? Math.round(selectedNode.height) : ''}
+                  disabled={!selectedNode}
+                  onUpdate={(val) =>
+                    updateSelectedNode({ height: Number(val) })
+                  }
+                />
+              </div>
+            </div>
+
+            <div className='grid grid-cols-2 gap-2 text-xs'>
+              <div className='rounded-lg bg-slate-100 px-3 py-2'>
+                <PropertyInput
+                  label='Fill'
+                  type='color'
+                  value={selectedNode?.fill || '#000000'}
+                  disabled={!selectedNode}
+                  onUpdate={(val) => updateSelectedNode({ fill: String(val) })}
+                />
+              </div>
+              <div className='rounded-lg bg-slate-100 px-3 py-2'>
+                <PropertyInput
+                  label='Stroke'
+                  type='color'
+                  value={selectedNode?.stroke || '#000000'}
+                  disabled={!selectedNode}
+                  onUpdate={(val) =>
+                    updateSelectedNode({ stroke: String(val) })
+                  }
+                />
               </div>
             </div>
           </div>

@@ -3,7 +3,7 @@ import { documentStore } from '@/common/stores/documentStore';
 import type { NodeId, SceneNode } from '@/common/types';
 
 export const documentCommands = {
-  moveNode(id: NodeId, next: Partial<SceneNode>) {
+  patchNode(id: NodeId, next: Partial<SceneNode>) {
     const state = documentStore.getState();
     const prev = state.getNodeById(id);
     if (!prev) {
