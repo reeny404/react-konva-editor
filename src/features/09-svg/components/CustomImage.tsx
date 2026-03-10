@@ -1,7 +1,7 @@
 import type { NodeId } from '@/common/types';
 import { Image } from 'react-konva';
 import useImage from 'use-image';
-import type { SelectableNode } from '../type';
+import type { DraggableNode, SelectableNode } from '../type';
 
 type SvgImageProps = {
   id: NodeId;
@@ -11,7 +11,8 @@ type SvgImageProps = {
   width: number;
   height: number;
   draggable?: boolean;
-} & SelectableNode;
+} & SelectableNode &
+  DraggableNode;
 
 export default function CustomImage({
   url,
@@ -22,7 +23,7 @@ export default function CustomImage({
   height,
   draggable = false,
   isSelected,
-  selectOne: select,
+  selectOne,
 }: SvgImageProps) {
   const [image] = useImage(url);
 
@@ -45,11 +46,11 @@ export default function CustomImage({
       strokeWidth={selected ? 3 : undefined}
       onClick={(e) => {
         e.cancelBubble = true;
-        select(id);
+        selectOne(id);
       }}
       onDragStart={(e) => {
         e.cancelBubble = true;
-        select(id);
+        selectOne(id);
       }}
     />
   );

@@ -1,21 +1,22 @@
+import { documentCommands } from '@/common/commands/documentCommands';
+import Button from '@/common/components/Button';
+import { useDocumentStore } from '@/common/stores/documentStore';
 import { CanvasContainer } from '@/common/ui/CanvasContainer';
-import BOX_ICON from '@/icons/box.svg';
-import CIRCLE_ICON from '@/icons/circle.svg';
 import { useRef } from 'react';
-import { Layer, Line, Rect } from 'react-konva';
+import { Circle, Layer, Line, Rect } from 'react-konva';
+import { v4 as uuid } from 'uuid';
 import CustomImage from './components/CustomImage';
 import ZoomInformation from './components/ZoomInformation';
 import { useGridPoints } from './hooks/useGridPoints';
 import { useSelection } from './hooks/useSelection';
 import { useZoomPan } from './hooks/useZoomPan';
 
+import BOX_ICON from '@/icons/box.svg';
+import CIRCLE_ICON from '@/icons/circle.svg';
+
 const CANVAS_SIZE = { width: 3000, height: 3000 };
 
-const ID = {
-  floor: 'floor',
-  box: 'svg-box',
-  circle: 'svg-circle',
-};
+const FLOOR_ID = 'floor';
 
 export default function Canvas() {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -31,11 +32,13 @@ export default function Canvas() {
     handleMouseUp,
     handleMouseLeave,
   } = useZoomPan(containerRef);
+
+  const nodes = useDocumentStore((state) => state.doc.nodes);
   const { selectOnly, clearSelection, isSelected } = useSelection();
 
   const handleMouseDown = (e: Parameters<typeof zoomPanMouseDown>[0]) => {
     const stage = e.target.getStage();
-    const isFloor = e.target === stage || e.target.id() === ID.floor;
+    const isFloor = e.target === stage || e.target.id() === FLOOR_ID;
     if (isFloor && e.evt.button === 0) {
       clearSelection();
     }
@@ -43,72 +46,146 @@ export default function Canvas() {
   };
 
   return (
-    <CanvasContainer
-      containerRef={containerRef}
-      width={stageSize.width}
-      height={stageSize.height}
-      x={pan.x}
-      y={pan.y}
-      scaleX={scale}
-      scaleY={scale}
-      onWheel={handleWheel}
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseLeave}
-    >
-      <Layer>
-        <Rect
-          id={ID.floor}
-          x={0}
-          y={0}
-          width={CANVAS_SIZE.width}
-          height={CANVAS_SIZE.height}
-          fill='#f8fafc'
-          stroke='#0f172a'
-          strokeWidth={2}
-        />
-        <ZoomInformation
-          size={CANVAS_SIZE}
-          scale={scale}
-          pan={pan}
-          viewportLeftBottom={{ x: 0, y: 0 }}
-        />
+    <>
+      <div className='flex gap-2 p-2'>
+        <Button
+          className='bg-slate-200'
+          onClick={() => {
+            documentCommands.addNode({
+              id: uuid(),
+              type: 'custom-image',
+              name: 'SVG Rect',
+              x: Math.max(pan.x, 0),
+              y: Math.max(pan.y, 0),
+              width: 200,
+              height: 200,
+              rotation: 0,
+              fill: '#0f172a',
+              stroke: '#38bdf8',
+              url: BOX_ICON,
+            });
+          }}
+        >
+          Add SVG Box
+        </Button>
+        <Button
+          className='bg-slate-200'
+          onClick={() => {
+            documentCommands.addNode({
+              id: uuid(),
+              type: 'custom-image',
+              name: 'SVG Circle',
+              x: Math.max(pan.x, 0),
+              y: Math.max(pan.y, 0),
+              width: 200,
+              height: 200,
+              rotation: 0,
+              fill: '#0f172a',
+              stroke: '#38bdf8',
+              url: CIRCLE_ICON,
+            });
+          }}
+        >
+          Add SVG Circle
+        </Button>
+      </div>
 
-        {gridPoints.map((points, idx) => (
-          <Line
-            key={idx}
-            points={points}
-            stroke='rgba(100, 116, 139, 0.2)'
-            strokeWidth={1}
-            listening={false}
+      <CanvasContainer
+        containerRef={containerRef}
+        width={stageSize.width}
+        height={stageSize.height}
+        x={pan.x}
+        y={pan.y}
+        scaleX={scale}
+        scaleY={scale}
+        onWheel={handleWheel}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseLeave}
+      >
+        <Layer>
+          <Rect
+            id={FLOOR_ID}
+            x={0}
+            y={0}
+            width={CANVAS_SIZE.width}
+            height={CANVAS_SIZE.height}
+            fill='#f8fafc'
+            stroke='#0f172a'
+            strokeWidth={2}
           />
-        ))}
+          <ZoomInformation
+            size={CANVAS_SIZE}
+            scale={scale}
+            pan={pan}
+            viewportLeftBottom={{ x: 0, y: 0 }}
+          />
 
-        <CustomImage
-          id={ID.box}
-          url={BOX_ICON}
-          x={100}
-          y={100}
-          width={200}
-          height={200}
-          draggable
-          isSelected={isSelected}
-          selectOne={selectOnly}
-        />
+          {gridPoints.map((points, idx) => (
+            <Line
+              key={idx}
+              points={points}
+              stroke='rgba(100, 116, 139, 0.2)'
+              strokeWidth={1}
+              listening={false}
+            />
+          ))}
 
-        <CustomImage
-          id={ID.circle}
-          url={CIRCLE_ICON}
-          x={100}
-          y={400}
-          width={200}
-          height={200}
-          draggable
-          isSelected={isSelected}
-          selectOne={selectOnly}
-        />
-      </Layer>
-    </CanvasContainer>
+          {nodes.map((node) => {
+            if (node.type === 'rect') {
+              return (
+                <Rect
+                  key={node.id}
+                  onClick={() => selectOnly(node.id)}
+                  draggable
+                  onDragEnd={(e) => {
+                    documentCommands.patchNode(node.id, {
+                      x: e.target.x(),
+                      y: e.target.y(),
+                    });
+                  }}
+                  {...node}
+                />
+              );
+            }
+            if (node.type === 'circle') {
+              return (
+                <Circle
+                  key={node.id}
+                  onClick={() => selectOnly(node.id)}
+                  draggable
+                  onDragEnd={(e) => {
+                    documentCommands.patchNode(node.id, {
+                      x: e.target.x(),
+                      y: e.target.y(),
+                    });
+                  }}
+                  {...node}
+                />
+              );
+            }
+            if (node.type === 'custom-image') {
+              return (
+                <CustomImage
+                  key={node.id}
+                  isSelected={isSelected}
+                  selectOne={selectOnly}
+                  draggable
+                  onDragEnd={(e) => {
+                    documentCommands.patchNode(node.id, {
+                      x: e.target.x(),
+                      y: e.target.y(),
+                    });
+                  }}
+                  {...node}
+                />
+              );
+            }
+            return null;
+          })}
+        </Layer>
+      </CanvasContainer>
+    </>
   );
 }
