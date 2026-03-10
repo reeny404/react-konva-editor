@@ -11,8 +11,10 @@ import { useGridPoints } from './hooks/useGridPoints';
 import { useSelection } from './hooks/useSelection';
 import { useZoomPan } from './hooks/useZoomPan';
 
+import type { ImageNode } from '@/common/types';
 import BOX_ICON from '@/icons/box.svg';
 import CIRCLE_ICON from '@/icons/circle.svg';
+import type { KonvaEventObject } from 'konva/lib/Node';
 
 const CANVAS_SIZE = { width: 3000, height: 3000 };
 
@@ -51,19 +53,9 @@ export default function Canvas() {
         <Button
           className='bg-slate-200'
           onClick={() => {
-            documentCommands.addNode({
-              id: uuid(),
-              type: 'custom-image',
-              name: 'SVG Rect',
-              x: Math.max(pan.x, 0),
-              y: Math.max(pan.y, 0),
-              width: 200,
-              height: 200,
-              rotation: 0,
-              fill: '#0f172a',
-              stroke: '#38bdf8',
-              url: BOX_ICON,
-            });
+            documentCommands.addNode(
+              createCustomImageNode(BOX_ICON, 'SVG Box'),
+            );
           }}
         >
           Add SVG Box
@@ -71,19 +63,9 @@ export default function Canvas() {
         <Button
           className='bg-slate-200'
           onClick={() => {
-            documentCommands.addNode({
-              id: uuid(),
-              type: 'custom-image',
-              name: 'SVG Circle',
-              x: Math.max(pan.x, 0),
-              y: Math.max(pan.y, 0),
-              width: 200,
-              height: 200,
-              rotation: 0,
-              fill: '#0f172a',
-              stroke: '#38bdf8',
-              url: CIRCLE_ICON,
-            });
+            documentCommands.addNode(
+              createCustomImageNode(CIRCLE_ICON, 'SVG Circle'),
+            );
           }}
         >
           Add SVG Circle
@@ -133,59 +115,67 @@ export default function Canvas() {
           ))}
 
           {nodes.map((node) => {
-            if (node.type === 'rect') {
-              return (
-                <Rect
-                  key={node.id}
-                  onClick={() => selectOnly(node.id)}
-                  draggable
-                  onDragEnd={(e) => {
-                    documentCommands.patchNode(node.id, {
-                      x: e.target.x(),
-                      y: e.target.y(),
-                    });
-                  }}
-                  {...node}
-                />
-              );
+            const select = () => selectOnly(node.id);
+            const move = (e: KonvaEventObject<DragEvent>) =>
+              documentCommands.patchNode(node.id, {
+                x: e.target.x(),
+                y: e.target.y(),
+              });
+
+            switch (node.type) {
+              case 'rect':
+                return (
+                  <Rect
+                    key={node.id}
+                    {...node}
+                    onClick={select}
+                    draggable
+                    onDragEnd={move}
+                  />
+                );
+              case 'circle':
+                return (
+                  <Circle
+                    key={node.id}
+                    {...node}
+                    onClick={select}
+                    draggable
+                    onDragEnd={move}
+                  />
+                );
+              case 'custom-image':
+                return (
+                  <CustomImage
+                    key={node.id}
+                    {...node}
+                    isSelected={isSelected}
+                    selectOne={selectOnly}
+                    onDragEnd={move}
+                    draggable
+                  />
+                );
+              default:
+                return null;
             }
-            if (node.type === 'circle') {
-              return (
-                <Circle
-                  key={node.id}
-                  onClick={() => selectOnly(node.id)}
-                  draggable
-                  onDragEnd={(e) => {
-                    documentCommands.patchNode(node.id, {
-                      x: e.target.x(),
-                      y: e.target.y(),
-                    });
-                  }}
-                  {...node}
-                />
-              );
-            }
-            if (node.type === 'custom-image') {
-              return (
-                <CustomImage
-                  key={node.id}
-                  isSelected={isSelected}
-                  selectOne={selectOnly}
-                  draggable
-                  onDragEnd={(e) => {
-                    documentCommands.patchNode(node.id, {
-                      x: e.target.x(),
-                      y: e.target.y(),
-                    });
-                  }}
-                  {...node}
-                />
-              );
-            }
-            return null;
           })}
         </Layer>
       </CanvasContainer>
     </>
   );
+}
+
+function createCustomImageNode(url: string, name: string = 'SVG Custom Image') {
+  const node: ImageNode = {
+    id: uuid(),
+    type: 'custom-image',
+    name,
+    x: 0,
+    y: 0,
+    width: 200,
+    height: 200,
+    rotation: 0,
+    url,
+  };
+
+  return node;
 }

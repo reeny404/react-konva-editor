@@ -1,5 +1,10 @@
 export type NodeId = string;
 
+type Color = {
+  fill: string;
+  stroke?: string;
+};
+
 type BaseNode<T extends string> = {
   id: NodeId;
   type: T;
@@ -9,12 +14,10 @@ type BaseNode<T extends string> = {
   width: number;
   height: number;
   rotation: number; // 0, 90, 180, 270
-  fill: string;
-  stroke?: string;
 };
 
-export type RectNode = BaseNode<'rect'>;
-export type CircleNode = BaseNode<'circle'>;
+export type RectNode = BaseNode<'rect'> & Color;
+export type CircleNode = BaseNode<'circle'> & Color;
 export type ImageNode = BaseNode<'custom-image'> & {
   url: string;
 };

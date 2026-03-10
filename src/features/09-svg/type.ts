@@ -1,4 +1,4 @@
-import type { KonvaPointerEvent } from 'konva/lib/PointerEvents';
+import type { KonvaEventObject } from 'konva/lib/Node';
 import type { useSelection } from './hooks/useSelection';
 
 export interface SelectableNode {
@@ -8,5 +8,5 @@ export interface SelectableNode {
 
 export interface DraggableNode {
   draggable?: boolean;
-  onDragEnd?: (e: KonvaPointerEvent) => void;
+  onDragEnd?: (e: KonvaEventObject<DragEvent>) => void;
 }
