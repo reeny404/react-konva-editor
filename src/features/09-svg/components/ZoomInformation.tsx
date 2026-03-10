@@ -20,7 +20,7 @@ function ZoomInformation({
       <Text
         x={20}
         y={20}
-        text='09-preview | wheel: zoom | middle-drag: pan | space+drag(floor): pan'
+        text='09-preview | wheel: zoom | middle-drag: pan'
         fontSize={18}
         fill='#0f172a'
         listening={false}
