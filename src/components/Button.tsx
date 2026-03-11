@@ -1,4 +1,4 @@
-import { cn } from '@/common/utils/style';
+import { cn } from '@/utils/style';
 import type { ComponentProps } from 'react';
 
 function Button({ children, className, ...props }: ComponentProps<'button'>) {

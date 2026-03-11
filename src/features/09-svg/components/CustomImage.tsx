@@ -1,5 +1,5 @@
-import { useSvgImage } from '@/common/hooks/useSvgImage';
-import type { ImageNode } from '@/common/types';
+import { useSvgImage } from '@/hooks/useSvgImage';
+import type { ImageNode } from '@/types';
 import { Image } from 'react-konva';
 import type { DraggableNode, SelectableNode } from '../type';
 

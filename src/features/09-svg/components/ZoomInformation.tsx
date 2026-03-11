@@ -1,4 +1,4 @@
-import type { Size } from '@/common/types';
+import type { Size } from '@/types';
 import { Text } from 'react-konva';
 import type { useZoomPan } from '../hooks/useZoomPan';
 

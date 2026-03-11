@@ -1,4 +1,4 @@
-import { CanvasContainer } from '@/common/ui/CanvasContainer';
+import { CanvasContainer } from '@/ui/CanvasContainer';
 import type { KonvaEventObject } from 'konva/lib/Node';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Layer, Line, Rect, Text } from 'react-konva';

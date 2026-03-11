@@ -1,4 +1,4 @@
-import { useViewportStore } from '@/common/stores/viewportStore';
+import { useViewportStore } from '@/stores/viewportStore';
 import type { ComponentProps, RefObject } from 'react';
 import { Stage } from 'react-konva';
 

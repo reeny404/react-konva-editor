@@ -1,7 +1,7 @@
-import { documentCommands as commands } from '@/common/commands/documentCommands';
-import { executeCommand } from '@/common/commands/history';
-import { documentStore } from '@/common/stores/documentStore';
-import type { SceneNode } from '@/common/types';
+import { documentCommands as commands } from '@/commands/documentCommands';
+import { executeCommand } from '@/commands/history';
+import { documentStore } from '@/stores/documentStore';
+import type { SceneNode } from '@/types';
 
 type TreeNode = SceneNode & { parentId?: SceneNode['id'] };
 

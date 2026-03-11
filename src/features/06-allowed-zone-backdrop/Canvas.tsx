@@ -1,5 +1,5 @@
-import { CanvasContainer } from '@/common/ui/CanvasContainer';
-import { getRelativePointerPosition } from '@/common/utils/coordinate';
+import { CanvasContainer } from '@/ui/CanvasContainer';
+import { getRelativePointerPosition } from '@/utils/coordinate';
 import type { KonvaEventObject } from 'konva/lib/Node';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Layer, Line, Path, Rect, Text } from 'react-konva';

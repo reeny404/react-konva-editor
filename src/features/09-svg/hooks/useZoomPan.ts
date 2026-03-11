@@ -1,4 +1,4 @@
-import type { Size } from '@/common/types';
+import type { Size } from '@/types';
 import type { KonvaEventObject } from 'konva/lib/Node';
 import type { RefObject } from 'react';
 import { useEffect, useMemo, useState } from 'react';
