@@ -1,14 +1,14 @@
+import { documentCommands } from '@/commands/documentCommands';
+import { redoCommand, undoCommand } from '@/commands/history';
+import { selectionCommands } from '@/commands/selectionCommands';
+import { PropertyInput } from '@/components/right-panel/PropertyInput';
 import { routes } from '@/features/routes';
+import { useSelectedNode } from '@/hooks/useSelectedNode';
+import { useDocumentStore } from '@/stores/documentStore';
+import { useSelectionStore } from '@/stores/selectionStore';
+import type { SceneNode } from '@/types/node';
 import { type ReactNode } from 'react';
 import { NavLink } from 'react-router-dom';
-import { documentCommands } from '../commands/documentCommands';
-import { redoCommand, undoCommand } from '../commands/history';
-import { selectionCommands } from '../commands/selectionCommands';
-import { PropertyInput } from '../components/right-panel/PropertyInput';
-import { useSelectedNode } from '../selectors/documentSelectors';
-import { useDocumentStore } from '../stores/documentStore';
-import { useSelectionStore } from '../stores/selectionStore';
-import type { RectNode } from '../types';
 import SectionCard from './SectionCard';
 
 type EditorLayoutProps = {
@@ -19,7 +19,7 @@ export function AppLayout({ children }: EditorLayoutProps) {
   const nodes = useDocumentStore((state) => state.doc.nodes);
   const selectedIds = useSelectionStore((state) => state.selectedIds);
   const selectedNode = useSelectedNode();
-  const updateSelectedNode = (patch: Partial<RectNode>) => {
+  const updateSelectedNode = (patch: Partial<SceneNode>) => {
     if (!selectedNode) {
       return;
     }

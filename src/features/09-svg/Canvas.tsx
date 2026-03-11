@@ -10,14 +10,14 @@ import { useGridPoints } from './hooks/useGridPoints';
 import { useSelection } from './hooks/useSelection';
 import { useZoomPan } from './hooks/useZoomPan';
 
+import { SelectionTransformer } from '@/components/SelectionTransformer';
+import { KEY_EDITOR_FLOOR } from '@/constants/key';
 import BOX_ICON from '@/icons/box.svg';
 import CIRCLE_ICON from '@/icons/circle.svg';
 import type { KonvaEventObject } from 'konva/lib/Node';
 import { createCustomImageNode } from './initializeNode';
 
 const CANVAS_SIZE = { width: 3000, height: 3000 };
-
-const FLOOR_ID = 'floor';
 
 export default function Canvas() {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -39,7 +39,7 @@ export default function Canvas() {
 
   const handleMouseDown = (e: Parameters<typeof zoomPanMouseDown>[0]) => {
     const stage = e.target.getStage();
-    const isFloor = e.target === stage || e.target.id() === FLOOR_ID;
+    const isFloor = e.target === stage || e.target.id() === KEY_EDITOR_FLOOR;
     if (isFloor && e.evt.button === 0) {
       clearSelection();
     }
@@ -87,7 +87,7 @@ export default function Canvas() {
       >
         <Layer>
           <Rect
-            id={FLOOR_ID}
+            id={KEY_EDITOR_FLOOR}
             x={0}
             y={0}
             width={CANVAS_SIZE.width}
@@ -158,6 +158,7 @@ export default function Canvas() {
             }
           })}
         </Layer>
+        <SelectionTransformer />
       </CanvasContainer>
     </>
   );

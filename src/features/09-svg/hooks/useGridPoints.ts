@@ -1,4 +1,4 @@
-import type { Size } from '@/types';
+import type { Size } from '@/types/geometry';
 import { useMemo } from 'react';
 
 /**

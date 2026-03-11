@@ -1,6 +1,6 @@
 import RECT from '@/icons/box.svg';
 import CIRCLE from '@/icons/circle.svg';
-import type { Color } from '../types';
+import type { Color } from '@/types/style';
 import { replaceSvgFillStroke } from './replaceSvgFillStroke';
 
 type Type = 'box' | 'circle';

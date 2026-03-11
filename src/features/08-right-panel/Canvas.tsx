@@ -1,12 +1,12 @@
 import { documentCommands } from '@/commands/documentCommands';
 import { selectionCommands } from '@/commands/selectionCommands';
+import { SelectionTransformer } from '@/components/SelectionTransformer';
 import { useDocumentStore } from '@/stores/documentStore';
 import { useSelectionStore } from '@/stores/selectionStore';
 import { CanvasContainer } from '@/ui/CanvasContainer';
 import type Konva from 'konva';
 import { useEffect, useRef, useState } from 'react';
 import { Layer, Rect, Text } from 'react-konva';
-import { SelectionTransformer } from './components/SelectionTransformer';
 
 export default function Canvas() {
   const containerRef = useRef<HTMLDivElement | null>(null);
