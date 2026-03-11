@@ -1,3 +1,4 @@
+import { SelectionTransformer } from '@/components/SelectionTransformer';
 import { useDocumentStore } from '@/stores/documentStore';
 import { useSelectionStore } from '@/stores/selectionStore';
 import { CanvasContainer } from '@/ui/CanvasContainer';
@@ -5,7 +6,6 @@ import type { KonvaPointerEvent } from 'konva/lib/PointerEvents';
 import { useEffect, useRef, useState } from 'react';
 import { Layer, Rect, Text } from 'react-konva';
 import { documentCommands } from './commands/documentCommands';
-import { SelectionTransformer } from './components/SelectionTransformer';
 import { useDrawing } from './hooks/useDrawing';
 
 export default function Canvas() {
@@ -102,7 +102,7 @@ export default function Canvas() {
                 selectOnly(node.id);
               }}
               onDragEnd={(e) => {
-                documentCommands.moveNode(node.id, {
+                documentCommands.patchNode(node.id, {
                   x: e.target.x(),
                   y: e.target.y(),
                 });
@@ -123,7 +123,7 @@ export default function Canvas() {
             dash={[4, 4]}
           />
         )}
-        <SelectionTransformer />
+        <SelectionTransformer applyPatch={documentCommands.patchNode} />
       </Layer>
     </CanvasContainer>
   );

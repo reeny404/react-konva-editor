@@ -1,10 +1,11 @@
+import type { Commander } from '@/commands/documentCommands';
 import { executeCommand } from '@/commands/history';
 import { documentStore } from '@/stores/documentStore';
-import type { NodeId, TreeNode } from '@/types';
+import type { TreeNode } from '@/types';
 
 /** rect 기능 + 부모 이동 시 자식이 함께 이동하는 documentCommands */
-export const documentCommands = {
-  moveNode(id: NodeId, next: Partial<TreeNode>) {
+export const documentCommands: Commander<TreeNode> = {
+  patchNode(id, next) {
     const state = documentStore.getState();
     const prev = state.getNodeById(id);
     if (!prev) {
@@ -67,14 +68,14 @@ export const documentCommands = {
     });
   },
 
-  addNode(node: TreeNode) {
+  addNode(node) {
     executeCommand({
       do: () => documentStore.getState().addNode(node),
       undo: () => documentStore.getState().removeNode(node.id),
     });
   },
 
-  removeNode(id: NodeId) {
+  removeNode(id) {
     const node = documentStore.getState().getNodeById(id);
     if (!node) {
       return;

@@ -10,6 +10,7 @@ import { useGridPoints } from './hooks/useGridPoints';
 import { useSelection } from './hooks/useSelection';
 import { useZoomPan } from './hooks/useZoomPan';
 
+import { SelectionTransformer } from '@/components/SelectionTransformer';
 import BOX_ICON from '@/icons/box.svg';
 import CIRCLE_ICON from '@/icons/circle.svg';
 import type { KonvaEventObject } from 'konva/lib/Node';
@@ -158,6 +159,7 @@ export default function Canvas() {
             }
           })}
         </Layer>
+        <SelectionTransformer />
       </CanvasContainer>
     </>
   );

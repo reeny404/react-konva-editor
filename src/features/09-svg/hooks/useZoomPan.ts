@@ -1,9 +1,7 @@
-import type { Size } from '@/types';
+import type { Position, Size } from '@/types';
 import type { KonvaEventObject } from 'konva/lib/Node';
 import type { RefObject } from 'react';
 import { useEffect, useMemo, useState } from 'react';
-
-type Position = { x: number; y: number };
 
 const MIN_SCALE = 0.25;
 const MAX_SCALE = 10;
