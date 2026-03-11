@@ -1,5 +1,5 @@
 import { useSelectionStore } from '@/stores/selectionStore';
-import type { NodeId } from '@/types';
+import type { NodeId } from '@/types/node';
 
 export function useSelection() {
   const selectedIds = useSelectionStore((state) => state.selectedIds);

@@ -1,6 +1,6 @@
-import type { Commander } from '@/commands/documentCommands';
+import type { DocumentCommands } from '@/commands/documentCommands';
 import { documentCommands } from '@/commands/documentCommands';
-import { useSelectedNode } from '@/selectors/documentSelectors';
+import { useSelectedNode } from '@/hooks/useSelectedNode';
 import type Konva from 'konva';
 import type { KonvaPointerEvent } from 'konva/lib/PointerEvents';
 import { useEffect, useRef } from 'react';
@@ -9,7 +9,7 @@ import { Transformer } from 'react-konva';
 export function SelectionTransformer({
   applyPatch = documentCommands.patchNode,
 }: {
-  applyPatch?: Commander['patchNode']; // commander 인터페이스를 따로 구현했을 경우 인자로 받도록
+  applyPatch?: DocumentCommands['patchNode']; // commander 인터페이스를 따로 구현했을 경우 인자로 받도록
 }) {
   const trRef = useRef<Konva.Transformer>(null);
   const selection = useSelectedNode();

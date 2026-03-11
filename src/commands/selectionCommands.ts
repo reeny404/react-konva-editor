@@ -1,6 +1,6 @@
 // commands/selectionCommands.ts
 import { selectionStore } from '@/stores/selectionStore';
-import type { NodeId } from '@/types';
+import type { NodeId } from '@/types/node';
 
 export const selectionCommands = {
   selectOnly(id: NodeId) {

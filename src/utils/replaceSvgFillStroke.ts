@@ -1,4 +1,4 @@
-import type { Color } from '../types';
+import type { Color } from '@/types/style';
 
 /**
  * <svg>의 fill, stroke만 변경

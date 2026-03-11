@@ -1,3 +1,4 @@
+import { KEY_EDITOR_FLOOR } from '@/constants/key';
 import { CanvasContainer } from '@/ui/CanvasContainer';
 import type { KonvaEventObject } from 'konva/lib/Node';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -125,7 +126,7 @@ export default function Canvas() {
     }
 
     const isMiddleMouse = e.evt.button === 1;
-    const isFloor = e.target === stage || e.target.id() === 'editor-floor';
+    const isFloor = e.target === stage || e.target.id() === KEY_EDITOR_FLOOR;
     const isSpacePan = isSpacePressed && isFloor;
 
     if (!isMiddleMouse && !isSpacePan) {
@@ -188,7 +189,7 @@ export default function Canvas() {
     >
       <Layer>
         <Rect
-          id='editor-floor'
+          id={KEY_EDITOR_FLOOR}
           x={0}
           y={0}
           width={EDITOR_SIZE.width}

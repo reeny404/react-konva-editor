@@ -1,10 +1,10 @@
-import type { Commander } from '@/commands/documentCommands';
+import type { DocumentCommands } from '@/commands/documentCommands';
 import { executeCommand } from '@/commands/history';
 import { documentStore } from '@/stores/documentStore';
-import type { TreeNode } from '@/types';
+import type { TreeNode } from '@/types/node';
 
 /** rect 기능 + 부모 이동 시 자식이 함께 이동하는 documentCommands */
-export const documentCommands: Commander<TreeNode> = {
+export const documentCommands: DocumentCommands<TreeNode> = {
   patchNode(id, next) {
     const state = documentStore.getState();
     const prev = state.getNodeById(id);

@@ -1,7 +1,7 @@
 import { documentCommands as commands } from '@/commands/documentCommands';
 import { executeCommand } from '@/commands/history';
 import { documentStore } from '@/stores/documentStore';
-import type { SceneNode } from '@/types';
+import type { SceneNode } from '@/types/node';
 
 type TreeNode = SceneNode & { parentId?: SceneNode['id'] };
 

@@ -1,5 +1,5 @@
-import { useDocumentStore } from '../stores/documentStore';
-import { useSelectionStore } from '../stores/selectionStore';
+import { useDocumentStore } from '@/stores/documentStore';
+import { useSelectionStore } from '@/stores/selectionStore';
 
 export function useSelectedNode() {
   const nodes = useDocumentStore((state) => state.doc.nodes);

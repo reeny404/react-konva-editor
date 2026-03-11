@@ -1,4 +1,5 @@
-import type { Position, Size } from '@/types';
+import { KEY_EDITOR_FLOOR } from '@/constants/key';
+import type { Position, Size } from '@/types/geometry';
 import type { KonvaEventObject } from 'konva/lib/Node';
 import type { RefObject } from 'react';
 import { useEffect, useMemo, useState } from 'react';
@@ -106,7 +107,7 @@ export function useZoomPan(containerRef: RefObject<HTMLDivElement | null>) {
     }
 
     const isMiddleMouse = e.evt.button === 1;
-    const isFloor = e.target === stage || e.target.id() === 'editor-floor';
+    const isFloor = e.target === stage || e.target.id() === KEY_EDITOR_FLOOR;
     const isSpacePan = isSpacePressed && isFloor;
 
     if (!isMiddleMouse && !isSpacePan) {

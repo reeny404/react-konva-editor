@@ -1,14 +1,14 @@
 import { executeCommand } from '@/commands/history';
 import { documentStore } from '@/stores/documentStore';
-import type { NodeId, SceneNode } from '@/types';
+import type { NodeId, SceneNode } from '@/types/node';
 
-export interface Commander<T extends SceneNode = SceneNode> {
+export interface DocumentCommands<T extends SceneNode = SceneNode> {
   patchNode(id: NodeId, next: Partial<T>): void;
   addNode(node: T): void;
   removeNode(id: NodeId): void;
 }
 
-export const documentCommands: Commander = {
+export const documentCommands: DocumentCommands = {
   patchNode(id, next) {
     const state = documentStore.getState();
     const prev = state.getNodeById(id);

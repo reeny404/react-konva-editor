@@ -1,4 +1,4 @@
-import type { NodeId, SceneNode } from '../types';
+import type { NodeId, SceneNode } from '@/types/node';
 import { createStore, createStoreHook } from './createStore';
 
 export type Document = {
