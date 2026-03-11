@@ -1,7 +1,6 @@
 import { documentCommands } from '@/commands/documentCommands';
 import Button from '@/components/Button';
 import { useDocumentStore } from '@/stores/documentStore';
-import { CanvasContainer } from '@/ui/CanvasContainer';
 import { useRef } from 'react';
 import { Circle, Layer, Line, Rect } from 'react-konva';
 import CustomImage from './components/CustomImage';
@@ -14,6 +13,7 @@ import { SelectionTransformer } from '@/components/SelectionTransformer';
 import { KEY_EDITOR_FLOOR } from '@/constants/key';
 import BOX_ICON from '@/icons/box.svg';
 import CIRCLE_ICON from '@/icons/circle.svg';
+import { CanvasStage } from '@/ui/CanvasStage';
 import type { KonvaEventObject } from 'konva/lib/Node';
 import { createCustomImageNode } from './initializeNode';
 
@@ -48,7 +48,7 @@ export default function Canvas() {
 
   return (
     <>
-      <div className='flex flex-wrap items-center gap-2 p-2'>
+      <div className='flex flex-wrap items-center gap-2 border-b border-slate-200 p-2'>
         <Button
           className='bg-slate-200'
           onClick={() => {
@@ -57,7 +57,7 @@ export default function Canvas() {
             );
           }}
         >
-          Box.svg
+          ADD Box.svg
         </Button>
         <Button
           className='bg-slate-200'
@@ -67,11 +67,11 @@ export default function Canvas() {
             );
           }}
         >
-          Circle.svg
+          ADD Circle.svg
         </Button>
       </div>
 
-      <CanvasContainer
+      <CanvasStage
         containerRef={containerRef}
         width={stageSize.width}
         height={stageSize.height}
@@ -159,7 +159,7 @@ export default function Canvas() {
           })}
         </Layer>
         <SelectionTransformer />
-      </CanvasContainer>
+      </CanvasStage>
     </>
   );
 }

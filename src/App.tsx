@@ -1,19 +1,7 @@
-import { routes } from '@/features/routes';
-import { AppLayout } from '@/ui/AppLayout';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import Router from './Router';
 
 function App() {
-  return (
-    <BrowserRouter>
-      <AppLayout>
-        <Routes>
-          {routes.map(({ path, Component }) => (
-            <Route key={path} path={path} element={<Component />} />
-          ))}
-        </Routes>
-      </AppLayout>
-    </BrowserRouter>
-  );
+  return <Router />;
 }
 
 export default App;

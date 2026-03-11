@@ -7,18 +7,14 @@ import { useSelectedNode } from '@/hooks/useSelectedNode';
 import { useDocumentStore } from '@/stores/documentStore';
 import { useSelectionStore } from '@/stores/selectionStore';
 import type { SceneNode } from '@/types/node';
-import { type ReactNode } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, Outlet } from 'react-router-dom';
 import SectionCard from './SectionCard';
 
-type EditorLayoutProps = {
-  children: ReactNode;
-};
-
-export function AppLayout({ children }: EditorLayoutProps) {
+export default function AppLayout() {
   const nodes = useDocumentStore((state) => state.doc.nodes);
   const selectedIds = useSelectionStore((state) => state.selectedIds);
   const selectedNode = useSelectedNode();
+
   const updateSelectedNode = (patch: Partial<SceneNode>) => {
     if (!selectedNode) {
       return;
@@ -110,7 +106,9 @@ export function AppLayout({ children }: EditorLayoutProps) {
           </div>
         </header>
 
-        <main className='min-h-0 flex-1'>{children}</main>
+        <main className='size-full min-h-0'>
+          <Outlet />
+        </main>
       </div>
 
       <aside

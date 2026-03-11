@@ -1,4 +1,5 @@
-import { CanvasContainer } from '@/ui/CanvasContainer';
+import useCanvasStage from '@/hooks/useCanvasStage';
+import { CanvasStage } from '@/ui/CanvasStage';
 import Konva from 'konva';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Layer, Rect, Text } from 'react-konva';
@@ -12,8 +13,7 @@ type NodeRect = {
 };
 
 export default function Canvas() {
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const [stageSize, setStageSize] = useState({ width: 0, height: 0 });
+  const { containerRef, stageSize } = useCanvasStage();
   const rectARef = useRef<Konva.Rect | null>(null);
   const rectBRef = useRef<Konva.Rect | null>(null);
 
@@ -34,27 +34,6 @@ export default function Canvas() {
   });
 
   const [isOverlapping, setIsOverlapping] = useState(false);
-
-  useEffect(() => {
-    const element = containerRef.current;
-    if (!element) {
-      return;
-    }
-
-    const updateSize = () => {
-      setStageSize({
-        width: element.clientWidth,
-        height: element.clientHeight,
-      });
-    };
-
-    updateSize();
-
-    const observer = new ResizeObserver(updateSize);
-    observer.observe(element);
-
-    return () => observer.disconnect();
-  }, []);
 
   const checkOverlap = () => {
     const nodeA = rectARef.current;
@@ -80,7 +59,7 @@ export default function Canvas() {
   }, [isOverlapping]);
 
   return (
-    <CanvasContainer
+    <CanvasStage
       containerRef={containerRef}
       width={stageSize.width}
       height={stageSize.height}
@@ -140,6 +119,6 @@ export default function Canvas() {
           }}
         />
       </Layer>
-    </CanvasContainer>
+    </CanvasStage>
   );
 }
