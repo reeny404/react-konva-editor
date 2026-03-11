@@ -4,17 +4,16 @@ import { useDocumentStore } from '@/common/stores/documentStore';
 import { CanvasContainer } from '@/common/ui/CanvasContainer';
 import { useRef } from 'react';
 import { Circle, Layer, Line, Rect } from 'react-konva';
-import { v4 as uuid } from 'uuid';
 import CustomImage from './components/CustomImage';
 import ZoomInformation from './components/ZoomInformation';
 import { useGridPoints } from './hooks/useGridPoints';
 import { useSelection } from './hooks/useSelection';
 import { useZoomPan } from './hooks/useZoomPan';
 
-import type { ImageNode } from '@/common/types';
 import BOX_ICON from '@/icons/box.svg';
 import CIRCLE_ICON from '@/icons/circle.svg';
 import type { KonvaEventObject } from 'konva/lib/Node';
+import { createCustomImageNode } from './initializeNode';
 
 const CANVAS_SIZE = { width: 3000, height: 3000 };
 
@@ -49,7 +48,7 @@ export default function Canvas() {
 
   return (
     <>
-      <div className='flex gap-2 p-2'>
+      <div className='flex flex-wrap items-center gap-2 p-2'>
         <Button
           className='bg-slate-200'
           onClick={() => {
@@ -58,7 +57,7 @@ export default function Canvas() {
             );
           }}
         >
-          Add SVG Box
+          Box.svg
         </Button>
         <Button
           className='bg-slate-200'
@@ -68,7 +67,7 @@ export default function Canvas() {
             );
           }}
         >
-          Add SVG Circle
+          Circle.svg
         </Button>
       </div>
 
@@ -162,20 +161,4 @@ export default function Canvas() {
       </CanvasContainer>
     </>
   );
-}
-
-function createCustomImageNode(url: string, name: string = 'SVG Custom Image') {
-  const node: ImageNode = {
-    id: uuid(),
-    type: 'custom-image',
-    name,
-    x: 0,
-    y: 0,
-    width: 200,
-    height: 200,
-    rotation: 0,
-    url,
-  };
-
-  return node;
 }
