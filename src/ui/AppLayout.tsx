@@ -91,10 +91,7 @@ export function AppLayout({ children }: EditorLayoutProps) {
 
       <div className='flex min-w-0 flex-1 flex-col'>
         <header className='flex h-14 shrink-0 items-center justify-between border-b border-slate-200 bg-white px-4'>
-          <div>
-            <p className='text-sm font-semibold text-slate-800'>Konva Editor</p>
-            <p className='text-xs text-slate-500'>React + TypeScript + Vite</p>
-          </div>
+          <p className='text-sm font-semibold text-slate-800'>Konva Editor</p>
           <div className='flex items-center gap-2'>
             <button
               type='button'
