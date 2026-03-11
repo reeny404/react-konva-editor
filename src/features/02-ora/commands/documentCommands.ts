@@ -1,10 +1,10 @@
 import { executeCommand } from '@/common/commands/history';
 import { documentStore } from '@/common/stores/documentStore';
-import type { NodeId, SceneNode } from '@/common/types';
+import type { NodeId, TreeNode } from '@/common/types';
 
 /** rect 기능 + 부모 이동 시 자식이 함께 이동하는 documentCommands */
 export const documentCommands = {
-  moveNode(id: NodeId, next: Partial<SceneNode>) {
+  moveNode(id: NodeId, next: Partial<TreeNode>) {
     const state = documentStore.getState();
     const prev = state.getNodeById(id);
     if (!prev) {
@@ -24,7 +24,9 @@ export const documentCommands = {
       dWidth: next.width !== undefined ? next.width - prev.width : 0,
       dHeight: next.height !== undefined ? next.height - prev.height : 0,
     };
-    const childrenNodes = state.doc.nodes.filter((n) => n.parentId === id);
+    const childrenNodes = state.doc.nodes.filter(
+      (n: TreeNode) => n.parentId === id,
+    );
     const syncPlan = {
       childSnapshots: childrenNodes.map((child) => ({ ...child })),
       childUpdates: childrenNodes.map((child) => ({
@@ -39,11 +41,15 @@ export const documentCommands = {
       })),
     };
 
-    const prevValues = Object.keys(next).reduce((acc, key) => {
-      const k = key as keyof SceneNode;
-      (acc as Record<string, unknown>)[k] = prev[k];
-      return acc;
-    }, {} as Partial<SceneNode>);
+    const prevNode = prev as TreeNode;
+    const prevValues = Object.keys(next).reduce<Partial<TreeNode>>(
+      (acc, key) => {
+        const k = key as keyof TreeNode;
+        (acc as Record<keyof TreeNode, unknown>)[k] = prevNode[k];
+        return acc;
+      },
+      {} as Partial<TreeNode>,
+    );
 
     executeCommand({
       do: () => {
@@ -61,7 +67,7 @@ export const documentCommands = {
     });
   },
 
-  addNode(node: SceneNode) {
+  addNode(node: TreeNode) {
     executeCommand({
       do: () => documentStore.getState().addNode(node),
       undo: () => documentStore.getState().removeNode(node.id),

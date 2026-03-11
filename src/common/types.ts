@@ -1,21 +1,28 @@
-export type NodeId = string;
-
-export type RectNode = {
-  id: NodeId;
-  type: 'rect';
-  parentId?: NodeId;
-  name: string;
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  rotation: number;
+export type Color = {
   fill: string;
   stroke?: string;
 };
 
-export type SceneNode = RectNode;
+export type Size = { width: number; height: number };
 
-export type DocumentModel = {
-  nodes: SceneNode[];
+export type Position = { x: number; y: number };
+
+export type NodeId = string;
+
+type BaseNode<T extends string> = {
+  id: NodeId;
+  type: T;
+  name: string;
+  rotation: number; // 0, 90, 180, 270
+} & Color &
+  Size &
+  Position;
+
+export type RectNode = BaseNode<'rect'>;
+export type CircleNode = BaseNode<'circle'>;
+export type ImageNode = BaseNode<'custom-image'> & {
+  url: string;
 };
+
+export type SceneNode = RectNode | CircleNode | ImageNode;
+export type TreeNode = SceneNode & { parentId?: SceneNode['id'] };
