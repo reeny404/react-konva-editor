@@ -1,6 +1,6 @@
-import { useDocumentStore } from '@/common/stores/documentStore';
-import { useSelectionStore } from '@/common/stores/selectionStore';
-import { CanvasContainer } from '@/common/ui/CanvasContainer';
+import { useDocumentStore } from '@/stores/documentStore';
+import { useSelectionStore } from '@/stores/selectionStore';
+import { CanvasContainer } from '@/ui/CanvasContainer';
 import type { KonvaPointerEvent } from 'konva/lib/PointerEvents';
 import { useEffect, useRef, useState } from 'react';
 import { Layer, Rect, Text } from 'react-konva';

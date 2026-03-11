@@ -1,5 +1,5 @@
-import { AppLayout } from '@/common/ui/AppLayout';
 import { routes } from '@/features/routes';
+import { AppLayout } from '@/ui/AppLayout';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 function App() {

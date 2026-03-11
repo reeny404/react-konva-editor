@@ -1,5 +1,5 @@
-import { documentCommands } from '@/common/commands/documentCommands';
-import { useSelectedNode } from '@/common/selectors/documentSelectors';
+import { documentCommands } from '@/commands/documentCommands';
+import { useSelectedNode } from '@/selectors/documentSelectors';
 import type Konva from 'konva';
 import type { KonvaPointerEvent } from 'konva/lib/PointerEvents';
 import { useEffect, useRef } from 'react';

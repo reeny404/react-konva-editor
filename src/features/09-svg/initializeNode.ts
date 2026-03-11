@@ -1,4 +1,4 @@
-import type { ImageNode } from '@/common/types';
+import type { ImageNode } from '@/types';
 import { v4 as uuid } from 'uuid';
 
 export function createCustomImageNode(

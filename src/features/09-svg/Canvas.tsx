@@ -1,7 +1,7 @@
-import { documentCommands } from '@/common/commands/documentCommands';
-import Button from '@/common/components/Button';
-import { useDocumentStore } from '@/common/stores/documentStore';
-import { CanvasContainer } from '@/common/ui/CanvasContainer';
+import { documentCommands } from '@/commands/documentCommands';
+import Button from '@/components/Button';
+import { useDocumentStore } from '@/stores/documentStore';
+import { CanvasContainer } from '@/ui/CanvasContainer';
 import { useRef } from 'react';
 import { Circle, Layer, Line, Rect } from 'react-konva';
 import CustomImage from './components/CustomImage';

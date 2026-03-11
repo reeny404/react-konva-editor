@@ -1,5 +1,5 @@
-import { documentStore } from '@/common/stores/documentStore';
-import { getRelativePointerPosition } from '@/common/utils/coordinate';
+import { documentStore } from '@/stores/documentStore';
+import { getRelativePointerPosition } from '@/utils/coordinate';
 import type { KonvaPointerEvent } from 'konva/lib/PointerEvents';
 import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';

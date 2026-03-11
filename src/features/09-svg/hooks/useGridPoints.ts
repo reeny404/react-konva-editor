@@ -1,4 +1,4 @@
-import type { Size } from '@/common/types';
+import type { Size } from '@/types';
 import { useMemo } from 'react';
 
 /**

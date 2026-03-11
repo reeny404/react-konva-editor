@@ -1,6 +1,6 @@
-import { executeCommand } from '@/common/commands/history';
-import { documentStore } from '@/common/stores/documentStore';
-import type { NodeId, SceneNode } from '@/common/types';
+import { executeCommand } from '@/commands/history';
+import { documentStore } from '@/stores/documentStore';
+import type { NodeId, SceneNode } from '@/types';
 
 export const documentCommands = {
   patchNode(id: NodeId, next: Partial<SceneNode>) {

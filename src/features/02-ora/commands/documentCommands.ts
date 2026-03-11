@@ -1,6 +1,6 @@
-import { executeCommand } from '@/common/commands/history';
-import { documentStore } from '@/common/stores/documentStore';
-import type { NodeId, TreeNode } from '@/common/types';
+import { executeCommand } from '@/commands/history';
+import { documentStore } from '@/stores/documentStore';
+import type { NodeId, TreeNode } from '@/types';
 
 /** rect 기능 + 부모 이동 시 자식이 함께 이동하는 documentCommands */
 export const documentCommands = {
