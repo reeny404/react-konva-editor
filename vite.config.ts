@@ -13,4 +13,19 @@ export default defineConfig({
       '@': path.resolve(__dirname, 'src'),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            return undefined;
+          }
+          const match = id.match(/[/\\]src[/\\]features[/\\](\d{2}-[^/\\]+)/);
+          if (match) {
+            return `feature-${match[1]}`;
+          }
+        },
+      },
+    },
+  },
 });
