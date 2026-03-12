@@ -86,6 +86,17 @@ export default function Canvas() {
         onMouseLeave={handleMouseLeave}
       >
         <Layer>
+          {gridPoints.map((points, idx) => (
+            <Line
+              key={idx}
+              points={points}
+              stroke='rgba(100, 116, 139, 0.2)'
+              strokeWidth={1}
+              listening={false}
+            />
+          ))}
+        </Layer>
+        <Layer>
           <Rect
             id={KEY_EDITOR_FLOOR}
             x={0}
