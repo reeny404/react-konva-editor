@@ -1,7 +1,8 @@
 import { KEY_EDITOR_FLOOR } from '@/constants/key';
-import { CanvasContainer } from '@/ui/CanvasContainer';
+import useCanvasStage from '@/hooks/useCanvasStage';
+import { CanvasStage } from '@/ui/CanvasStage';
 import type { KonvaEventObject } from 'konva/lib/Node';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Layer, Line, Rect, Text } from 'react-konva';
 
 type Position = { x: number; y: number };
@@ -12,35 +13,13 @@ const MAX_SCALE = 4;
 const SCALE_STEP = 1.08;
 
 export default function Canvas() {
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const [stageSize, setStageSize] = useState({ width: 0, height: 0 });
+  const { containerRef, stageSize } = useCanvasStage();
 
   const [scale, setScale] = useState(1);
   const [pan, setPan] = useState<Position>({ x: 0, y: 0 });
   const [isSpacePressed, setIsSpacePressed] = useState(false);
   const [isPanning, setIsPanning] = useState(false);
   const [lastPointer, setLastPointer] = useState<Position | null>(null);
-
-  useEffect(() => {
-    const element = containerRef.current;
-    if (!element) {
-      return;
-    }
-
-    const updateSize = () => {
-      setStageSize({
-        width: element.clientWidth,
-        height: element.clientHeight,
-      });
-    };
-
-    updateSize();
-
-    const observer = new ResizeObserver(updateSize);
-    observer.observe(element);
-
-    return () => observer.disconnect();
-  }, []);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -172,7 +151,7 @@ export default function Canvas() {
   }, [pan.x, pan.y, scale, stageSize.height]);
 
   return (
-    <CanvasContainer
+    <CanvasStage
       title='zoom'
       containerRef={containerRef}
       width={stageSize.width}
@@ -245,6 +224,6 @@ export default function Canvas() {
           listening={false}
         />
       </Layer>
-    </CanvasContainer>
+    </CanvasStage>
   );
 }

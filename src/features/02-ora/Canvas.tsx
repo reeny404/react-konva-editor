@@ -1,16 +1,15 @@
 import { SelectionTransformer } from '@/components/SelectionTransformer';
+import useCanvasStage from '@/hooks/useCanvasStage';
 import { useDocumentStore } from '@/stores/documentStore';
 import { useSelectionStore } from '@/stores/selectionStore';
-import { CanvasContainer } from '@/ui/CanvasContainer';
+import { CanvasStage } from '@/ui/CanvasStage';
 import type { KonvaPointerEvent } from 'konva/lib/PointerEvents';
-import { useEffect, useRef, useState } from 'react';
 import { Layer, Rect, Text } from 'react-konva';
 import { documentCommands } from './commands/documentCommands';
 import { useDrawing } from './hooks/useDrawing';
 
 export default function Canvas() {
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const [stageSize, setStageSize] = useState({ width: 0, height: 0 });
+  const { containerRef, stageSize } = useCanvasStage();
 
   const {
     tempRect,
@@ -23,27 +22,6 @@ export default function Canvas() {
   const selectOnly = useSelectionStore((state) => state.selectOnly);
   const clearSelection = useSelectionStore((state) => state.clearSelection);
 
-  useEffect(() => {
-    const element = containerRef.current;
-    if (!element) {
-      return;
-    }
-
-    const updateSize = () => {
-      setStageSize({
-        width: element.clientWidth,
-        height: element.clientHeight,
-      });
-    };
-
-    updateSize();
-
-    const observer = new ResizeObserver(updateSize);
-    observer.observe(element);
-
-    return () => observer.disconnect();
-  }, []);
-
   const handleMouseDown = (e: KonvaPointerEvent) => {
     if (e.target === e.target.getStage()) {
       clearSelection();
@@ -52,7 +30,7 @@ export default function Canvas() {
   };
 
   return (
-    <CanvasContainer
+    <CanvasStage
       containerRef={containerRef}
       width={stageSize.width}
       height={stageSize.height}
@@ -125,6 +103,6 @@ export default function Canvas() {
         )}
         <SelectionTransformer applyPatch={documentCommands.patchNode} />
       </Layer>
-    </CanvasContainer>
+    </CanvasStage>
   );
 }

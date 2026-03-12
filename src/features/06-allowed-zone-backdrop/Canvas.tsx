@@ -1,4 +1,5 @@
-import { CanvasContainer } from '@/ui/CanvasContainer';
+import useCanvasStage from '@/hooks/useCanvasStage';
+import { CanvasStage } from '@/ui/CanvasStage';
 import { getRelativePointerPosition } from '@/utils/coordinate';
 import type { KonvaEventObject } from 'konva/lib/Node';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -58,8 +59,7 @@ function isRectInsidePolygon(
 }
 
 export default function Canvas() {
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const [stageSize, setStageSize] = useState({ width: 0, height: 0 });
+  const { containerRef, stageSize } = useCanvasStage();
 
   const [rectPos, setRectPos] = useState<Position>({ x: 840, y: 180 });
   const [polyRectPos, setPolyRectPos] = useState<Position>({ x: 860, y: 220 });
@@ -79,27 +79,6 @@ export default function Canvas() {
   useEffect(() => {
     polyRectPosRef.current = polyRectPos;
   }, [polyRectPos]);
-
-  useEffect(() => {
-    const element = containerRef.current;
-    if (!element) {
-      return;
-    }
-
-    const updateSize = () => {
-      setStageSize({
-        width: element.clientWidth,
-        height: element.clientHeight,
-      });
-    };
-
-    updateSize();
-
-    const observer = new ResizeObserver(updateSize);
-    observer.observe(element);
-
-    return () => observer.disconnect();
-  }, []);
 
   const polygonPoints = useMemo(
     () => ALLOWED_POLYGON.flatMap((p) => [p.x, p.y]),
@@ -150,7 +129,7 @@ export default function Canvas() {
   };
 
   return (
-    <CanvasContainer
+    <CanvasStage
       containerRef={containerRef}
       width={stageSize.width}
       height={stageSize.height}
@@ -276,6 +255,6 @@ export default function Canvas() {
           }}
         />
       </Layer>
-    </CanvasContainer>
+    </CanvasStage>
   );
 }
