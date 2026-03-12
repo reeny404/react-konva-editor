@@ -8,3 +8,6 @@ dist
 
 # Generated from .ts by tsc -b (tsconfig.node)
 *.config.js
+
+# etc
+src/mocks/**
