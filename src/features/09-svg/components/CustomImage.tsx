@@ -1,9 +1,9 @@
 import { useSvgImage } from '@/hooks/useSvgImage';
-import type { ImageNode } from '@/types/node';
+import type { SvgNode } from '@/types/node';
 import { Image } from 'react-konva';
 import type { DraggableNode, SelectableNode } from '../type';
 
-type SvgImageProps = Omit<ImageNode, 'type'> & SelectableNode & DraggableNode;
+type SvgImageProps = Omit<SvgNode, 'type'> & SelectableNode & DraggableNode;
 
 export default function CustomImage({
   url,

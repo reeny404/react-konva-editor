@@ -2,8 +2,7 @@ import { documentCommands } from '@/commands/documentCommands';
 import Button from '@/components/Button';
 import { useDocumentStore } from '@/stores/documentStore';
 import { useRef } from 'react';
-import { Circle, Layer, Line, Rect } from 'react-konva';
-import CustomImage from './components/CustomImage';
+import { Layer, Line, Rect } from 'react-konva';
 import ZoomInformation from './components/ZoomInformation';
 import { useGridPoints } from './hooks/useGridPoints';
 import { useSelection } from './hooks/useSelection';
@@ -15,6 +14,7 @@ import BOX_ICON from '@/icons/box.svg';
 import CIRCLE_ICON from '@/icons/circle.svg';
 import { CanvasStage } from '@/ui/CanvasStage';
 import type { KonvaEventObject } from 'konva/lib/Node';
+import CustomImage from './components/CustomImage';
 import { createCustomImageNode } from './initializeNode';
 
 const CANVAS_SIZE = { width: 3000, height: 3000 };
@@ -124,50 +124,23 @@ export default function Canvas() {
             />
           ))}
 
-          {nodes.map((node) => {
-            const select = () => selectOnly(node.id);
-            const move = (e: KonvaEventObject<DragEvent>) =>
-              documentCommands.patchNode(node.id, {
-                x: e.target.x(),
-                y: e.target.y(),
-              });
-
-            switch (node.type) {
-              case 'rect':
-                return (
-                  <Rect
-                    key={node.id}
-                    {...node}
-                    onClick={select}
-                    draggable
-                    onDragEnd={move}
-                  />
-                );
-              case 'circle':
-                return (
-                  <Circle
-                    key={node.id}
-                    {...node}
-                    onClick={select}
-                    draggable
-                    onDragEnd={move}
-                  />
-                );
-              case 'custom-image':
-                return (
-                  <CustomImage
-                    key={node.id}
-                    {...node}
-                    isSelected={isSelected}
-                    selectOne={selectOnly}
-                    onDragEnd={move}
-                    draggable
-                  />
-                );
-              default:
-                return null;
-            }
-          })}
+          {nodes.map((node) =>
+            node.type === 'svg' ? (
+              <CustomImage
+                key={node.id}
+                {...node}
+                isSelected={isSelected}
+                selectOne={selectOnly}
+                onDragEnd={(e: KonvaEventObject<DragEvent>) =>
+                  documentCommands.patchNode(node.id, {
+                    x: e.target.x(),
+                    y: e.target.y(),
+                  })
+                }
+                draggable
+              />
+            ) : null,
+          )}
           <SelectionTransformer />
         </Layer>
       </CanvasStage>

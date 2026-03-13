@@ -11,24 +11,24 @@ export function SelectionTransformer({
 }: {
   applyPatch?: DocumentCommands['patchNode']; // commander 인터페이스를 따로 구현했을 경우 인자로 받도록
 }) {
-  const trRef = useRef<Konva.Transformer>(null);
+  const ref = useRef<Konva.Transformer>(null);
   const selection = useSelectedNode();
 
   useEffect(() => {
-    if (!trRef.current) {
+    if (!ref.current) {
       return;
     }
 
-    const stage = trRef.current.getStage();
+    const stage = ref.current.getStage();
     if (!stage || !selection) {
-      trRef.current.nodes([]);
+      ref.current.nodes([]);
       return;
     }
 
     // Canvas.tsx의 Rect에 넣은 id를 기반으로 노드 탐색
     const targetNode = stage.findOne('#' + selection.id);
     if (targetNode) {
-      trRef.current.nodes([targetNode]);
+      ref.current.nodes([targetNode]);
     }
   }, [selection]);
 
@@ -56,7 +56,7 @@ export function SelectionTransformer({
 
   return (
     <Transformer
-      ref={trRef}
+      ref={ref}
       onTransformEnd={handleTransformEnd}
       anchorFill='#ffffff'
       anchorStroke='#2563eb'

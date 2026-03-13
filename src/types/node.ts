@@ -8,15 +8,21 @@ type BaseNode<T extends string> = {
   type: T;
   name: string;
   rotation: number; // 0, 90, 180, 270
+  opacity?: number;
+  locked?: boolean;
 } & Color &
   Size &
   Position;
 
 type RectNode = BaseNode<'rect'>;
 type CircleNode = BaseNode<'circle'>;
-export type ImageNode = BaseNode<'custom-image'> & {
+export type ImageNode = Omit<BaseNode<'image'>, 'fill' | 'stroke'> & {
   url: string;
 };
 
-export type SceneNode = RectNode | CircleNode | ImageNode;
+export type SvgNode = BaseNode<'svg'> & {
+  url: string;
+};
+
+export type SceneNode = RectNode | CircleNode | ImageNode | SvgNode;
 export type TreeNode = SceneNode & { parentId?: SceneNode['id'] };
