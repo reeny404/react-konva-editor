@@ -1,7 +1,7 @@
 import type { CanvasFloor } from '@/stores/canvasFloorStore';
 import type { Document } from '@/stores/documentStore';
 import type { SceneNode } from '@/types/node';
-import { computeCanvasFloorAndScale } from '../computeCanvasFloorAndScale';
+import { computeCanvasFloorAndScale } from '../utils/computeCanvasFloorAndScale';
 import { adaptScenarioToCanvasDocument } from './scenario/adaptScenarioToCanvasDocument';
 import type { ScenarioDb, SubareaDb } from './scenario/types';
 

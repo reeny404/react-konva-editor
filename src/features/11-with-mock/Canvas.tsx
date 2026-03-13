@@ -1,25 +1,18 @@
 import { documentCommands } from '@/commands/documentCommands';
-import Button from '@/components/Button';
-import {
-  canvasFloorStore,
-  useCanvasFloorStore,
-} from '@/stores/canvasFloorStore';
-import { documentStore, useDocumentStore } from '@/stores/documentStore';
+import { SelectionTransformer } from '@/components/SelectionTransformer';
+import { KEY_EDITOR_FLOOR } from '@/constants/key';
+import { useCanvasFloorStore } from '@/stores/canvasFloorStore';
+import { useDocumentStore } from '@/stores/documentStore';
+import { CanvasStage } from '@/ui/CanvasStage';
+import type { KonvaEventObject } from 'konva/lib/Node';
 import { useRef, useState } from 'react';
 import { Circle, Layer, Line, Rect } from 'react-konva';
+import Img from './components/Image';
 import Svg from './components/Svg';
 import ZoomInformation from './components/ZoomInformation';
 import { useGridPoints } from './hooks/useGridPoints';
 import { useSelection } from './hooks/useSelection';
 import { useZoomPan } from './hooks/useZoomPan';
-
-import { SelectionTransformer } from '@/components/SelectionTransformer';
-import { KEY_EDITOR_FLOOR } from '@/constants/key';
-import { CanvasStage } from '@/ui/CanvasStage';
-import type { KonvaEventObject } from 'konva/lib/Node';
-import { buildCanvasFromDb } from './adaptors/buildCanvasFromDb';
-import { loadMockScenario } from './adaptors/loadMockScenario';
-import Img from './components/Image';
 
 export default function Canvas() {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -56,25 +49,15 @@ export default function Canvas() {
   return (
     <>
       <div className='flex flex-wrap items-center gap-2 border-b border-slate-200 p-2'>
-        <Button
-          onClick={() => {
-            const { scenario, subareas } = loadMockScenario();
-            const { document, canvasFloor } = buildCanvasFromDb(
-              scenario,
-              subareas,
-            );
-            canvasFloorStore.getState().setCanvasFloor(canvasFloor);
-            documentStore.getState().setDocument(document);
-          }}
-        >
-          Mock 데이터 로드
-        </Button>
-        <Button
-          className={draggable ? 'bg-slate-300' : 'font-bold'}
+        <button
+          type='button'
+          className={
+            draggable ? 'rounded bg-slate-300 px-2 py-1' : 'px-2 py-1 font-bold'
+          }
           onClick={() => setDraggable((prev) => !prev)}
         >
           Locked: {draggable ? 'ON' : 'OFF'}
-        </Button>
+        </button>
       </div>
 
       <CanvasStage

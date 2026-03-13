@@ -8,7 +8,7 @@ import {
   createImageNode,
   createRectNode,
   createSvgNode,
-} from '../../createNode';
+} from '../../utils/createNode';
 import type { DbBounds, DbPoint, ScenarioDb, SubareaDb } from './types';
 
 type CoordinateTransform = {
