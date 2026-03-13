@@ -1,4 +1,3 @@
-import { documentCommands } from '@/commands/documentCommands';
 import { SelectionTransformer } from '@/components/SelectionTransformer';
 import { KEY_EDITOR_FLOOR } from '@/constants/key';
 import { useCanvasFloorStore } from '@/stores/canvasFloorStore';
@@ -7,6 +6,7 @@ import { CanvasStage } from '@/ui/CanvasStage';
 import type { KonvaEventObject } from 'konva/lib/Node';
 import { useRef, useState } from 'react';
 import { Circle, Layer, Line, Rect } from 'react-konva';
+import { documentCommands } from './commands/documentCommands';
 import Img from './components/Image';
 import Svg from './components/Svg';
 import ZoomInformation from './components/ZoomInformation';
