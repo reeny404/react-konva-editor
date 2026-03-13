@@ -32,7 +32,7 @@ export default function AppLayout() {
         className='hidden w-72 shrink-0 space-y-4 border-r border-slate-200 bg-slate-50 p-4 lg:block'
       >
         <SectionCard title='Features'>
-          <ul className='max-h-md space-y-2 overflow-y-auto text-sm'>
+          <ul className='max-h-[300px] space-y-2 overflow-y-auto text-sm'>
             {routes.map(({ folder, path }) => (
               <li key={folder}>
                 <NavLink
@@ -53,7 +53,7 @@ export default function AppLayout() {
         </SectionCard>
 
         <SectionCard title='Layers & Nodes'>
-          <ul className='space-y-4 text-sm'>
+          <ul className='max-h-[calc(100vh-400px)] space-y-4 overflow-y-auto text-sm'>
             {orderedLayers.map((layer) => {
               const isActive = activeLayerId === layer.id;
 
