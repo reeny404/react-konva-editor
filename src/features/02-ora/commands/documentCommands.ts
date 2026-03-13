@@ -2,7 +2,7 @@ import type { DocumentCommands } from '@/commands/documentCommands';
 import { executeCommand } from '@/commands/history';
 import { documentStore } from '@/stores/documentStore';
 import type { TreeNode } from '@/types/node';
-
+import { getAllNodesFromLayers } from '@/utils/nodeUtils';
 /** rect 기능 + 부모 이동 시 자식이 함께 이동하는 documentCommands */
 export const documentCommands: DocumentCommands<TreeNode> = {
   patchNode(id, next) {
@@ -25,9 +25,10 @@ export const documentCommands: DocumentCommands<TreeNode> = {
       dWidth: next.width !== undefined ? next.width - prev.width : 0,
       dHeight: next.height !== undefined ? next.height - prev.height : 0,
     };
-    const childrenNodes = state.doc.nodes.filter(
-      (n: TreeNode) => n.parentId === id,
-    );
+    // 스토어의 전체 노드 목록에서 자식들을 찾습니다.
+    const childrenNodes = getAllNodesFromLayers(state.doc.layers).filter(
+      (n) => (n as TreeNode).parentId === id,
+    ) as TreeNode[];
     const syncPlan = {
       childSnapshots: childrenNodes.map((child) => ({ ...child })),
       childUpdates: childrenNodes.map((child) => ({

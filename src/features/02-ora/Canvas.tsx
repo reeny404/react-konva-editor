@@ -1,7 +1,9 @@
 import { SelectionTransformer } from '@/components/SelectionTransformer';
+import { selectionCommands } from '@/commands/selectionCommands';
 import useCanvasStage from '@/hooks/useCanvasStage';
 import { useDocumentStore } from '@/stores/documentStore';
 import { useSelectionStore } from '@/stores/selectionStore';
+import { getAllNodesFromLayers } from '@/utils/nodeUtils';
 import { CanvasStage } from '@/ui/CanvasStage';
 import type { KonvaPointerEvent } from 'konva/lib/PointerEvents';
 import { Layer, Rect, Text } from 'react-konva';
@@ -17,14 +19,13 @@ export default function Canvas() {
     onMouseMove,
     onMouseUp,
   } = useDrawing();
-  const nodes = useDocumentStore((state) => state.doc.nodes);
+  const layers = useDocumentStore((state) => state.doc.layers);
+  const nodes = getAllNodesFromLayers(layers);
   const selectedIds = useSelectionStore((state) => state.selectedIds);
-  const selectOnly = useSelectionStore((state) => state.selectOnly);
-  const clearSelection = useSelectionStore((state) => state.clearSelection);
 
   const handleMouseDown = (e: KonvaPointerEvent) => {
     if (e.target === e.target.getStage()) {
-      clearSelection();
+      selectionCommands.clearSelection();
       startDrawing(e);
     }
   };
@@ -73,11 +74,11 @@ export default function Canvas() {
               draggable
               onClick={(e) => {
                 e.cancelBubble = true;
-                selectOnly(node.id);
+                selectionCommands.selectOnly(node.id);
               }}
               onDragStart={(e) => {
                 e.cancelBubble = true;
-                selectOnly(node.id);
+                selectionCommands.selectOnly(node.id);
               }}
               onDragEnd={(e) => {
                 documentCommands.patchNode(node.id, {

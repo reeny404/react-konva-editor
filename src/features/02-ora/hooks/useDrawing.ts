@@ -4,6 +4,7 @@ import type { KonvaPointerEvent } from 'konva/lib/PointerEvents';
 import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { documentCommands } from '../commands/documentCommands';
+import { getAllNodesFromLayers } from '@/utils/nodeUtils';
 
 export function useDrawing() {
   const [tempRect, setTempRect] = useState<{
@@ -54,7 +55,8 @@ export function useDrawing() {
       return;
     }
 
-    const latestNodes = documentStore.getState().doc.nodes;
+    const state = documentStore.getState();
+    const latestNodes = getAllNodesFromLayers(state.doc.layers);
     const latestCount = latestNodes.length;
 
     if (Math.abs(tempRect.w) > 5 && Math.abs(tempRect.h) > 5) {

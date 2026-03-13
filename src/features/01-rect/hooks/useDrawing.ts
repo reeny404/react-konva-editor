@@ -1,9 +1,11 @@
 import { documentStore } from '@/stores/documentStore';
+import type { RectNode } from '@/types/node';
 import { getRelativePointerPosition } from '@/utils/coordinate';
 import type { KonvaPointerEvent } from 'konva/lib/PointerEvents';
 import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { documentCommands } from '../commands/documentCommands';
+import { getAllNodesFromLayers } from '@/utils/nodeUtils';
 
 export function useDrawing() {
   // 드래그 중인 임시 사각형 상태 (UI 가이드용)
@@ -56,7 +58,8 @@ export function useDrawing() {
       return;
     }
 
-    const latestNodes = documentStore.getState().doc.nodes;
+    const state = documentStore.getState();
+    const latestNodes = getAllNodesFromLayers(state.doc.layers);
     const latestCount = latestNodes.length;
 
     // 너무 작은 사각형(클릭 실수)은 생성하지 않음
