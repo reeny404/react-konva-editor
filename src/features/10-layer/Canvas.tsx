@@ -230,7 +230,8 @@ export default function Canvas() {
                           <CustomImage
                             {...commonProps}
                             {...(node as ImageNode)}
-                            isSelected={isSelected}
+                            isSelected={(id) => selectedIds.includes(id)}
+                            selectOne={() => selectNode()}
                           />
                         );
 

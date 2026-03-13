@@ -1,5 +1,6 @@
 import { documentCommands } from '@/commands/documentCommands';
 import Button from '@/components/Button';
+import CustomImage from '@/components/canvas/CustomImage';
 import { SelectionTransformer } from '@/components/SelectionTransformer';
 import { KEY_EDITOR_FLOOR } from '@/constants/key';
 import BOX_ICON from '@/icons/box.svg';
@@ -10,7 +11,6 @@ import { getAllNodesFromLayers } from '@/utils/nodeUtils';
 import type { KonvaEventObject } from 'konva/lib/Node';
 import { useRef } from 'react';
 import { Circle, Layer, Line, Rect } from 'react-konva';
-import CustomImage from './components/CustomImage';
 import ZoomInformation from './components/ZoomInformation';
 import { useGridPoints } from './hooks/useGridPoints';
 import { useSelection } from './hooks/useSelection';

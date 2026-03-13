@@ -1,15 +1,9 @@
 import { useSvgImage } from '@/hooks/useSvgImage';
 import type { ImageNode } from '@/types/node';
-import type Konva from 'konva';
+import type { DraggableNode, SelectableNode } from '@/types/type';
 import { Image } from 'react-konva';
 
-interface CustomImageProps extends Omit<ImageNode, 'type'> {
-  isSelected?: boolean;
-  onClick?: (e: Konva.KonvaEventObject<MouseEvent>) => void;
-  onDragStart?: (e: Konva.KonvaEventObject<MouseEvent>) => void;
-  onDragEnd?: (e: Konva.KonvaEventObject<DragEvent>) => void;
-  draggable?: boolean;
-}
+type SvgImageProps = Omit<ImageNode, 'type'> & SelectableNode & DraggableNode;
 
 export default function CustomImage({
   url,
@@ -19,25 +13,17 @@ export default function CustomImage({
   fill,
   stroke,
   isSelected,
-  onClick,
-  onDragStart,
-  onDragEnd,
-  draggable,
+  selectOne,
   ...props
-}: CustomImageProps) {
+}: SvgImageProps) {
   const [image] = useSvgImage(url, { fill, stroke });
 
   if (!image) {
     return null;
   }
 
-  const selectedStyle = isSelected
-    ? {
-        stroke: '#111827',
-        strokeWidth: 3,
-        shadowBlur: 5,
-        shadowColor: 'rgba(0,0,0,0.3)',
-      }
+  const selectedStyle = isSelected?.(id)
+    ? { stroke: '#111827', strokeWidth: 3 }
     : {};
 
   return (
@@ -46,10 +32,14 @@ export default function CustomImage({
       image={image}
       x={x}
       y={y}
-      draggable={draggable}
-      onClick={onClick}
-      onDragStart={onDragStart}
-      onDragEnd={onDragEnd}
+      onClick={(e) => {
+        e.cancelBubble = true;
+        selectOne(id);
+      }}
+      onDragStart={(e) => {
+        e.cancelBubble = true;
+        selectOne(id);
+      }}
       {...selectedStyle}
       {...props}
     />
