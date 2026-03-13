@@ -1,7 +1,7 @@
 import { useSvgImage } from '@/hooks/useSvgImage';
 import type { SvgNode } from '@/types/node';
+import type { DraggableNode, SelectableNode } from '@/types/type';
 import { Image } from 'react-konva';
-import type { DraggableNode, SelectableNode } from '../type';
 
 type SvgImageProps = Omit<SvgNode, 'type'> & SelectableNode & DraggableNode;
 

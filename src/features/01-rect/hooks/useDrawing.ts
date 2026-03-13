@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { documentCommands } from '../commands/documentCommands';
 
 export function useDrawing() {
-  const latestNodes = useDocumentStore((state) => state.doc.nodes);
+  const latestNodes = useDocumentStore((state) => state.doc.layers);
 
   // 드래그 중인 임시 사각형 상태 (UI 가이드용)
   const [tempRect, setTempRect] = useState<{

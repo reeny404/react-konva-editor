@@ -1,6 +1,8 @@
 import type { DocumentCommands } from '@/commands/documentCommands';
 import { documentCommands } from '@/commands/documentCommands';
 import { useSelectedNode } from '@/hooks/useSelectedNode';
+import { useDocumentStore } from '@/stores/documentStore';
+import { isNodeLockedInLayers } from '@/utils/nodeUtils';
 import type Konva from 'konva';
 import type { KonvaPointerEvent } from 'konva/lib/PointerEvents';
 import { useEffect, useRef } from 'react';
@@ -9,28 +11,38 @@ import { Transformer } from 'react-konva';
 export function SelectionTransformer({
   applyPatch = documentCommands.patchNode,
 }: {
-  applyPatch?: DocumentCommands['patchNode']; // commander 인터페이스를 따로 구현했을 경우 인자로 받도록
+  applyPatch?: DocumentCommands['patchNode'];
 }) {
   const ref = useRef<Konva.Transformer>(null);
   const selection = useSelectedNode();
+
+  // 유틸리티를 사용하여 잠금 상태 확인
+  const isLocked = useDocumentStore((state) =>
+    selection ? isNodeLockedInLayers(state.doc.layers, selection.id) : false,
+  );
 
   useEffect(() => {
     if (!ref.current) {
       return;
     }
 
-    const stage = ref.current.getStage();
-    if (!stage || !selection) {
+    if (!selection || isLocked) {
       ref.current.nodes([]);
       return;
     }
 
-    // Canvas.tsx의 Rect에 넣은 id를 기반으로 노드 탐색
+    const stage = ref.current.getStage();
+    if (!stage) {
+      return;
+    }
+
     const targetNode = stage.findOne('#' + selection.id);
     if (targetNode) {
       ref.current.nodes([targetNode]);
+    } else {
+      ref.current.nodes([]);
     }
-  }, [selection]);
+  }, [selection, isLocked]);
 
   const handleTransformEnd = (e: KonvaPointerEvent) => {
     if (!selection) {

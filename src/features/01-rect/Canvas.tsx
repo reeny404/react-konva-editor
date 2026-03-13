@@ -3,7 +3,9 @@ import { SelectionTransformer } from '@/components/SelectionTransformer';
 import useCanvasStage from '@/hooks/useCanvasStage';
 import { useDocumentStore } from '@/stores/documentStore';
 import { useSelectionStore } from '@/stores/selectionStore';
+import { selectionCommands } from '@/commands/selectionCommands';
 import { CanvasStage } from '@/ui/CanvasStage';
+import { getAllNodesFromLayers } from '@/utils/nodeUtils';
 import type { KonvaPointerEvent } from 'konva/lib/PointerEvents';
 import { Layer, Rect, Text } from 'react-konva';
 import { useDrawing } from './hooks/useDrawing';
@@ -17,15 +19,14 @@ export default function Canvas() {
     onMouseMove,
     onMouseUp,
   } = useDrawing();
-  const nodes = useDocumentStore((state) => state.doc.nodes);
+  const layers = useDocumentStore((state) => state.doc.layers);
+  const nodes = getAllNodesFromLayers(layers);
   const selectedIds = useSelectionStore((state) => state.selectedIds);
-  const selectOnly = useSelectionStore((state) => state.selectOnly);
-  const clearSelection = useSelectionStore((state) => state.clearSelection);
 
   // 마우스 다운 핸들러: 배경 클릭 시 선택 해제 + 그리기 시작
   const handleMouseDown = (e: KonvaPointerEvent) => {
     if (e.target === e.target.getStage()) {
-      clearSelection(); // 기존 배경 클릭 시 선택 해제
+      selectionCommands.clearSelection(); // 기존 배경 클릭 시 선택 해제
       startDrawing(e); // 그리기 시작 로직 호출
     }
   };
@@ -74,11 +75,11 @@ export default function Canvas() {
               draggable
               onClick={(e) => {
                 e.cancelBubble = true; // 이벤트 전파 방지 (Stage 클릭 방지)
-                selectOnly(node.id);
+                selectionCommands.selectOnly(node.id);
               }}
               onDragStart={(e) => {
                 e.cancelBubble = true; // 이벤트 전파 방지
-                selectOnly(node.id);
+                selectionCommands.selectOnly(node.id);
               }}
               onDragEnd={(e) => {
                 documentCommands.patchNode(node.id, {

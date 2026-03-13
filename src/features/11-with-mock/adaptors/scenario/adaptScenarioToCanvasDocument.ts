@@ -238,5 +238,9 @@ export function adaptScenarioToCanvasDocument(
     // process flows
   }
 
-  return { nodes };
+  return {
+    layers: [
+      { id: uuid(), name: 'Layer 1', visible: true, locked: false, nodes },
+    ],
+  };
 }

@@ -3,6 +3,7 @@ import { KEY_EDITOR_FLOOR } from '@/constants/key';
 import { useCanvasFloorStore } from '@/stores/canvasFloorStore';
 import { useDocumentStore } from '@/stores/documentStore';
 import { CanvasStage } from '@/ui/CanvasStage';
+import { getAllNodesFromLayers } from '@/utils/nodeUtils';
 import type { KonvaEventObject } from 'konva/lib/Node';
 import { useRef, useState } from 'react';
 import { Circle, Layer, Line, Rect } from 'react-konva';
@@ -22,7 +23,8 @@ export default function Canvas() {
   const { size: canvasSize, cellSize } = useCanvasFloorStore(
     (state) => state.floor,
   );
-  const nodes = useDocumentStore((state) => state.doc.nodes);
+  const layers = useDocumentStore((state) => state.doc.layers);
+  const nodes = getAllNodesFromLayers(layers);
 
   const gridPoints = useGridPoints(canvasSize, cellSize);
   const {

@@ -1,20 +1,20 @@
 import { documentCommands } from '@/commands/documentCommands';
 import Button from '@/components/Button';
+import CustomImage from '@/components/canvas/CustomImage';
+import { SelectionTransformer } from '@/components/SelectionTransformer';
+import { KEY_EDITOR_FLOOR } from '@/constants/key';
+import BOX_ICON from '@/icons/box.svg';
+import CIRCLE_ICON from '@/icons/circle.svg';
 import { useDocumentStore } from '@/stores/documentStore';
+import { CanvasStage } from '@/ui/CanvasStage';
+import { getAllNodesFromLayers } from '@/utils/nodeUtils';
+import type { KonvaEventObject } from 'konva/lib/Node';
 import { useRef } from 'react';
 import { Layer, Line, Rect } from 'react-konva';
 import ZoomInformation from './components/ZoomInformation';
 import { useGridPoints } from './hooks/useGridPoints';
 import { useSelection } from './hooks/useSelection';
 import { useZoomPan } from './hooks/useZoomPan';
-
-import { SelectionTransformer } from '@/components/SelectionTransformer';
-import { KEY_EDITOR_FLOOR } from '@/constants/key';
-import BOX_ICON from '@/icons/box.svg';
-import CIRCLE_ICON from '@/icons/circle.svg';
-import { CanvasStage } from '@/ui/CanvasStage';
-import type { KonvaEventObject } from 'konva/lib/Node';
-import CustomImage from './components/CustomImage';
 import { createCustomImageNode } from './initializeNode';
 
 const CANVAS_SIZE = { width: 3000, height: 3000 };
@@ -34,7 +34,8 @@ export default function Canvas() {
     handleMouseLeave,
   } = useZoomPan(containerRef);
 
-  const nodes = useDocumentStore((state) => state.doc.nodes);
+  const layers = useDocumentStore((state) => state.doc.layers);
+  const nodes = getAllNodesFromLayers(layers);
   const { selectOnly, clearSelection, isSelected } = useSelection();
 
   const handleMouseDown = (e: Parameters<typeof zoomPanMouseDown>[0]) => {

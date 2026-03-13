@@ -2,6 +2,7 @@ import { documentCommands } from '@/commands/documentCommands';
 import { redoCommand, undoCommand } from '@/commands/history';
 import { selectionCommands } from '@/commands/selectionCommands';
 import { PropertyInput } from '@/components/right-panel/PropertyInput';
+import { layerCommands } from '@/features/10-layer/commands/layerCommands';
 import { routes } from '@/features/routes';
 import { useSelectedNode } from '@/hooks/useSelectedNode';
 import { useDocumentStore } from '@/stores/documentStore';
@@ -11,7 +12,9 @@ import { NavLink, Outlet } from 'react-router-dom';
 import SectionCard from './SectionCard';
 
 export default function AppLayout() {
-  const nodes = useDocumentStore((state) => state.doc.nodes);
+  const layers = useDocumentStore((state) => state.doc.layers);
+  const orderedLayers = [...layers].reverse();
+  const activeLayerId = useDocumentStore((state) => state.activeLayerId);
   const selectedIds = useSelectionStore((state) => state.selectedIds);
   const selectedNode = useSelectedNode();
 
@@ -49,35 +52,62 @@ export default function AppLayout() {
           </ul>
         </SectionCard>
 
-        <SectionCard title='Layers'>
-          <div className='space-y-2 text-sm text-slate-600'>
-            <button
-              type='button'
-              className='w-full rounded-lg border border-sky-200 bg-sky-50 px-3 py-2 text-left font-medium text-sky-800'
-            >
-              Rect
-            </button>
-          </div>
-        </SectionCard>
-
-        <SectionCard title='Nodes'>
-          <ul className='space-y-2 text-sm text-slate-700'>
-            {nodes.map((node) => {
-              const isSelected = selectedIds.includes(node.id);
+        <SectionCard title='Layers & Nodes'>
+          <ul className='space-y-4 text-sm'>
+            {orderedLayers.map((layer) => {
+              const isActive = activeLayerId === layer.id;
 
               return (
-                <li key={node.id}>
+                <li key={layer.id} className='space-y-1'>
                   <button
                     type='button'
-                    onClick={() => selectionCommands.selectOnly(node.id)}
-                    className={`w-full rounded-lg border px-3 py-2 text-left transition ${
-                      isSelected
-                        ? 'border-sky-200 bg-sky-50 font-medium text-sky-800'
-                        : 'border-slate-200 bg-white text-slate-700'
+                    onClick={() => layerCommands.setActiveLayer(layer.id)}
+                    className={`flex w-full items-center justify-between rounded-lg border px-3 py-2 text-left font-medium transition ${
+                      isActive
+                        ? 'border-sky-400 bg-sky-50 text-sky-800 shadow-sm'
+                        : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
                     }`}
                   >
-                    {node.name}
+                    <span className='flex items-center gap-2'>
+                      {isActive ? '🎯' : '📁'} {layer.name}
+                    </span>
+                    <span className='flex gap-1'>
+                      {layer.locked && '🔒'}
+                      {!layer.visible && '👁️‍🗨️'}
+                    </span>
                   </button>
+
+                  <ul className='ml-4 space-y-1 border-l-2 border-slate-200 pl-2'>
+                    {layer.nodes.map(
+                      (node: SceneNode & { locked?: boolean }) => {
+                        const isSelected = selectedIds.includes(node.id);
+                        return (
+                          <li key={node.id} className='flex items-center gap-1'>
+                            <button
+                              type='button'
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                selectionCommands.selectOnly(node.id);
+                                layerCommands.setActiveLayer(layer.id);
+                              }}
+                              className={`w-full rounded-md px-2 py-1.5 text-left text-xs transition ${
+                                isSelected
+                                  ? 'bg-sky-100 font-semibold text-sky-900'
+                                  : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800'
+                              }`}
+                            >
+                              📄 {node.name}
+                            </button>
+                          </li>
+                        );
+                      },
+                    )}
+                    {layer.nodes.length === 0 && (
+                      <li className='py-1 text-[10px] text-slate-400 italic'>
+                        No nodes in this layer
+                      </li>
+                    )}
+                  </ul>
                 </li>
               );
             })}
