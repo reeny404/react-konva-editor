@@ -15,3 +15,24 @@ export const isNodeLockedInLayers = (
 ): boolean => {
   return layers.some((l) => l.locked && l.nodes.some((n) => n.id === nodeId));
 };
+
+//특정 부모를 가진 직계 자식 노드들 추출
+export const getChildrenByParentId = (
+  nodes: SceneNode[],
+  parentId: NodeId,
+): SceneNode[] => {
+  return nodes.filter((n): n is SceneNode & { parentId?: NodeId } => {
+    return (n as SceneNode & { parentId?: NodeId }).parentId === parentId;
+  });
+};
+
+//특정 부모 하위의 모든 자식 노드들 추출
+export const getAllDescendants = (
+  nodes: SceneNode[],
+  parentId: NodeId,
+): SceneNode[] => {
+  const children = getChildrenByParentId(nodes, parentId);
+  return children.reduce<SceneNode[]>((acc, child) => {
+    return [...acc, child, ...getAllDescendants(nodes, child.id)];
+  }, []);
+};
