@@ -1,9 +1,10 @@
 import Button from '@/components/Button';
 import { canvasFloorStore } from '@/stores/canvasFloorStore';
 import { documentStore } from '@/stores/documentStore';
+import { FileError } from '@/utils/file';
 import { useState } from 'react';
 import { buildCanvasFromDb } from './adaptors/buildCanvasFromDb';
-import { FileError, loadMockScenario } from './adaptors/loadMockScenario';
+import { loadMockScenario } from './adaptors/loadMockScenario';
 import Canvas from './Canvas';
 
 export default function Container() {
@@ -23,9 +24,9 @@ export default function Container() {
               );
               canvasFloorStore.getState().setCanvasFloor(canvasFloor);
               documentStore.getState().setDocument(document);
-            } catch (error) {
-              if (error instanceof FileError) {
-                setMockError(error.message);
+            } catch (e) {
+              if (e instanceof FileError) {
+                setMockError(e.message);
                 return;
               }
 

@@ -1,5 +1,4 @@
 import BOX_ICON from '@/icons/box.svg';
-import BACKGROUND_IMAGE from '@/mocks/background.png';
 import type { Document } from '@/stores/documentStore';
 import type { Size } from '@/types/geometry';
 import type { SceneNode } from '@/types/node';
@@ -113,7 +112,7 @@ export function adaptScenarioToCanvasDocument(
         id: uuid(),
         name: 'Background Image',
         rotation: 0,
-        url: BACKGROUND_IMAGE,
+        url: '/mocks/background.png',
         ...rect,
       }),
     );
