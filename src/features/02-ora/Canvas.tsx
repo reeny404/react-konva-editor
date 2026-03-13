@@ -1,10 +1,14 @@
+import { selectionCommands } from '@/commands/selectionCommands';
 import { SelectionTransformer } from '@/components/SelectionTransformer';
 import useCanvasStage from '@/hooks/useCanvasStage';
 import { useDocumentStore } from '@/stores/documentStore';
 import { useSelectionStore } from '@/stores/selectionStore';
+import type { SceneNode } from '@/types/node';
 import { CanvasStage } from '@/ui/CanvasStage';
+import { getAllNodesFromLayers } from '@/utils/nodeUtils';
+import type Konva from 'konva';
 import type { KonvaPointerEvent } from 'konva/lib/PointerEvents';
-import { Layer, Rect, Text } from 'react-konva';
+import { Group, Layer, Rect, Text } from 'react-konva';
 import { documentCommands } from './commands/documentCommands';
 import { useDrawing } from './hooks/useDrawing';
 
@@ -17,16 +21,104 @@ export default function Canvas() {
     onMouseMove,
     onMouseUp,
   } = useDrawing();
-  const nodes = useDocumentStore((state) => state.doc.nodes);
+  const layers = useDocumentStore((state) => state.doc.layers);
+  const nodes = getAllNodesFromLayers(layers);
   const selectedIds = useSelectionStore((state) => state.selectedIds);
-  const selectOnly = useSelectionStore((state) => state.selectOnly);
-  const clearSelection = useSelectionStore((state) => state.clearSelection);
 
   const handleMouseDown = (e: KonvaPointerEvent) => {
     if (e.target === e.target.getStage()) {
-      clearSelection();
+      selectionCommands.clearSelection();
       startDrawing(e);
     }
+  };
+
+  const rootNodes = nodes.filter(
+    (n) => !(n as SceneNode & { parentId?: string }).parentId,
+  );
+
+  const renderNode = (node: SceneNode & { parentId?: string }) => {
+    if (node.type !== 'rect') {
+      return null;
+    }
+
+    const children = nodes.filter(
+      (n) => (n as SceneNode & { parentId?: string }).parentId === node.id,
+    );
+    const isGroup = children.length > 0;
+    const isSelected = selectedIds.includes(node.id);
+
+    const handleSelect = (
+      e: Konva.KonvaEventObject<MouseEvent | DragEvent>,
+    ) => {
+      e.cancelBubble = true;
+      selectionCommands.selectOnly(node.id);
+    };
+
+    const handleDragEnd = (e: Konva.KonvaEventObject<DragEvent>) => {
+      e.cancelBubble = true;
+      documentCommands.patchNode(node.id, {
+        x: e.target.x(),
+        y: e.target.y(),
+      });
+    };
+
+    if (isGroup) {
+      return (
+        <Group
+          key={node.id}
+          id={node.id}
+          x={node.x}
+          y={node.y}
+          draggable
+          onClick={handleSelect}
+          onDragStart={handleSelect}
+          onDragEnd={handleDragEnd}
+        >
+          {/* 부모 사각형은 그룹 내부에서 0,0을 기준으로 그려집니다 */}
+          <Rect
+            id={`${node.id}-bg`}
+            x={0}
+            y={0}
+            width={node.width}
+            height={node.height}
+            rotation={node.rotation ?? 0}
+            fill={node.fill}
+            cornerRadius={0}
+            shadowColor='rgba(15, 23, 42, 0.35)'
+            shadowBlur={10}
+            shadowOffset={{ x: 0, y: 6 }}
+            shadowOpacity={0.35}
+            stroke={isSelected ? '#111827' : (node.stroke ?? '#38bdf8')}
+            strokeWidth={isSelected ? 3 : 2}
+          />
+          {children.map(renderNode)}
+        </Group>
+      );
+    }
+
+    return (
+      <Rect
+        key={node.id}
+        id={node.id}
+        x={node.x}
+        y={node.y}
+        width={node.width}
+        height={node.height}
+        rotation={node.rotation ?? 0}
+        fill={node.fill}
+        cornerRadius={0}
+        shadowColor='rgba(15, 23, 42, 0.35)'
+        shadowBlur={10}
+        shadowOffset={{ x: 0, y: 6 }}
+        shadowOpacity={0.35}
+        stroke={isSelected ? '#111827' : (node.stroke ?? '#38bdf8')}
+        strokeWidth={isSelected ? 3 : 2}
+        draggable
+        onClick={handleSelect}
+        onDragStart={handleSelect}
+        onDragEnd={handleDragEnd}
+      />
+    );
   };
 
   return (
@@ -46,48 +138,7 @@ export default function Canvas() {
           fontSize={14}
           fill='#64748b'
         />
-        {nodes.map((node) => {
-          if (node.type !== 'rect') {
-            return null;
-          }
-
-          const isSelected = selectedIds.includes(node.id);
-
-          return (
-            <Rect
-              key={node.id}
-              id={node.id}
-              x={node.x}
-              y={node.y}
-              width={node.width}
-              height={node.height}
-              rotation={node.rotation ?? 0}
-              fill={node.fill}
-              cornerRadius={0}
-              shadowColor='rgba(15, 23, 42, 0.35)'
-              shadowBlur={10}
-              shadowOffset={{ x: 0, y: 6 }}
-              shadowOpacity={0.35}
-              stroke={isSelected ? '#111827' : (node.stroke ?? '#38bdf8')}
-              strokeWidth={isSelected ? 3 : 2}
-              draggable
-              onClick={(e) => {
-                e.cancelBubble = true;
-                selectOnly(node.id);
-              }}
-              onDragStart={(e) => {
-                e.cancelBubble = true;
-                selectOnly(node.id);
-              }}
-              onDragEnd={(e) => {
-                documentCommands.patchNode(node.id, {
-                  x: e.target.x(),
-                  y: e.target.y(),
-                });
-              }}
-            />
-          );
-        })}
+        {rootNodes.map(renderNode)}
 
         {tempRect && (
           <Rect

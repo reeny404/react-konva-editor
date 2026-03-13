@@ -1,5 +1,6 @@
 import { documentStore } from '@/stores/documentStore';
 import { getRelativePointerPosition } from '@/utils/coordinate';
+import { getAllNodesFromLayers } from '@/utils/nodeUtils';
 import type { KonvaPointerEvent } from 'konva/lib/PointerEvents';
 import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
@@ -54,17 +55,22 @@ export function useDrawing() {
       return;
     }
 
-    const latestNodes = documentStore.getState().doc.nodes;
+    const state = documentStore.getState();
+    const latestNodes = getAllNodesFromLayers(state.doc.layers);
     const latestCount = latestNodes.length;
 
     if (Math.abs(tempRect.w) > 5 && Math.abs(tempRect.h) > 5) {
+      const parent = latestCount > 0 ? latestNodes[latestCount - 1] : undefined;
+      const absX = tempRect.w < 0 ? tempRect.x + tempRect.w : tempRect.x;
+      const absY = tempRect.h < 0 ? tempRect.y + tempRect.h : tempRect.y;
+
       documentCommands.addNode({
         id: uuidv4(),
         type: 'rect',
         name: `Rectangle ${latestCount + 1}`,
-        parentId: latestCount > 0 ? latestNodes[latestCount - 1].id : undefined,
-        x: tempRect.w < 0 ? tempRect.x + tempRect.w : tempRect.x,
-        y: tempRect.h < 0 ? tempRect.y + tempRect.h : tempRect.y,
+        parentId: parent?.id,
+        x: parent ? absX - parent.x : absX,
+        y: parent ? absY - parent.y : absY,
         width: Math.abs(tempRect.w),
         height: Math.abs(tempRect.h),
         rotation: 0,

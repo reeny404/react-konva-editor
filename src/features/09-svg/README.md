@@ -25,7 +25,7 @@
 
 관련 파일
 
-- `src/features/09-svg/components/CustomImage.tsx`
+- `src/components/canvas/CustomImage.tsx`
 - `src/hooks/useSvgImage.ts`
 - `src/utils/replaceSvgFillStroke.ts`
 

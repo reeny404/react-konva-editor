@@ -12,11 +12,11 @@ type BaseNode<T extends string> = {
   Size &
   Position;
 
-type RectNode = BaseNode<'rect'>;
-type CircleNode = BaseNode<'circle'>;
+export type RectNode = BaseNode<'rect'>;
+export type CircleNode = BaseNode<'circle'>;
 export type ImageNode = BaseNode<'custom-image'> & {
   url: string;
 };
 
 export type SceneNode = RectNode | CircleNode | ImageNode;
-export type TreeNode = SceneNode & { parentId?: SceneNode['id'] };
+export type TreeNode = SceneNode & { parentId?: NodeId };
