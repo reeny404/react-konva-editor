@@ -5,7 +5,6 @@ import { computeCanvasFloorAndScale } from '../computeCanvasFloorAndScale';
 import { adaptScenarioToCanvasDocument } from './scenario/adaptScenarioToCanvasDocument';
 import type { ScenarioDb, SubareaDb } from './scenario/types';
 
-/** grid 없을 때 사용하는 캔버스 바닥 기본값 */
 const DEFAULT_CANVAS_FLOOR: CanvasFloor = {
   scale: 1,
   size: { width: 3000, height: 3000 },

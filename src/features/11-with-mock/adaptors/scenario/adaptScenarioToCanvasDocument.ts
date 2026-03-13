@@ -78,9 +78,11 @@ function safeBounds(input: Partial<DbBounds> | undefined, fallback: DbBounds) {
 /**
  * Scenario(최상위) + Subarea n개(DB 응답)를 Canvas(Document) 형태로 변환.
  *
- * - 현재 프로젝트의 Canvas Node 타입이 `rect/circle/image` 중심이라
- *   subarea의 polygon(points)은 우선 min/max 기반의 rect로 렌더링하는 예시를 제공.
- * - 필요한 경우 여기서 points → Line/Shape로 확장하면 됨(현재는 노드 타입에 없음).
+ * TODO: 추후 필요 시 확장 가능
+ * - 다각형 points 무시하고 rect로 그리도록 되어 있음
+ * - structure 추가 필요
+ * - Line 추가 필요 (Road, Process Flow 등)
+ * - Rotation 값이 0이 아닐 경우, 예상 렌더링 위치가 다름 [반드시 확인 필요 -> 기존 로직에서 rotation 시 min/max 계산식 확인 필요]
  */
 export function adaptScenarioToCanvasDocument(
   scenario: ScenarioDb,
