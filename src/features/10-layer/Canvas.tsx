@@ -198,7 +198,9 @@ export default function Canvas() {
                     const selectionStyle = {
                       stroke: isSelected
                         ? '#2563eb'
-                        : (node.stroke ?? '#0f172a'),
+                        : 'stroke' in node
+                          ? node.stroke
+                          : '#0f172a',
                       strokeWidth: isSelected ? 3 : 1,
                     };
 
@@ -225,9 +227,10 @@ export default function Canvas() {
                           />
                         );
 
-                      case 'custom-image':
+                      case 'image':
                         return (
                           <CustomImage
+                            fill={''}
                             {...commonProps}
                             {...(node as ImageNode)}
                             isSelected={(id) => selectedIds.includes(id)}

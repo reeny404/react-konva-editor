@@ -59,6 +59,37 @@ const config: Linter.Config[] = [
       'no-alert': 'error',
     },
   },
+  {
+    files: ['src/**/*.{ts,tsx,js,jsx}'],
+    ignores: ['src/commands/**/*', 'src/stores/**/*', 'src/**/commands/**/*'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: '@/stores/documentStore',
+              importNames: ['documentStore'],
+              message:
+                'documentStore는 Commands 또는 store 정의 파일에서만 사용 가능합니다. 컴포넌트에서는 useDocumentStore 훅을 사용하세요.',
+            },
+            {
+              name: '@/stores/canvasFloorStore',
+              importNames: ['canvasFloorStore'],
+              message:
+                'canvasFloorStore는 Commands 또는 store 정의 파일에서만 사용 가능합니다. 컴포넌트에서는 useCanvasFloorStore 훅을 사용하세요.',
+            },
+            {
+              name: '@/stores/selectionStore',
+              importNames: ['selectionStore'],
+              message:
+                'selectionStore는 Commands 또는 store 정의 파일에서만 사용 가능합니다. 컴포넌트에서는 useSelectionStore 훅을 사용하세요.',
+            },
+          ],
+        },
+      ],
+    },
+  },
 ];
 
 export default config;

@@ -31,11 +31,11 @@
 
 #### HUD (Heads Up Display)
 
-- 컨테이너 좌측 상단에 Layer Stack UI를 구현했습니다. 
+- 컨테이너 좌측 상단에 Layer Stack UI를 구현했습니다.
 - 데이터 상으로는 레이어 순서가 배열 인덱스대로 존재하지만, 사용자에게는 가장 상단(Index가 높은) 레이어가 위쪽에 보이도록 `.reverse()`를 통하여 직관적으로 레이어 층계를 렌더링합니다.
 
 ### 파일 구성
 
-- `Canvas.tsx`: 메인 캔버스 렌더링 컴포넌트, 상단 컨트롤바 생성, Layer HUD 구조 렌더링, 멀티 Layer/Group/Node 순회 및 이벤트 차단 로직 포함 
+- `Canvas.tsx`: 메인 캔버스 렌더링 컴포넌트, 상단 컨트롤바 생성, Layer HUD 구조 렌더링, 멀티 Layer/Group/Node 순회 및 이벤트 차단 로직 포함
 - `commands/layerCommands.tsx`: 레이어 조작과 관련된 스토어 상태 변경과 과거 기록(undo/redo) 캡슐화 로직
 - `commands/documentCommands.ts`: 상단 레이어에 도형 추가와 노드 이동 등의 위치 변경 로직 수행

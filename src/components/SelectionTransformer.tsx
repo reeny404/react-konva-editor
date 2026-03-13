@@ -13,7 +13,7 @@ export function SelectionTransformer({
 }: {
   applyPatch?: DocumentCommands['patchNode'];
 }) {
-  const trRef = useRef<Konva.Transformer>(null);
+  const ref = useRef<Konva.Transformer>(null);
   const selection = useSelectedNode();
 
   // 유틸리티를 사용하여 잠금 상태 확인
@@ -22,25 +22,25 @@ export function SelectionTransformer({
   );
 
   useEffect(() => {
-    if (!trRef.current) {
+    if (!ref.current) {
       return;
     }
 
     if (!selection || isLocked) {
-      trRef.current.nodes([]);
+      ref.current.nodes([]);
       return;
     }
 
-    const stage = trRef.current.getStage();
+    const stage = ref.current.getStage();
     if (!stage) {
       return;
     }
 
     const targetNode = stage.findOne('#' + selection.id);
     if (targetNode) {
-      trRef.current.nodes([targetNode]);
+      ref.current.nodes([targetNode]);
     } else {
-      trRef.current.nodes([]);
+      ref.current.nodes([]);
     }
   }, [selection, isLocked]);
 
@@ -68,7 +68,7 @@ export function SelectionTransformer({
 
   return (
     <Transformer
-      ref={trRef}
+      ref={ref}
       onTransformEnd={handleTransformEnd}
       anchorFill='#ffffff'
       anchorStroke='#2563eb'

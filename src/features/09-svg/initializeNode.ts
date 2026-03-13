@@ -1,13 +1,13 @@
-import type { ImageNode } from '@/types/node';
+import type { SvgNode } from '@/types/node';
 import { v4 as uuid } from 'uuid';
 
 export function createCustomImageNode(
   url: string,
   name: string = 'SVG Custom Image',
-) {
-  const node: ImageNode = {
+): SvgNode {
+  return {
     id: uuid(),
-    type: 'custom-image',
+    type: 'svg',
     name,
     x: 0,
     y: 0,
@@ -18,6 +18,4 @@ export function createCustomImageNode(
     stroke: '#337F66',
     url,
   };
-
-  return node;
 }
