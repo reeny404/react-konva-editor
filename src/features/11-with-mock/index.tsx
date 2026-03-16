@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { buildCanvasFromDb } from './adaptors/buildCanvasFromDb';
 import { loadMockScenario } from './adaptors/loadMockScenario';
 import Canvas from './Canvas';
+import { LOCKED_DEFAULT } from './constant';
 
 type Metadata = {
   cellSize: number;
@@ -14,7 +15,7 @@ type Metadata = {
 
 export default function Container() {
   const [mockError, setMockError] = useState<string | null>(null);
-  const [readonly, setReadonly] = useState<boolean>(true);
+  const [readonly, setReadonly] = useState<boolean>(LOCKED_DEFAULT);
   const [metadata, setMetadata] = useState<Metadata>({
     cellSize: 100,
     canvasSize: {

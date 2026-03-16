@@ -6,6 +6,7 @@ import BOX_ICON from '@/icons/box.svg';
 import type { Size } from '@/types/geometry';
 import type { CanvasNode } from '@/types/node';
 import { v4 as uuid } from 'uuid';
+import { LOCKED_DEFAULT } from '../../constant';
 import {
   createImageNode,
   createRectNode,
@@ -117,6 +118,7 @@ export function adaptScenarioToCanvasDocument(
         name: 'Background Image',
         rotation: 0,
         url: '/mocks/background.png',
+        locked: bg.lock ?? false,
         ...rect,
       }),
     );
@@ -259,7 +261,7 @@ function createLayer(name: string, nodes: CanvasNode[]): CanvasLayerWithNodes {
     id: uuid(),
     name,
     visible: true,
-    locked: false,
+    locked: LOCKED_DEFAULT,
     nodes,
   };
 }

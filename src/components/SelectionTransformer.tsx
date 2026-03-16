@@ -81,6 +81,7 @@ export function SelectionTransformer({
       anchorStroke='#2563eb'
       anchorCornerRadius={2}
       borderStroke='#2563eb'
+      listening={!isLocked}
     />
   );
 }
