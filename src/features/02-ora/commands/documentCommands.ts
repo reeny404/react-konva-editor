@@ -1,4 +1,5 @@
 import type { DocumentCommands } from '@/commands/documentCommands';
+import { documentCommands as baseCommands } from '@/commands/documentCommands';
 import { executeCommand } from '@/commands/history';
 import { getAllDescendants } from '@/features/02-ora/utils/nodeUtils';
 import { useDocumentStore } from '@/stores/documentStore';
@@ -9,6 +10,8 @@ type TreeNode = CanvasNode & { parentId?: NodeId };
 
 /** rect 기능 + 부모 이동 시 자식이 함께 이동하는 documentCommands */
 export const documentCommands: DocumentCommands<TreeNode> = {
+  ...baseCommands,
+
   patchNode(id, next) {
     const state = useDocumentStore.getState();
     const prev = state.getNode(id);
