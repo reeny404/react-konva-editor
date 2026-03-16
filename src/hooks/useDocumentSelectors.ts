@@ -1,14 +1,33 @@
 import { useDocumentStore } from '@/stores/documentStore';
-import {
-  getHydratedLayers,
-  getNodesInRenderOrder,
-} from '@/stores/selectors/documentSelectors';
+import type { LayerId } from '@/types/layer';
+import type { CanvasNode } from '@/types/node';
+import { useMemo } from 'react';
 
-export const useHydratedLayers = () =>
-  useDocumentStore((state) => getHydratedLayers(state.doc));
+export type HydratedLayer = {
+  layerId: LayerId;
+  nodes: CanvasNode[];
+};
 
-export const useRenderNodes = () =>
-  useDocumentStore((state) => getNodesInRenderOrder(state.doc));
+export function useHydratedLayers() {
+  const layers = useDocumentStore((state) => state.doc.layerOrder);
+  const layerMapper = useDocumentStore((state) => state.doc.layerMapper);
+  const nodes = useDocumentStore((state) => state.doc.nodes);
 
-export const useActiveLayerId = () =>
-  useDocumentStore((state) => state.doc.activeLayerId);
+  const hydratedLayers = useMemo(() => {
+    return layers
+      .map((layerId: LayerId) => {
+        const nodeIds = layerMapper[layerId];
+        if (!nodeIds?.length) {
+          return null;
+        }
+
+        return {
+          layerId,
+          nodes: nodeIds.map((nodeId) => nodes[nodeId]),
+        };
+      })
+      .filter((layer): layer is HydratedLayer => Boolean(layer));
+  }, [layers, nodes]);
+
+  return hydratedLayers;
+}

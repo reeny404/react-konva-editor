@@ -1,3 +1,7 @@
+import type {
+  CanvasLayerWithNodes,
+  DocumentCommands,
+} from '@/commands/documentCommands';
 import BOX_ICON from '@/icons/box.svg';
 import type { Size } from '@/types/geometry';
 import type { CanvasNode } from '@/types/node';
@@ -86,7 +90,7 @@ export function adaptScenarioToCanvasDocument(
   scenario: ScenarioDb,
   subareas: SubareaDb[],
   options: AdaptScenarioToCanvasDocumentOptions,
-): CanvasNode[] {
+): Parameters<DocumentCommands['loadDocument']>[0] {
   const transform = options.transform ?? {
     scale: 0.01,
     offset: { x: 0, y: 0 },
@@ -96,7 +100,8 @@ export function adaptScenarioToCanvasDocument(
     max: { x: 0, y: 0 },
   };
 
-  const nodes: CanvasNode[] = [];
+  const layers: CanvasLayerWithNodes[] = [];
+  const scenarioNodes: CanvasNode[] = [];
   const canvasHeight = options.size.height;
 
   const bg = scenario.backgroundImage;
@@ -106,7 +111,7 @@ export function adaptScenarioToCanvasDocument(
       transform,
       canvasHeight,
     );
-    nodes.push(
+    scenarioNodes.push(
       createImageNode({
         id: uuid(),
         name: 'Background Image',
@@ -128,7 +133,7 @@ export function adaptScenarioToCanvasDocument(
       transform,
       canvasHeight,
     );
-    nodes.push(
+    scenarioNodes.push(
       createRectNode({
         id: uuid(),
         name: rack.rackNumber,
@@ -147,7 +152,7 @@ export function adaptScenarioToCanvasDocument(
         transform,
         canvasHeight,
       );
-      nodes.push(
+      scenarioNodes.push(
         createSvgNode({
           id: uuid(),
           name: equipment.equipmentTag,
@@ -162,13 +167,17 @@ export function adaptScenarioToCanvasDocument(
     });
   }
 
+  layers.push(createLayer('Scenario', scenarioNodes));
+
   for (const subarea of subareas) {
+    const subareaNodes: CanvasNode[] = [];
+
     const rect = boundsToRect(
       safeBounds(subarea, fallbackBounds),
       transform,
       canvasHeight,
     );
-    nodes.push(
+    subareaNodes.push(
       createRectNode({
         id: subarea._id,
         name: subarea.name,
@@ -192,7 +201,7 @@ export function adaptScenarioToCanvasDocument(
         transform,
         canvasHeight,
       );
-      nodes.push(
+      subareaNodes.push(
         createRectNode({
           id: uuid(),
           name: rack.rackNumber,
@@ -217,7 +226,7 @@ export function adaptScenarioToCanvasDocument(
         transform,
         canvasHeight,
       );
-      nodes.push(
+      subareaNodes.push(
         createRectNode({
           id: uuid(),
           name: building.name,
@@ -229,6 +238,8 @@ export function adaptScenarioToCanvasDocument(
           locked,
         }),
       );
+
+      layers.push(createLayer(subarea.name, subareaNodes));
     }
 
     // TODO 추후 line 이 개발이 완료되면 아래 항목들도 rendering 되도록 추가할 예정
@@ -237,5 +248,18 @@ export function adaptScenarioToCanvasDocument(
     // process flows
   }
 
-  return nodes;
+  return {
+    activeLayerId: null,
+    layers,
+  };
+}
+
+function createLayer(name: string, nodes: CanvasNode[]): CanvasLayerWithNodes {
+  return {
+    id: uuid(),
+    name,
+    visible: true,
+    locked: false,
+    nodes,
+  };
 }

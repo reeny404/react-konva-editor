@@ -12,6 +12,11 @@ export function executeCommand(command: Command) {
   redoStack.length = 0;
 }
 
+export function clearHistory() {
+  undoStack.length = 0;
+  redoStack.length = 0;
+}
+
 export function undoCommand() {
   const command = undoStack.pop();
   if (!command) {
