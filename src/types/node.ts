@@ -18,5 +18,15 @@ export type ImageNode = BaseNode<'custom-image'> & {
   url: string;
 };
 
-export type SceneNode = RectNode | CircleNode | ImageNode;
+export type PolygonPoint = {
+  x: number;
+  y: number;
+};
+
+export type PolygonNode = BaseNode<'polygon'> & {
+  points: PolygonPoint[];
+  strokeWidth: number;
+};
+
+export type SceneNode = RectNode | CircleNode | ImageNode | PolygonNode;
 export type TreeNode = SceneNode & { parentId?: NodeId };
