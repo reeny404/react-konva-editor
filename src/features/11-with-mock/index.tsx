@@ -27,8 +27,7 @@ export default function Container() {
   useEffect(() => {
     return () => {
       documentCommands.loadDocument({
-        activeLayerId: null,
-        layers: [],
+        nodes: [],
       });
     };
   }, []);

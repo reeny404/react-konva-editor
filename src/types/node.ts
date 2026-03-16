@@ -24,4 +24,14 @@ export type SvgNode = BaseNode<'svg'> & {
   url: string;
 };
 
-export type CanvasNode = RectNode | CircleNode | ImageNode | SvgNode;
+export type GroupNode = BaseNode<'group'> & {
+  visible: boolean;
+  children: CanvasNode[];
+};
+
+export type CanvasNode =
+  | RectNode
+  | CircleNode
+  | ImageNode
+  | SvgNode
+  | GroupNode;

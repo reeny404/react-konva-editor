@@ -28,8 +28,7 @@ export function buildCanvasFromDb(
     console.warn('Grid data is required, but not found');
     return {
       document: {
-        activeLayerId: null,
-        layers: [],
+        nodes: [],
       },
       meta: DEFAULT_CANVAS_FLOOR,
     };

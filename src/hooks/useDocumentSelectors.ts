@@ -1,4 +1,5 @@
 import { useDocumentStore } from '@/stores/documentStore';
+import { useLayerStore } from '@/stores/layerStore';
 import type { LayerId } from '@/types/layer';
 import type { CanvasNode } from '@/types/node';
 import { useMemo } from 'react';
@@ -9,20 +10,20 @@ export type HydratedLayer = {
 };
 
 export function useHydratedLayers() {
-  const layers = useDocumentStore((state) => state.doc.layerOrder);
-  const layerMapper = useDocumentStore((state) => state.doc.layerMapper);
+  const layers = useLayerStore((state) => state.doc.layers);
+  const layerMapper = useLayerStore((state) => state.doc.layerMapper);
   const nodes = useDocumentStore((state) => state.doc.nodes);
 
   const hydratedLayers = useMemo(() => {
     return layers
-      .map((layerId: LayerId) => {
-        const nodeIds = layerMapper[layerId];
+      .map((layer) => {
+        const nodeIds = layerMapper[layer.id];
         if (!nodeIds?.length) {
           return null;
         }
 
         return {
-          layerId,
+          layerId: layer.id,
           nodes: nodeIds.map((nodeId) => nodes[nodeId]),
         };
       })

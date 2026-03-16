@@ -10,8 +10,8 @@ export function useSelectedNode() {
   const selectedId = selectedIds[0];
 
   if (!selectedId) {
-    return undefined;
+    return null;
   }
 
-  return getNode(selectedId);
+  return getNode(selectedId) ?? null;
 }

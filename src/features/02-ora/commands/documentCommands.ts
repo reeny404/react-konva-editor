@@ -3,7 +3,6 @@ import { documentCommands as baseCommands } from '@/commands/documentCommands';
 import { executeCommand } from '@/commands/history';
 import { getAllDescendants } from '@/features/02-ora/utils/nodeUtils';
 import { useDocumentStore } from '@/stores/documentStore';
-import { getNodesInRenderOrder } from '@/stores/selectors/documentSelectors';
 import type { CanvasNode, NodeId } from '@/types/node';
 
 type TreeNode = CanvasNode & { parentId?: NodeId };
@@ -44,23 +43,26 @@ export const documentCommands: DocumentCommands<TreeNode> = {
 
   removeNode(id) {
     //부모 삭제시 자식도 삭제 (아직 삭제 구현은 하지 않음)
-    const state = useDocumentStore.getState();
-    const node = state.getNode(id);
+    const {
+      getNode,
+      doc: { nodes },
+    } = useDocumentStore.getState();
+    const node = getNode(id);
     if (!node) {
       return;
     }
-
-    const allNodes = getNodesInRenderOrder(state.doc);
-    const descendants = getAllDescendants(allNodes, id);
+    const descendants = getAllDescendants(Object.values(nodes), id);
 
     executeCommand({
       do: () => {
-        descendants.forEach((d) => state.removeNode(d.id));
-        state.removeNode(id);
+        const removeNode = useDocumentStore.getState().removeNode;
+        descendants.forEach((d) => removeNode(d.id));
+        removeNode(id);
       },
       undo: () => {
-        state.addNode(node);
-        descendants.forEach((d) => state.addNode(d));
+        const addNode = useDocumentStore.getState().addNode;
+        descendants.forEach((d) => addNode(d));
+        addNode(node);
       },
     });
   },

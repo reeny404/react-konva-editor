@@ -6,7 +6,6 @@ import { KEY_EDITOR_FLOOR } from '@/constants/key';
 import BOX_ICON from '@/icons/box.svg';
 import CIRCLE_ICON from '@/icons/circle.svg';
 import { useDocumentStore } from '@/stores/documentStore';
-import { getNodesInRenderOrder } from '@/stores/selectors/documentSelectors';
 import { CanvasStage } from '@/ui/CanvasStage';
 import type { KonvaEventObject } from 'konva/lib/Node';
 import { useRef } from 'react';
@@ -34,8 +33,8 @@ export default function Canvas() {
     handleMouseLeave,
   } = useZoomPan(containerRef);
 
-  const doc = useDocumentStore((state) => state.doc);
-  const nodes = getNodesInRenderOrder(doc);
+  const nodeMapper = useDocumentStore((state) => state.doc.nodes);
+  const nodes = Object.values(nodeMapper);
   const { selectOnly, clearSelection, isSelected } = useSelection();
 
   const handleMouseDown = (e: Parameters<typeof zoomPanMouseDown>[0]) => {
@@ -86,17 +85,6 @@ export default function Canvas() {
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseLeave}
       >
-        <Layer>
-          {gridPoints.map((points, idx) => (
-            <Line
-              key={idx}
-              points={points}
-              stroke='rgba(100, 116, 139, 0.2)'
-              strokeWidth={1}
-              listening={false}
-            />
-          ))}
-        </Layer>
         <Layer>
           <Rect
             id={KEY_EDITOR_FLOOR}
