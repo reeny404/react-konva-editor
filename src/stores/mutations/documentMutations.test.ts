@@ -1,6 +1,10 @@
 import assert from 'node:assert/strict';
-import test from 'node:test';
+import { test } from 'vitest';
 
+import type { CanvasDocument } from '@/types/document';
+import type { CanvasLayer } from '@/types/layer';
+import type { CanvasNode } from '@/types/node';
+import { findLayerIdByNodeId } from '../selectors/documentSelectors';
 import {
   addLayerToDocument,
   addNodeToDocument,
@@ -10,11 +14,7 @@ import {
   setActiveLayerInDocument,
   updateLayerInDocument,
   updateNodeInDocument,
-} from '../src/stores/mutations/documentMutations.ts';
-import { findLayerIdByNodeId } from '../src/stores/selectors/documentSelectors.ts';
-import type { CanvasDocument } from '../src/types/document.ts';
-import type { CanvasLayer } from '../src/types/layer.ts';
-import type { CanvasNode } from '../src/types/node.ts';
+} from './documentMutations';
 
 const createLayer = (id: string, name = `Layer ${id}`): CanvasLayer => ({
   id,
