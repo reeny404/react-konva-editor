@@ -1,7 +1,9 @@
+import type { DocumentCommands } from '@/commands/documentCommands';
 import BOX_ICON from '@/icons/box.svg';
 import type { Size } from '@/types/geometry';
 import type { CanvasNode } from '@/types/node';
 import { v4 as uuid } from 'uuid';
+import { LOCKED_DEFAULT } from '../../constant';
 import {
   createImageNode,
   createRectNode,
@@ -86,7 +88,7 @@ export function adaptScenarioToCanvasDocument(
   scenario: ScenarioDb,
   subareas: SubareaDb[],
   options: AdaptScenarioToCanvasDocumentOptions,
-): CanvasNode[] {
+): Parameters<DocumentCommands['loadDocument']>[0] {
   const transform = options.transform ?? {
     scale: 0.01,
     offset: { x: 0, y: 0 },
@@ -97,6 +99,7 @@ export function adaptScenarioToCanvasDocument(
   };
 
   const nodes: CanvasNode[] = [];
+  const scenarioChildNodes: CanvasNode[] = [];
   const canvasHeight = options.size.height;
 
   const bg = scenario.backgroundImage;
@@ -106,12 +109,13 @@ export function adaptScenarioToCanvasDocument(
       transform,
       canvasHeight,
     );
-    nodes.push(
+    scenarioChildNodes.push(
       createImageNode({
         id: uuid(),
         name: 'Background Image',
         rotation: 0,
         url: '/mocks/background.png',
+        locked: bg.lock ?? false,
         ...rect,
       }),
     );
@@ -128,7 +132,7 @@ export function adaptScenarioToCanvasDocument(
       transform,
       canvasHeight,
     );
-    nodes.push(
+    scenarioChildNodes.push(
       createRectNode({
         id: uuid(),
         name: rack.rackNumber,
@@ -147,7 +151,7 @@ export function adaptScenarioToCanvasDocument(
         transform,
         canvasHeight,
       );
-      nodes.push(
+      scenarioChildNodes.push(
         createSvgNode({
           id: uuid(),
           name: equipment.equipmentTag,
@@ -162,13 +166,17 @@ export function adaptScenarioToCanvasDocument(
     });
   }
 
+  nodes.push(createGroup('Scenario', scenarioChildNodes));
+
   for (const subarea of subareas) {
+    const subareaChildNodes: CanvasNode[] = [];
+
     const rect = boundsToRect(
       safeBounds(subarea, fallbackBounds),
       transform,
       canvasHeight,
     );
-    nodes.push(
+    subareaChildNodes.push(
       createRectNode({
         id: subarea._id,
         name: subarea.name,
@@ -192,7 +200,7 @@ export function adaptScenarioToCanvasDocument(
         transform,
         canvasHeight,
       );
-      nodes.push(
+      subareaChildNodes.push(
         createRectNode({
           id: uuid(),
           name: rack.rackNumber,
@@ -217,7 +225,7 @@ export function adaptScenarioToCanvasDocument(
         transform,
         canvasHeight,
       );
-      nodes.push(
+      subareaChildNodes.push(
         createRectNode({
           id: uuid(),
           name: building.name,
@@ -235,7 +243,32 @@ export function adaptScenarioToCanvasDocument(
     // roads
     // structures
     // process flows
+
+    nodes.push(createGroup(subarea.name, subareaChildNodes));
   }
 
-  return nodes;
+  return {
+    nodes,
+  };
+}
+
+/**
+ * TODO GroupNode 속성 점검 필요
+ */
+function createGroup(name: string, nodes: CanvasNode[]): CanvasNode {
+  return {
+    id: uuid(),
+    type: 'group',
+    name,
+    visible: true,
+    locked: LOCKED_DEFAULT,
+    children: nodes,
+    rotation: 0,
+    fill: '#FFFFFF',
+    stroke: '#000000',
+    width: 0,
+    height: 0,
+    x: 0,
+    y: 0,
+  };
 }

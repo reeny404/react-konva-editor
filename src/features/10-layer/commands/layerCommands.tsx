@@ -1,82 +1,84 @@
 import { executeCommand } from '@/commands/history';
-import { useDocumentStore } from '@/stores/documentStore';
-import { getNodesByLayerId } from '@/stores/selectors/documentSelectors';
+import { useLayerStore } from '@/stores/layerStore';
 import type { CanvasLayer, LayerId } from '@/types/layer';
 
 export const layerCommands = {
   setActiveLayer(id: LayerId | null) {
-    useDocumentStore.getState().setActiveLayer(id);
+    useLayerStore.getState().setActiveLayer(id);
   },
 
   addLayer() {
+    const {
+      doc: { layers },
+    } = useLayerStore.getState();
     const id = `layer-${Date.now()}`;
     const newLayer: CanvasLayer = {
       id,
-      name: `Layer ${useDocumentStore.getState().doc.layerOrder.length + 1}`,
+      name: `Layer ${Object.keys(layers).length + 1}`,
       visible: true,
       locked: false,
     };
 
     executeCommand({
-      do: () => useDocumentStore.getState().addLayer(newLayer),
-      undo: () => useDocumentStore.getState().removeLayer(id),
+      do: () => useLayerStore.getState().addLayer(newLayer),
+      undo: () => useLayerStore.getState().removeLayer(id),
     });
   },
 
   removeLayer(id: LayerId) {
-    const state = useDocumentStore.getState();
-    const layer = state.getLayer(id);
+    const {
+      doc: { activeLayerId: activeId, layers, layerMapper: mapper },
+      getLayer,
+    } = useLayerStore.getState();
+
+    const layer = getLayer(id);
     if (!layer) {
       return;
     }
 
-    const prevActiveLayerId = state.doc.activeLayerId;
-    const layerIndex = state.doc.layerOrder.findIndex(
-      (layerId) => layerId === id,
-    );
-    const layerNodes = getNodesByLayerId(state.doc, id);
+    const prevActiveLayerId = activeId;
+    const layerIndex = layers.findIndex((layer) => layer.id === id);
 
     executeCommand({
-      do: () => useDocumentStore.getState().removeLayer(id),
+      do: () => useLayerStore.getState().removeLayer(id),
       undo: () => {
-        const store = useDocumentStore.getState();
-        store.addLayer(layer, layerIndex);
-        layerNodes.forEach((node) => store.addNode(node, id));
-        store.setActiveLayer(prevActiveLayerId);
+        const { addLayer, setActiveLayer } = useLayerStore.getState();
+        addLayer({ ...layer, nodes: mapper[id] }, layerIndex);
+        setActiveLayer(prevActiveLayerId);
       },
     });
   },
 
   raiseLayer(id: LayerId) {
-    const layerOrder = useDocumentStore.getState().doc.layerOrder;
-    const fromIndex = layerOrder.findIndex((layerId) => layerId === id);
+    const layerOrder = useLayerStore.getState().doc.layers;
+    const fromIndex = layerOrder.findIndex((layer) => layer.id === id);
     if (fromIndex === -1 || fromIndex === layerOrder.length - 1) {
       return;
     }
 
     const toIndex = fromIndex + 1;
     executeCommand({
-      do: () => useDocumentStore.getState().reorderLayer(fromIndex, toIndex),
-      undo: () => useDocumentStore.getState().reorderLayer(toIndex, fromIndex),
+      do: () => useLayerStore.getState().reorderLayer(fromIndex, toIndex),
+      undo: () => useLayerStore.getState().reorderLayer(toIndex, fromIndex),
     });
   },
 
   lowerLayer(id: LayerId) {
-    const layerOrder = useDocumentStore.getState().doc.layerOrder;
-    const fromIndex = layerOrder.findIndex((layerId) => layerId === id);
+    const layerOrder = useLayerStore.getState().doc.layers;
+    const fromIndex = layerOrder.findIndex((layer) => layer.id === id);
     if (fromIndex === -1 || fromIndex === 0) {
       return;
     }
 
     const toIndex = fromIndex - 1;
     executeCommand({
-      do: () => useDocumentStore.getState().reorderLayer(fromIndex, toIndex),
-      undo: () => useDocumentStore.getState().reorderLayer(toIndex, fromIndex),
+      do: () => useLayerStore.getState().reorderLayer(fromIndex, toIndex),
+      undo: () => useLayerStore.getState().reorderLayer(toIndex, fromIndex),
     });
   },
 
   toggleLayerLock(id: LayerId) {
-    const layer = useDocumentStore.getState().getLayer(id);
+    const layer = useLayerStore.getState().getLayer(id);
     if (!layer) {
       return;
     }
@@ -84,15 +86,15 @@ export const layerCommands = {
     const prevLocked = layer.locked;
     executeCommand({
       do: () =>
-        useDocumentStore.getState().updateLayer(id, { locked: !prevLocked }),
+        useLayerStore.getState().updateLayer(id, { locked: !prevLocked }),
       undo: () =>
-        useDocumentStore.getState().updateLayer(id, { locked: prevLocked }),
+        useLayerStore.getState().updateLayer(id, { locked: prevLocked }),
     });
   },
 
   /*지금은 사용하지 않음. 추후에 레이어 가시성 토글에 필요할 수도 있어 미리 구현*/
   /*   toggleLayerVisibility(id: LayerId) {
-    const layer = useDocumentStore.getState().getLayerById(id);
+    const layer = useLayerStore.getState().getLayerById(id);
     if (!layer) {
       return;
     }
@@ -100,9 +102,9 @@ export const layerCommands = {
     const prevVisible = layer.visible;
     executeCommand({
       do: () =>
-        useDocumentStore.getState().updateLayer(id, { visible: !prevVisible }),
+        useLayerStore.getState().updateLayer(id, { visible: !prevVisible }),
       undo: () =>
-        useDocumentStore.getState().updateLayer(id, { visible: prevVisible }),
+        useLayerStore.getState().updateLayer(id, { visible: prevVisible }),
     });
   }, */
 };

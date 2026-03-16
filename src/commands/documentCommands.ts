@@ -1,14 +1,23 @@
-import { executeCommand } from '@/commands/history';
+import { clearHistory, executeCommand } from '@/commands/history';
 import { useDocumentStore } from '@/stores/documentStore';
 import type { CanvasNode, NodeId } from '@/types/node';
 
 export interface DocumentCommands<T extends CanvasNode = CanvasNode> {
+  loadDocument(doc: { nodes: CanvasNode[] }): void;
   patchNode(id: NodeId, next: Partial<T>): void;
   addNode(node: T): void;
   removeNode(id: NodeId): void;
 }
 
 export const documentCommands: DocumentCommands = {
+  loadDocument({ nodes }) {
+    clearHistory();
+
+    useDocumentStore.getState().setDocument({
+      nodes: Object.fromEntries(nodes.map((node) => [node.id, node])),
+    });
+  },
+
   patchNode(id, next) {
     const state = useDocumentStore.getState();
     const prev = state.getNode(id);

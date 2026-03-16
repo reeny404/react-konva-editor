@@ -1,13 +1,12 @@
+import { documentCommands } from '@/commands/documentCommands';
 import { SelectionTransformer } from '@/components/SelectionTransformer';
 import { KEY_EDITOR_FLOOR } from '@/constants/key';
-import { useCanvasFloorStore } from '@/stores/canvasFloorStore';
-import { useDocumentStore } from '@/stores/documentStore';
-import { getNodesInRenderOrder } from '@/stores/selectors/documentSelectors';
+import { useHydratedLayers } from '@/hooks/useDocumentSelectors';
+import type { Size } from '@/types/geometry';
 import { CanvasStage } from '@/ui/CanvasStage';
 import type { KonvaEventObject } from 'konva/lib/Node';
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { Circle, Layer, Line, Rect } from 'react-konva';
-import { documentCommands } from './commands/documentCommands';
 import Img from './components/Image';
 import Svg from './components/Svg';
 import ZoomInformation from './components/ZoomInformation';
@@ -15,16 +14,16 @@ import { useGridPoints } from './hooks/useGridPoints';
 import { useSelection } from './hooks/useSelection';
 import { useZoomPan } from './hooks/useZoomPan';
 
-export default function Canvas() {
+type Props = {
+  canvasSize: Size;
+  cellSize: number;
+  readonly: boolean;
+};
+
+export default function Canvas({ canvasSize, cellSize, readonly }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  const [draggable, setDraggable] = useState<boolean>(false);
-
-  const { size: canvasSize, cellSize } = useCanvasFloorStore(
-    (state) => state.floor,
-  );
-  const doc = useDocumentStore((state) => state.doc);
-  const nodes = getNodesInRenderOrder(doc);
+  const layers = useHydratedLayers();
 
   const gridPoints = useGridPoints(canvasSize, cellSize);
   const {
@@ -49,74 +48,64 @@ export default function Canvas() {
   };
 
   return (
-    <>
-      <div className='flex flex-wrap items-center gap-2 border-b border-slate-200 p-2'>
-        <button
-          type='button'
-          className={
-            draggable ? 'rounded bg-slate-300 px-2 py-1' : 'px-2 py-1 font-bold'
-          }
-          onClick={() => setDraggable((prev) => !prev)}
-        >
-          Locked: {draggable ? 'ON' : 'OFF'}
-        </button>
-      </div>
-
-      <CanvasStage
-        containerRef={containerRef}
-        width={stageSize.width}
-        height={stageSize.height}
-        x={pan.x}
-        y={pan.y}
-        scaleX={scale}
-        scaleY={scale}
-        onWheel={handleWheel}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseLeave}
-      >
-        <Layer>
-          {gridPoints.map((points, idx) => (
-            <Line
-              key={idx}
-              points={points}
-              stroke='rgba(100, 116, 139, 0.2)'
-              strokeWidth={1}
-              listening={false}
-            />
-          ))}
-        </Layer>
-        <Layer>
-          <Rect
-            id={KEY_EDITOR_FLOOR}
-            x={0}
-            y={0}
-            width={canvasSize.width}
-            height={canvasSize.height}
-            fill='#f8fafc'
-            stroke='#0f172a'
-            strokeWidth={2}
+    <CanvasStage
+      containerRef={containerRef}
+      width={stageSize.width}
+      height={stageSize.height}
+      x={pan.x}
+      y={pan.y}
+      scaleX={scale}
+      scaleY={scale}
+      onWheel={handleWheel}
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseLeave}
+    >
+      <Layer>
+        {gridPoints.map((points, idx) => (
+          <Line
+            key={idx}
+            points={points}
+            stroke='rgba(100, 116, 139, 0.2)'
+            strokeWidth={1}
+            listening={false}
           />
-          <ZoomInformation
-            size={canvasSize}
-            scale={scale}
-            pan={pan}
-            viewportLeftBottom={{ x: 0, y: 0 }}
+        ))}
+      </Layer>
+      <Layer>
+        <Rect
+          id={KEY_EDITOR_FLOOR}
+          x={0}
+          y={0}
+          width={canvasSize.width}
+          height={canvasSize.height}
+          fill='#f8fafc'
+          stroke='#0f172a'
+          strokeWidth={2}
+        />
+        <ZoomInformation
+          size={canvasSize}
+          scale={scale}
+          pan={pan}
+          viewportLeftBottom={{ x: 0, y: 0 }}
+        />
+
+        {gridPoints.map((points, idx) => (
+          <Line
+            key={idx}
+            points={points}
+            stroke='rgba(100, 116, 139, 0.2)'
+            strokeWidth={1}
+            listening={false}
           />
+        ))}
+      </Layer>
 
-          {gridPoints.map((points, idx) => (
-            <Line
-              key={idx}
-              points={points}
-              stroke='rgba(100, 116, 139, 0.2)'
-              strokeWidth={1}
-              listening={false}
-            />
-          ))}
-
-          {nodes.map((node) => {
-            const locked = draggable ? true : node.locked;
+      {layers.map((layer) => (
+        <Layer key={layer.layerId}>
+          {layer.nodes.map((node) => {
+            const locked = readonly ? true : node.locked;
             const select = () => selectOnly(node.id);
             const move = (e: KonvaEventObject<DragEvent>) =>
               documentCommands.patchNode(node.id, {
@@ -172,9 +161,11 @@ export default function Canvas() {
                 return null;
             }
           })}
-          <SelectionTransformer layerId='layer-1' />
         </Layer>
-      </CanvasStage>
-    </>
+      ))}
+      <Layer>
+        <SelectionTransformer />
+      </Layer>
+    </CanvasStage>
   );
 }

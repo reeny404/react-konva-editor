@@ -1,8 +1,10 @@
 import { documentCommands as baseCommands } from '@/commands/documentCommands';
 import { executeCommand } from '@/commands/history';
 import { useDocumentStore } from '@/stores/documentStore';
+import { useLayerStore } from '@/stores/layerStore';
 import type { LayerId } from '@/types/layer';
 import type { CanvasNode } from '@/types/node';
+
 /**
  * 10-layer 피처 테스트를 위한 확장 명령
  */
@@ -32,8 +34,8 @@ export const documentCommands = {
     };
 
     executeCommand({
-      do: () => useDocumentStore.getState().addNode(node, layerId),
-      undo: () => useDocumentStore.getState().removeNode(node.id),
+      do: () => useLayerStore.getState().addNode(layerId, node),
+      undo: () => useLayerStore.getState().removeNode(layerId, node.id),
     });
   },
 };

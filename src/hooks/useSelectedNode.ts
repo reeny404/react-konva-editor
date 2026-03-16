@@ -1,16 +1,17 @@
 import { useDocumentStore } from '@/stores/documentStore';
 import { useSelectionStore } from '@/stores/selectionStore';
-import { getNodesInRenderOrder } from '@/stores/selectors/documentSelectors';
 
+/**
+ * MEMO: Multiple selection 미지원
+ */
 export function useSelectedNode() {
-  const doc = useDocumentStore((state) => state.doc);
+  const getNode = useDocumentStore((state) => state.getNode);
   const selectedIds = useSelectionStore((state) => state.selectedIds);
   const selectedId = selectedIds[0];
 
   if (!selectedId) {
-    return undefined;
+    return null;
   }
 
-  const nodes = getNodesInRenderOrder(doc);
-  return nodes.find((node) => node.id === selectedId);
+  return getNode(selectedId) ?? null;
 }

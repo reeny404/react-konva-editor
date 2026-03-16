@@ -1,18 +1,16 @@
+import { selectionCommands } from '@/commands/selectionCommands';
 import Button from '@/components/Button';
 import CustomImage from '@/components/canvas/CustomImage';
 import { SelectionTransformer } from '@/components/SelectionTransformer';
 import { KEY_EDITOR_FLOOR } from '@/constants/key';
 import useCanvasStage from '@/hooks/useCanvasStage';
+import { useDocumentStore } from '@/stores/documentStore';
+import { useLayerStore } from '@/stores/layerStore';
+import { useSelectionStore } from '@/stores/selectionStore';
+import type { CanvasNode, ImageNode } from '@/types/node';
 import { CanvasStage } from '@/ui/CanvasStage';
 import type Konva from 'konva';
 import { Circle, Group, Layer, Rect } from 'react-konva';
-
-import { useDocumentStore } from '@/stores/documentStore';
-import { useSelectionStore } from '@/stores/selectionStore';
-import { getHydratedLayers } from '@/stores/selectors/documentSelectors';
-import type { CanvasNode, ImageNode } from '@/types/node';
-
-import { selectionCommands } from '@/commands/selectionCommands';
 import { documentCommands } from './commands/documentCommands';
 import { layerCommands } from './commands/layerCommands';
 
@@ -21,10 +19,16 @@ const CANVAS_SIZE = { width: 3000, height: 3000 };
 export default function Canvas() {
   const { containerRef, stageSize } = useCanvasStage();
 
-  const doc = useDocumentStore((state) => state.doc);
-  const layers = getHydratedLayers(doc);
-  const orderedLayers = [...layers].reverse();
-  const activeLayerId = doc.activeLayerId;
+  const { layers, activeLayerId, layerMapper } = useLayerStore(
+    (state) => state.doc,
+  );
+  const getNode = useDocumentStore((state) => state.getNode);
+  const orderedLayers = layers.map((layer) => ({
+    ...layer,
+    nodes: layerMapper[layer.id]
+      .map((nodeId) => getNode(nodeId))
+      .filter((node): node is CanvasNode => Boolean(node)),
+  }));
   const selectedIds = useSelectionStore((state) => state.selectedIds);
 
   const handleStageClick = (e: Konva.KonvaEventObject<MouseEvent>) => {
@@ -142,7 +146,7 @@ export default function Canvas() {
               strokeWidth={2}
             />
 
-            {layers.map((layer) => {
+            {orderedLayers.map((layer) => {
               if (!layer.visible) {
                 return null;
               }
@@ -248,7 +252,7 @@ export default function Canvas() {
               );
             })}
 
-            <SelectionTransformer layerId='layer-1' />
+            <SelectionTransformer />
           </Layer>
         </CanvasStage>
       </div>
