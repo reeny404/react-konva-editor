@@ -240,14 +240,14 @@ export function adaptScenarioToCanvasDocument(
           locked,
         }),
       );
-
-      layers.push(createLayer(subarea.name, subareaNodes));
     }
 
     // TODO 추후 line 이 개발이 완료되면 아래 항목들도 rendering 되도록 추가할 예정
     // roads
     // structures
     // process flows
+
+    layers.push(createLayer(subarea.name, subareaNodes));
   }
 
   return {
