@@ -2,31 +2,28 @@ import type { DocumentCommands } from '@/commands/documentCommands';
 import { documentCommands } from '@/commands/documentCommands';
 import { useSelectedNode } from '@/hooks/useSelectedNode';
 import { useDocumentStore } from '@/stores/documentStore';
-import type { LayerId } from '@/types/layer';
 import type Konva from 'konva';
 import type { KonvaPointerEvent } from 'konva/lib/PointerEvents';
 import { useEffect, useRef } from 'react';
 import { Transformer } from 'react-konva';
 
 type SelectionTransformerProps = {
-  layerId: LayerId;
   applyPatch?: DocumentCommands['patchNode'];
 };
 
 export function SelectionTransformer({
-  layerId,
   applyPatch = documentCommands.patchNode,
 }: SelectionTransformerProps) {
   const ref = useRef<Konva.Transformer>(null);
   const selection = useSelectedNode();
-  const isLockedLayer = useDocumentStore(
-    (state) => state.getLayer(layerId)?.locked ?? false,
-  );
+  // const isLockedLayer = useDocumentStore(
+  //   (state) => state.getLayer(layerId)?.locked ?? false,
+  // );
   const isLockedNode = useDocumentStore(
     (state) => state.getNode(selection?.id)?.locked ?? false,
   );
 
-  const isLocked = isLockedLayer || isLockedNode;
+  const isLocked = isLockedNode;
 
   useEffect(() => {
     if (!ref.current) {

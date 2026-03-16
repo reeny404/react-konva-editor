@@ -104,7 +104,7 @@ export default function Canvas() {
             dash={[4, 4]} // 점선 처리
           />
         )}
-        <SelectionTransformer layerId='layer-1' />
+        <SelectionTransformer />
       </Layer>
     </CanvasStage>
   );

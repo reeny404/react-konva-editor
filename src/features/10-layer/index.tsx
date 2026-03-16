@@ -248,7 +248,7 @@ export default function Canvas() {
               );
             })}
 
-            <SelectionTransformer layerId='layer-1' />
+            <SelectionTransformer />
           </Layer>
         </CanvasStage>
       </div>

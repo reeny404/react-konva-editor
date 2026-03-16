@@ -100,8 +100,6 @@ export default function Canvas({ canvasSize, cellSize, readonly }: Props) {
             listening={false}
           />
         ))}
-
-        <SelectionTransformer layerId='layer-1' />
       </Layer>
 
       {layers.map((layer) => (
@@ -163,9 +161,11 @@ export default function Canvas({ canvasSize, cellSize, readonly }: Props) {
                 return null;
             }
           })}
-          <SelectionTransformer layerId={layer.layerId} />
         </Layer>
       ))}
+      <Layer>
+        <SelectionTransformer />
+      </Layer>
     </CanvasStage>
   );
 }

@@ -152,10 +152,7 @@ export default function Canvas() {
             dash={[4, 4]}
           />
         )}
-        <SelectionTransformer
-          layerId='layer-1'
-          applyPatch={documentCommands.patchNode}
-        />
+        <SelectionTransformer applyPatch={documentCommands.patchNode} />
       </Layer>
     </CanvasStage>
   );

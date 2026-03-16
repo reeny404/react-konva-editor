@@ -140,7 +140,7 @@ export default function Canvas() {
               />
             ) : null,
           )}
-          <SelectionTransformer layerId='layer-1' />
+          <SelectionTransformer />
         </Layer>
       </CanvasStage>
     </>
