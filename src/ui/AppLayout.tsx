@@ -7,18 +7,20 @@ import { routes } from '@/features/routes';
 import { useSelectedNode } from '@/hooks/useSelectedNode';
 import { useDocumentStore } from '@/stores/documentStore';
 import { useSelectionStore } from '@/stores/selectionStore';
-import type { SceneNode } from '@/types/node';
+import { getHydratedLayers } from '@/stores/selectors/documentSelectors';
+import type { CanvasNode } from '@/types/node';
 import { NavLink, Outlet } from 'react-router-dom';
 import SectionCard from './SectionCard';
 
 export default function AppLayout() {
-  const layers = useDocumentStore((state) => state.doc.layers);
+  const doc = useDocumentStore((state) => state.doc);
+  const layers = getHydratedLayers(doc);
   const orderedLayers = [...layers].reverse();
-  const activeLayerId = useDocumentStore((state) => state.activeLayerId);
+  const activeLayerId = doc.activeLayerId;
   const selectedIds = useSelectionStore((state) => state.selectedIds);
   const selectedNode = useSelectedNode();
 
-  const updateSelectedNode = (patch: Partial<SceneNode>) => {
+  const updateSelectedNode = (patch: Partial<CanvasNode>) => {
     if (!selectedNode) {
       return;
     }
@@ -79,7 +81,7 @@ export default function AppLayout() {
 
                   <ul className='ml-4 space-y-1 border-l-2 border-slate-200 pl-2'>
                     {layer.nodes.map(
-                      (node: SceneNode & { locked?: boolean }) => {
+                      (node: CanvasNode & { locked?: boolean }) => {
                         const isSelected = selectedIds.includes(node.id);
                         return (
                           <li key={node.id} className='flex items-center gap-1'>

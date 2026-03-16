@@ -2,7 +2,7 @@ import { documentCommands as baseCommands } from '@/commands/documentCommands';
 import { executeCommand } from '@/commands/history';
 import { useDocumentStore } from '@/stores/documentStore';
 import type { LayerId } from '@/types/layer';
-import type { SceneNode } from '@/types/node';
+import type { CanvasNode } from '@/types/node';
 /**
  * 10-layer 피처 테스트를 위한 확장 명령
  */
@@ -13,14 +13,12 @@ export const documentCommands = {
    * 테스트용: 지정된 레이어에 사각형 노드를 생성하여 추가
    */
   addRectToLayer(layerId: LayerId) {
-    const layers = useDocumentStore.getState().doc.layers;
-    const totalNodes = layers.reduce(
-      (sum, layer) => sum + layer.nodes.length,
-      0,
-    );
+    const totalNodes = Object.keys(
+      useDocumentStore.getState().doc.nodes,
+    ).length;
 
     const id = `rect-${Date.now()}`;
-    const node: SceneNode = {
+    const node: CanvasNode = {
       id,
       type: 'rect',
       name: `Rect ${totalNodes + 1}`,

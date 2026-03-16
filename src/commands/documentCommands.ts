@@ -1,8 +1,8 @@
 import { executeCommand } from '@/commands/history';
 import { useDocumentStore } from '@/stores/documentStore';
-import type { NodeId, SceneNode } from '@/types/node';
+import type { CanvasNode, NodeId } from '@/types/node';
 
-export interface DocumentCommands<T extends SceneNode = SceneNode> {
+export interface DocumentCommands<T extends CanvasNode = CanvasNode> {
   patchNode(id: NodeId, next: Partial<T>): void;
   addNode(node: T): void;
   removeNode(id: NodeId): void;
@@ -11,16 +11,16 @@ export interface DocumentCommands<T extends SceneNode = SceneNode> {
 export const documentCommands: DocumentCommands = {
   patchNode(id, next) {
     const state = useDocumentStore.getState();
-    const prev = state.getNodeById(id);
+    const prev = state.getNode(id);
     if (!prev) {
       return;
     }
 
     const prevValues = Object.keys(next).reduce((acc, key) => {
-      const k = key as keyof SceneNode;
+      const k = key as keyof CanvasNode;
       (acc as Record<string, unknown>)[k] = prev[k];
       return acc;
-    }, {} as Partial<SceneNode>);
+    }, {} as Partial<CanvasNode>);
 
     executeCommand({
       do: () => state.updateNode(id, next),
@@ -36,7 +36,7 @@ export const documentCommands: DocumentCommands = {
   },
 
   removeNode(id) {
-    const node = useDocumentStore.getState().getNodeById(id);
+    const node = useDocumentStore.getState().getNode(id);
     if (!node) {
       return;
     }

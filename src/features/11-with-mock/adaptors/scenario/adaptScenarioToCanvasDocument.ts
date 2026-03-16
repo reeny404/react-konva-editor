@@ -1,6 +1,6 @@
 import BOX_ICON from '@/icons/box.svg';
 import type { Size } from '@/types/geometry';
-import type { SceneNode } from '@/types/node';
+import type { CanvasNode } from '@/types/node';
 import { v4 as uuid } from 'uuid';
 import {
   createImageNode,
@@ -86,7 +86,7 @@ export function adaptScenarioToCanvasDocument(
   scenario: ScenarioDb,
   subareas: SubareaDb[],
   options: AdaptScenarioToCanvasDocumentOptions,
-): SceneNode[] {
+): CanvasNode[] {
   const transform = options.transform ?? {
     scale: 0.01,
     offset: { x: 0, y: 0 },
@@ -96,7 +96,7 @@ export function adaptScenarioToCanvasDocument(
     max: { x: 0, y: 0 },
   };
 
-  const nodes: SceneNode[] = [];
+  const nodes: CanvasNode[] = [];
   const canvasHeight = options.size.height;
 
   const bg = scenario.backgroundImage;

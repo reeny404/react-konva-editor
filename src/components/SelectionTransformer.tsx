@@ -2,24 +2,31 @@ import type { DocumentCommands } from '@/commands/documentCommands';
 import { documentCommands } from '@/commands/documentCommands';
 import { useSelectedNode } from '@/hooks/useSelectedNode';
 import { useDocumentStore } from '@/stores/documentStore';
-import { isNodeLockedInLayers } from '@/utils/nodeUtils';
+import type { LayerId } from '@/types/layer';
 import type Konva from 'konva';
 import type { KonvaPointerEvent } from 'konva/lib/PointerEvents';
 import { useEffect, useRef } from 'react';
 import { Transformer } from 'react-konva';
 
-export function SelectionTransformer({
-  applyPatch = documentCommands.patchNode,
-}: {
+type SelectionTransformerProps = {
+  layerId: LayerId;
   applyPatch?: DocumentCommands['patchNode'];
-}) {
+};
+
+export function SelectionTransformer({
+  layerId,
+  applyPatch = documentCommands.patchNode,
+}: SelectionTransformerProps) {
   const ref = useRef<Konva.Transformer>(null);
   const selection = useSelectedNode();
-
-  // 유틸리티를 사용하여 잠금 상태 확인
-  const isLocked = useDocumentStore((state) =>
-    selection ? isNodeLockedInLayers(state.doc.layers, selection.id) : false,
+  const isLockedLayer = useDocumentStore(
+    (state) => state.getLayer(layerId)?.locked ?? false,
   );
+  const isLockedNode = useDocumentStore(
+    (state) => state.getNode(selection?.id)?.locked ?? false,
+  );
+
+  const isLocked = isLockedLayer || isLockedNode;
 
   useEffect(() => {
     if (!ref.current) {

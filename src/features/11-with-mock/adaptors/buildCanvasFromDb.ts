@@ -1,5 +1,5 @@
 import type { CanvasFloor } from '@/stores/canvasFloorStore';
-import type { SceneNode } from '@/types/node';
+import type { CanvasNode } from '@/types/node';
 import { computeCanvasFloorAndScale } from '../utils/computeCanvasFloorAndScale';
 import { adaptScenarioToCanvasDocument } from './scenario/adaptScenarioToCanvasDocument';
 import type { ScenarioDb, SubareaDb } from './scenario/types';
@@ -11,7 +11,7 @@ const DEFAULT_CANVAS_FLOOR: CanvasFloor = {
 };
 
 export type BuildCanvasFromDbResult = {
-  document: SceneNode[];
+  document: CanvasNode[];
   canvasFloor: CanvasFloor;
 };
 

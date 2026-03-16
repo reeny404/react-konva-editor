@@ -1,9 +1,9 @@
 import { documentCommands as commands } from '@/commands/documentCommands';
 import { executeCommand } from '@/commands/history';
 import { useDocumentStore } from '@/stores/documentStore';
-import type { SceneNode } from '@/types/node';
+import type { CanvasNode, NodeId } from '@/types/node';
 
-type TreeNode = SceneNode & { parentId?: SceneNode['id'] };
+type TreeNode = CanvasNode & { parentId?: NodeId };
 
 export const documentCommands = {
   ...commands,

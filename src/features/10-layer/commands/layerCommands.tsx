@@ -1,6 +1,7 @@
 import { executeCommand } from '@/commands/history';
 import { useDocumentStore } from '@/stores/documentStore';
-import type { DocumentLayer, LayerId } from '@/types/layer';
+import { getNodesByLayerId } from '@/stores/selectors/documentSelectors';
+import type { CanvasLayer, LayerId } from '@/types/layer';
 
 export const layerCommands = {
   setActiveLayer(id: LayerId | null) {
@@ -9,12 +10,11 @@ export const layerCommands = {
 
   addLayer() {
     const id = `layer-${Date.now()}`;
-    const newLayer: DocumentLayer = {
+    const newLayer: CanvasLayer = {
       id,
-      name: `Layer ${useDocumentStore.getState().doc.layers.length + 1}`,
+      name: `Layer ${useDocumentStore.getState().doc.layerOrder.length + 1}`,
       visible: true,
       locked: false,
-      nodes: [],
     };
 
     executeCommand({
@@ -24,21 +24,33 @@ export const layerCommands = {
   },
 
   removeLayer(id: LayerId) {
-    const layer = useDocumentStore.getState().getLayerById(id);
+    const state = useDocumentStore.getState();
+    const layer = state.getLayer(id);
     if (!layer) {
       return;
     }
 
+    const prevActiveLayerId = state.doc.activeLayerId;
+    const layerIndex = state.doc.layerOrder.findIndex(
+      (layerId) => layerId === id,
+    );
+    const layerNodes = getNodesByLayerId(state.doc, id);
+
     executeCommand({
       do: () => useDocumentStore.getState().removeLayer(id),
-      undo: () => useDocumentStore.getState().addLayer(layer),
+      undo: () => {
+        const store = useDocumentStore.getState();
+        store.addLayer(layer, layerIndex);
+        layerNodes.forEach((node) => store.addNode(node, id));
+        store.setActiveLayer(prevActiveLayerId);
+      },
     });
   },
 
   raiseLayer(id: LayerId) {
-    const layers = useDocumentStore.getState().doc.layers;
-    const fromIndex = layers.findIndex((l) => l.id === id);
-    if (fromIndex === -1 || fromIndex === layers.length - 1) {
+    const layerOrder = useDocumentStore.getState().doc.layerOrder;
+    const fromIndex = layerOrder.findIndex((layerId) => layerId === id);
+    if (fromIndex === -1 || fromIndex === layerOrder.length - 1) {
       return;
     }
 
@@ -50,8 +62,8 @@ export const layerCommands = {
   },
 
   lowerLayer(id: LayerId) {
-    const layers = useDocumentStore.getState().doc.layers;
-    const fromIndex = layers.findIndex((l) => l.id === id);
+    const layerOrder = useDocumentStore.getState().doc.layerOrder;
+    const fromIndex = layerOrder.findIndex((layerId) => layerId === id);
     if (fromIndex === -1 || fromIndex === 0) {
       return;
     }
@@ -64,7 +76,7 @@ export const layerCommands = {
   },
 
   toggleLayerLock(id: LayerId) {
-    const layer = useDocumentStore.getState().getLayerById(id);
+    const layer = useDocumentStore.getState().getLayer(id);
     if (!layer) {
       return;
     }

@@ -1,9 +1,9 @@
 import { useDocumentStore } from '@/stores/documentStore';
 import { useSelectionStore } from '@/stores/selectionStore';
-import { getAllNodesFromLayers } from '@/utils/nodeUtils';
+import { getNodesInRenderOrder } from '@/stores/selectors/documentSelectors';
 
 export function useSelectedNode() {
-  const layers = useDocumentStore((state) => state.doc.layers);
+  const doc = useDocumentStore((state) => state.doc);
   const selectedIds = useSelectionStore((state) => state.selectedIds);
   const selectedId = selectedIds[0];
 
@@ -11,6 +11,6 @@ export function useSelectedNode() {
     return undefined;
   }
 
-  const nodes = getAllNodesFromLayers(layers);
+  const nodes = getNodesInRenderOrder(doc);
   return nodes.find((node) => node.id === selectedId);
 }
