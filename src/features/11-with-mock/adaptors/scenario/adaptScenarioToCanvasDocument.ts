@@ -1,5 +1,4 @@
 import BOX_ICON from '@/icons/box.svg';
-import type { Document } from '@/stores/documentStore';
 import type { Size } from '@/types/geometry';
 import type { SceneNode } from '@/types/node';
 import { v4 as uuid } from 'uuid';
@@ -87,7 +86,7 @@ export function adaptScenarioToCanvasDocument(
   scenario: ScenarioDb,
   subareas: SubareaDb[],
   options: AdaptScenarioToCanvasDocumentOptions,
-): Document {
+): SceneNode[] {
   const transform = options.transform ?? {
     scale: 0.01,
     offset: { x: 0, y: 0 },
@@ -238,9 +237,5 @@ export function adaptScenarioToCanvasDocument(
     // process flows
   }
 
-  return {
-    layers: [
-      { id: uuid(), name: 'Layer 1', visible: true, locked: false, nodes },
-    ],
-  };
+  return nodes;
 }

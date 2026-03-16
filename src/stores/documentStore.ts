@@ -2,7 +2,7 @@ import type { DocumentLayer, LayerId } from '@/types/layer';
 import type { NodeId, SceneNode } from '@/types/node';
 import { createStore, createStoreHook } from './createStore';
 
-export type Document = {
+type Document = {
   layers: DocumentLayer[];
 };
 

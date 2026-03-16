@@ -1,5 +1,5 @@
 import type { CanvasFloor } from '@/stores/canvasFloorStore';
-import type { Document } from '@/stores/documentStore';
+import type { SceneNode } from '@/types/node';
 import { computeCanvasFloorAndScale } from '../utils/computeCanvasFloorAndScale';
 import { adaptScenarioToCanvasDocument } from './scenario/adaptScenarioToCanvasDocument';
 import type { ScenarioDb, SubareaDb } from './scenario/types';
@@ -11,7 +11,7 @@ const DEFAULT_CANVAS_FLOOR: CanvasFloor = {
 };
 
 export type BuildCanvasFromDbResult = {
-  document: Document;
+  document: SceneNode[];
   canvasFloor: CanvasFloor;
 };
 
@@ -28,7 +28,7 @@ export function buildCanvasFromDb(
   if (!grid) {
     console.warn('Grid data is required, but not found');
     return {
-      document: { layers: [] },
+      document: [],
       canvasFloor: DEFAULT_CANVAS_FLOOR,
     };
   }
@@ -39,7 +39,7 @@ export function buildCanvasFromDb(
     cellSize: grid.cellSize,
   });
 
-  const document = adaptScenarioToCanvasDocument(scenario, subareas, {
+  const nodes = adaptScenarioToCanvasDocument(scenario, subareas, {
     size: canvasFloor.size,
     cellSize: canvasFloor.cellSize,
     transform: {
@@ -49,7 +49,7 @@ export function buildCanvasFromDb(
   });
 
   return {
-    document,
     canvasFloor,
+    document: nodes,
   };
 }

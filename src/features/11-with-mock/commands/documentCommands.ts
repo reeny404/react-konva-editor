@@ -11,9 +11,22 @@ export const documentCommands = {
   ...commands,
 
   setDocumentFromScenario: (scenario: ScenarioDb, subareas: SubareaDb[]) => {
-    const { document, canvasFloor } = buildCanvasFromDb(scenario, subareas);
+    const { document: nodes, canvasFloor } = buildCanvasFromDb(
+      scenario,
+      subareas,
+    );
 
     canvasFloorStore.getState().setCanvasFloor(canvasFloor);
-    documentStore.getState().setDocument(document);
+    documentStore.getState().setDocument({
+      layers: [
+        {
+          id: 'layer-1',
+          name: 'Layer 1',
+          visible: true,
+          locked: false,
+          nodes,
+        },
+      ],
+    });
   },
 };
