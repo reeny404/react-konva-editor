@@ -15,6 +15,25 @@ export function getBoundingBox(points: PolygonPoint[]) {
   };
 }
 
+export function rectToPolygonPoints(
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+): PolygonPoint[] {
+  const left = width >= 0 ? x : x + width;
+  const top = height >= 0 ? y : y + height;
+  const w = Math.abs(width);
+  const h = Math.abs(height);
+
+  return [
+    { x: left, y: top },
+    { x: left + w, y: top },
+    { x: left + w, y: top + h },
+    { x: left, y: top + h },
+  ];
+}
+
 export function toLocalPoints(
   points: PolygonPoint[],
   originX: number,

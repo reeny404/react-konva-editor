@@ -9,6 +9,7 @@ import {
   createEmptyPolygonDraft,
   getBoundingBox,
   insertPolygonPointAt,
+  rectToPolygonPoints,
   replacePolygonPointAt,
   toLocalPoints,
 } from '../utils/polygonUtils';
@@ -32,8 +33,96 @@ function getPolygonNode(nodeId: NodeId) {
 }
 
 export const polygonCommands = {
+  //툴 선택
+  setActiveTool(tool: 'polygon-click' | 'polygon-rect') {
+    polygonToolStore.setState((prev) => ({
+      ...prev,
+      activeTool: tool,
+      draft: createEmptyPolygonDraft(),
+      rectDraft: null,
+      mode: { type: 'idle' },
+    }));
+  },
+
+  //사각형 그리기
+  startRectDrawing(point: PolygonPoint) {
+    polygonToolStore.setState((prev) => ({
+      ...prev,
+      draft: createEmptyPolygonDraft(),
+      rectDraft: {
+        isDrawing: true,
+        x: point.x,
+        y: point.y,
+        width: 0,
+        height: 0,
+      },
+      mode: { type: 'drawing-polygon-from-rect' },
+    }));
+  },
+
+  updateRectDraft(point: PolygonPoint) {
+    const state = polygonToolStore.getState();
+
+    if (state.mode.type !== 'drawing-polygon-from-rect' || !state.rectDraft) {
+      return;
+    }
+
+    polygonToolStore.setState((prev) => ({
+      ...prev,
+      rectDraft: {
+        ...prev.rectDraft!,
+        width: point.x - prev.rectDraft!.x,
+        height: point.y - prev.rectDraft!.y,
+      },
+    }));
+  },
+
+  finishRectDrawing() {
+    const state = polygonToolStore.getState();
+
+    if (state.mode.type !== 'drawing-polygon-from-rect' || !state.rectDraft) {
+      return;
+    }
+
+    const { x, y, width, height } = state.rectDraft;
+
+    if (Math.abs(width) < 5 || Math.abs(height) < 5) {
+      polygonToolStore.setState((prev) => ({
+        ...prev,
+        rectDraft: null,
+        mode: { type: 'idle' },
+      }));
+      return;
+    }
+
+    const absolutePoints = rectToPolygonPoints(x, y, width, height);
+    const box = getBoundingBox(absolutePoints);
+
+    const node: PolygonNode = {
+      id: uuidv4(),
+      type: 'polygon',
+      name: getNextPolygonName(),
+      x: box.minX,
+      y: box.minY,
+      width: box.width,
+      height: box.height,
+      rotation: 0,
+      fill: '#0f172a',
+      stroke: '#38bdf8',
+      strokeWidth: 2,
+      points: toLocalPoints(absolutePoints, box.minX, box.minY),
+    };
+
+    documentCommands.addNode(node);
+
+    polygonToolStore.setState((prev) => ({
+      ...prev,
+      rectDraft: null,
+      mode: { type: 'idle' },
+    }));
+  },
   // drawing mode
-  startDrawing() {
+  startPointDrawing() {
     polygonToolStore.setState((state) => ({
       ...state,
       draft: {
@@ -44,7 +133,7 @@ export const polygonCommands = {
     }));
   },
 
-  cancelDrawing() {
+  cancelPointDrawing() {
     polygonToolStore.setState((state) => ({
       ...state,
       draft: createEmptyPolygonDraft(),
@@ -102,7 +191,7 @@ export const polygonCommands = {
     }));
   },
 
-  finishDrawing() {
+  finishPointDrawing() {
     const state = polygonToolStore.getState();
     const { draft, mode } = state;
 
