@@ -1,13 +1,13 @@
 // commands/selectionCommands.ts
-import { selectionStore } from '@/stores/selectionStore';
+import { useSelectionStore } from '@/stores/selectionStore';
 import type { NodeId } from '@/types/node';
 
 export const selectionCommands = {
   selectOnly(id: NodeId) {
-    selectionStore.getState().selectOnly(id);
+    useSelectionStore.getState().selectOnly(id);
   },
 
   clearSelection() {
-    selectionStore.getState().clearSelection();
+    useSelectionStore.getState().clearSelection();
   },
 };

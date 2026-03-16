@@ -4,8 +4,8 @@ import type {
   ScenarioDb,
   SubareaDb,
 } from '@/features/11-with-mock/adaptors/scenario/types';
-import { canvasFloorStore } from '@/stores/canvasFloorStore';
-import { documentStore } from '@/stores/documentStore';
+import { useCanvasFloorStore } from '@/stores/canvasFloorStore';
+import { useDocumentStore } from '@/stores/documentStore';
 
 export const documentCommands = {
   ...commands,
@@ -16,8 +16,8 @@ export const documentCommands = {
       subareas,
     );
 
-    canvasFloorStore.getState().setCanvasFloor(canvasFloor);
-    documentStore.getState().setDocument({
+    useCanvasFloorStore.getState().setCanvasFloor(canvasFloor);
+    useDocumentStore.getState().setDocument({
       layers: [
         {
           id: 'layer-1',

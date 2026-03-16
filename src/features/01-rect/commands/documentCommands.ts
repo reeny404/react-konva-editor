@@ -1,6 +1,6 @@
 import { documentCommands as commands } from '@/commands/documentCommands';
 import { executeCommand } from '@/commands/history';
-import { documentStore } from '@/stores/documentStore';
+import { useDocumentStore } from '@/stores/documentStore';
 import type { SceneNode } from '@/types/node';
 
 type TreeNode = SceneNode & { parentId?: SceneNode['id'] };
@@ -10,8 +10,8 @@ export const documentCommands = {
 
   addNode(node: TreeNode) {
     executeCommand({
-      do: () => documentStore.getState().addNode(node),
-      undo: () => documentStore.getState().removeNode(node.id),
+      do: () => useDocumentStore.getState().addNode(node),
+      undo: () => useDocumentStore.getState().removeNode(node.id),
     });
   },
 };

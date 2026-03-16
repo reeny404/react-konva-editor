@@ -1,6 +1,6 @@
 import type { DocumentLayer, LayerId } from '@/types/layer';
 import type { NodeId, SceneNode } from '@/types/node';
-import { createStore, createStoreHook } from './createStore';
+import { create } from 'zustand';
 
 type Document = {
   layers: DocumentLayer[];
@@ -26,7 +26,7 @@ type DocumentStoreState = {
   getLayerById: (id: LayerId) => DocumentLayer | undefined;
 };
 
-export const documentStore = createStore<DocumentStoreState>((set, get) => ({
+export const useDocumentStore = create<DocumentStoreState>()((set, get) => ({
   doc: {
     layers: [
       {
@@ -158,5 +158,3 @@ export const documentStore = createStore<DocumentStoreState>((set, get) => ({
 
   getLayerById: (id) => get().doc.layers.find((l) => l.id === id),
 }));
-
-export const useDocumentStore = createStoreHook(documentStore);

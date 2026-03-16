@@ -1,5 +1,5 @@
 import { executeCommand } from '@/commands/history';
-import { documentStore } from '@/stores/documentStore';
+import { useDocumentStore } from '@/stores/documentStore';
 import type { NodeId, SceneNode } from '@/types/node';
 
 export interface DocumentCommands<T extends SceneNode = SceneNode> {
@@ -10,7 +10,7 @@ export interface DocumentCommands<T extends SceneNode = SceneNode> {
 
 export const documentCommands: DocumentCommands = {
   patchNode(id, next) {
-    const state = documentStore.getState();
+    const state = useDocumentStore.getState();
     const prev = state.getNodeById(id);
     if (!prev) {
       return;
@@ -30,19 +30,19 @@ export const documentCommands: DocumentCommands = {
 
   addNode(node) {
     executeCommand({
-      do: () => documentStore.getState().addNode(node),
-      undo: () => documentStore.getState().removeNode(node.id),
+      do: () => useDocumentStore.getState().addNode(node),
+      undo: () => useDocumentStore.getState().removeNode(node.id),
     });
   },
 
   removeNode(id) {
-    const node = documentStore.getState().getNodeById(id);
+    const node = useDocumentStore.getState().getNodeById(id);
     if (!node) {
       return;
     }
     executeCommand({
-      do: () => documentStore.getState().removeNode(id),
-      undo: () => documentStore.getState().addNode(node),
+      do: () => useDocumentStore.getState().removeNode(id),
+      undo: () => useDocumentStore.getState().addNode(node),
     });
   },
 };

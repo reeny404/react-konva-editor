@@ -17,7 +17,7 @@ export type BuildCanvasFromDbResult = {
 
 /**
  * 시나리오 DB 데이터로부터 문서(nodes)와 캔버스 바닥(size, cellSize, scale)을 한 번에 계산합니다.
- * 초기화 시 documentStore.setDocument(result.document), canvasFloorStore.setCanvasFloor(result.canvasFloor) 로 넘겨주면 됩니다.
+ * 초기화 시 useDocumentStore.getState().setDocument(...), useCanvasFloorStore.getState().setCanvasFloor(result.canvasFloor) 로 넘겨주면 됩니다.
  */
 export function buildCanvasFromDb(
   scenario: ScenarioDb,
