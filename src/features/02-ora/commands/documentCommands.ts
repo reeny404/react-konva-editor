@@ -1,8 +1,11 @@
 import type { DocumentCommands } from '@/commands/documentCommands';
 import { executeCommand } from '@/commands/history';
 import { documentStore } from '@/stores/documentStore';
-import type { TreeNode } from '@/types/node';
+import type { NodeId, SceneNode } from '@/types/node';
 import { getAllDescendants, getAllNodesFromLayers } from '@/utils/nodeUtils';
+
+type TreeNode = SceneNode & { parentId?: NodeId };
+
 /** rect 기능 + 부모 이동 시 자식이 함께 이동하는 documentCommands */
 export const documentCommands: DocumentCommands<TreeNode> = {
   patchNode(id, next) {

@@ -25,4 +25,3 @@ export type SvgNode = BaseNode<'svg'> & {
 };
 
 export type SceneNode = RectNode | CircleNode | ImageNode | SvgNode;
-export type TreeNode = SceneNode & { parentId?: NodeId };
