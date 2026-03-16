@@ -1,5 +1,5 @@
 import type { NodeId } from '@/types/node';
-import { createStore, createStoreHook } from './createStore';
+import { create } from 'zustand';
 
 type SelectionStoreState = {
   selectedIds: NodeId[];
@@ -7,10 +7,8 @@ type SelectionStoreState = {
   clearSelection: () => void;
 };
 
-export const selectionStore = createStore<SelectionStoreState>((set) => ({
+export const useSelectionStore = create<SelectionStoreState>()((set) => ({
   selectedIds: [],
   selectOnly: (id) => set((state) => ({ ...state, selectedIds: [id] })),
   clearSelection: () => set((state) => ({ ...state, selectedIds: [] })),
 }));
-
-export const useSelectionStore = createStoreHook(selectionStore);

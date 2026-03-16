@@ -1,11 +1,11 @@
 import { documentCommands } from '@/commands/documentCommands';
+import { selectionCommands } from '@/commands/selectionCommands';
 import { SelectionTransformer } from '@/components/SelectionTransformer';
 import useCanvasStage from '@/hooks/useCanvasStage';
 import { useDocumentStore } from '@/stores/documentStore';
 import { useSelectionStore } from '@/stores/selectionStore';
-import { selectionCommands } from '@/commands/selectionCommands';
+import { getNodesInRenderOrder } from '@/stores/selectors/documentSelectors';
 import { CanvasStage } from '@/ui/CanvasStage';
-import { getAllNodesFromLayers } from '@/utils/nodeUtils';
 import type { KonvaPointerEvent } from 'konva/lib/PointerEvents';
 import { Layer, Rect, Text } from 'react-konva';
 import { useDrawing } from './hooks/useDrawing';
@@ -19,8 +19,8 @@ export default function Canvas() {
     onMouseMove,
     onMouseUp,
   } = useDrawing();
-  const layers = useDocumentStore((state) => state.doc.layers);
-  const nodes = getAllNodesFromLayers(layers);
+  const doc = useDocumentStore((state) => state.doc);
+  const nodes = getNodesInRenderOrder(doc);
   const selectedIds = useSelectionStore((state) => state.selectedIds);
 
   // 마우스 다운 핸들러: 배경 클릭 시 선택 해제 + 그리기 시작
@@ -104,7 +104,7 @@ export default function Canvas() {
             dash={[4, 4]} // 점선 처리
           />
         )}
-        <SelectionTransformer />
+        <SelectionTransformer layerId='layer-1' />
       </Layer>
     </CanvasStage>
   );

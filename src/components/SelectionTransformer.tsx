@@ -2,45 +2,52 @@ import type { DocumentCommands } from '@/commands/documentCommands';
 import { documentCommands } from '@/commands/documentCommands';
 import { useSelectedNode } from '@/hooks/useSelectedNode';
 import { useDocumentStore } from '@/stores/documentStore';
-import { isNodeLockedInLayers } from '@/utils/nodeUtils';
+import type { LayerId } from '@/types/layer';
 import type Konva from 'konva';
 import type { KonvaPointerEvent } from 'konva/lib/PointerEvents';
 import { useEffect, useRef } from 'react';
 import { Transformer } from 'react-konva';
 
-export function SelectionTransformer({
-  applyPatch = documentCommands.patchNode,
-}: {
+type SelectionTransformerProps = {
+  layerId: LayerId;
   applyPatch?: DocumentCommands['patchNode'];
-}) {
-  const trRef = useRef<Konva.Transformer>(null);
-  const selection = useSelectedNode();
+};
 
-  // 유틸리티를 사용하여 잠금 상태 확인
-  const isLocked = useDocumentStore((state) =>
-    selection ? isNodeLockedInLayers(state.doc.layers, selection.id) : false,
+export function SelectionTransformer({
+  layerId,
+  applyPatch = documentCommands.patchNode,
+}: SelectionTransformerProps) {
+  const ref = useRef<Konva.Transformer>(null);
+  const selection = useSelectedNode();
+  const isLockedLayer = useDocumentStore(
+    (state) => state.getLayer(layerId)?.locked ?? false,
+  );
+  const isLockedNode = useDocumentStore(
+    (state) => state.getNode(selection?.id)?.locked ?? false,
   );
 
+  const isLocked = isLockedLayer || isLockedNode;
+
   useEffect(() => {
-    if (!trRef.current) {
+    if (!ref.current) {
       return;
     }
 
     if (!selection || isLocked) {
-      trRef.current.nodes([]);
+      ref.current.nodes([]);
       return;
     }
 
-    const stage = trRef.current.getStage();
+    const stage = ref.current.getStage();
     if (!stage) {
       return;
     }
 
     const targetNode = stage.findOne('#' + selection.id);
     if (targetNode) {
-      trRef.current.nodes([targetNode]);
+      ref.current.nodes([targetNode]);
     } else {
-      trRef.current.nodes([]);
+      ref.current.nodes([]);
     }
   }, [selection, isLocked]);
 
@@ -68,7 +75,7 @@ export function SelectionTransformer({
 
   return (
     <Transformer
-      ref={trRef}
+      ref={ref}
       onTransformEnd={handleTransformEnd}
       anchorFill='#ffffff'
       anchorStroke='#2563eb'

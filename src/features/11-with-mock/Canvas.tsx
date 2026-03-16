@@ -1,28 +1,32 @@
-import { documentCommands } from '@/commands/documentCommands';
-import Button from '@/components/Button';
-import CustomImage from '@/components/canvas/CustomImage';
 import { SelectionTransformer } from '@/components/SelectionTransformer';
 import { KEY_EDITOR_FLOOR } from '@/constants/key';
-import BOX_ICON from '@/icons/box.svg';
-import CIRCLE_ICON from '@/icons/circle.svg';
+import { useCanvasFloorStore } from '@/stores/canvasFloorStore';
 import { useDocumentStore } from '@/stores/documentStore';
+import { getNodesInRenderOrder } from '@/stores/selectors/documentSelectors';
 import { CanvasStage } from '@/ui/CanvasStage';
-import { getAllNodesFromLayers } from '@/utils/nodeUtils';
 import type { KonvaEventObject } from 'konva/lib/Node';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { Circle, Layer, Line, Rect } from 'react-konva';
+import { documentCommands } from './commands/documentCommands';
+import Img from './components/Image';
+import Svg from './components/Svg';
 import ZoomInformation from './components/ZoomInformation';
 import { useGridPoints } from './hooks/useGridPoints';
 import { useSelection } from './hooks/useSelection';
 import { useZoomPan } from './hooks/useZoomPan';
-import { createCustomImageNode } from './initializeNode';
-
-const CANVAS_SIZE = { width: 3000, height: 3000 };
 
 export default function Canvas() {
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  const gridPoints = useGridPoints(CANVAS_SIZE, 100);
+  const [draggable, setDraggable] = useState<boolean>(false);
+
+  const { size: canvasSize, cellSize } = useCanvasFloorStore(
+    (state) => state.floor,
+  );
+  const doc = useDocumentStore((state) => state.doc);
+  const nodes = getNodesInRenderOrder(doc);
+
+  const gridPoints = useGridPoints(canvasSize, cellSize);
   const {
     stageSize,
     scale,
@@ -33,9 +37,6 @@ export default function Canvas() {
     handleMouseUp,
     handleMouseLeave,
   } = useZoomPan(containerRef);
-
-  const layers = useDocumentStore((state) => state.doc.layers);
-  const nodes = getAllNodesFromLayers(layers);
   const { selectOnly, clearSelection, isSelected } = useSelection();
 
   const handleMouseDown = (e: Parameters<typeof zoomPanMouseDown>[0]) => {
@@ -50,26 +51,15 @@ export default function Canvas() {
   return (
     <>
       <div className='flex flex-wrap items-center gap-2 border-b border-slate-200 p-2'>
-        <Button
-          className='bg-slate-200'
-          onClick={() => {
-            documentCommands.addNode(
-              createCustomImageNode(BOX_ICON, 'SVG Box'),
-            );
-          }}
+        <button
+          type='button'
+          className={
+            draggable ? 'rounded bg-slate-300 px-2 py-1' : 'px-2 py-1 font-bold'
+          }
+          onClick={() => setDraggable((prev) => !prev)}
         >
-          ADD Box.svg
-        </Button>
-        <Button
-          className='bg-slate-200'
-          onClick={() => {
-            documentCommands.addNode(
-              createCustomImageNode(CIRCLE_ICON, 'SVG Circle'),
-            );
-          }}
-        >
-          ADD Circle.svg
-        </Button>
+          Locked: {draggable ? 'ON' : 'OFF'}
+        </button>
       </div>
 
       <CanvasStage
@@ -102,14 +92,14 @@ export default function Canvas() {
             id={KEY_EDITOR_FLOOR}
             x={0}
             y={0}
-            width={CANVAS_SIZE.width}
-            height={CANVAS_SIZE.height}
+            width={canvasSize.width}
+            height={canvasSize.height}
             fill='#f8fafc'
             stroke='#0f172a'
             strokeWidth={2}
           />
           <ZoomInformation
-            size={CANVAS_SIZE}
+            size={canvasSize}
             scale={scale}
             pan={pan}
             viewportLeftBottom={{ x: 0, y: 0 }}
@@ -126,6 +116,7 @@ export default function Canvas() {
           ))}
 
           {nodes.map((node) => {
+            const locked = draggable ? true : node.locked;
             const select = () => selectOnly(node.id);
             const move = (e: KonvaEventObject<DragEvent>) =>
               documentCommands.patchNode(node.id, {
@@ -138,38 +129,50 @@ export default function Canvas() {
                 return (
                   <Rect
                     key={node.id}
-                    {...node}
                     onClick={select}
-                    draggable
                     onDragEnd={move}
+                    draggable={!locked}
+                    {...node}
                   />
                 );
               case 'circle':
                 return (
                   <Circle
                     key={node.id}
-                    {...node}
                     onClick={select}
-                    draggable
                     onDragEnd={move}
+                    draggable={!locked}
+                    {...node}
                   />
                 );
-              case 'custom-image':
+              case 'svg':
                 return (
-                  <CustomImage
+                  <Svg
                     key={node.id}
-                    {...node}
                     isSelected={isSelected}
                     selectOne={selectOnly}
                     onDragEnd={move}
-                    draggable
+                    draggable={!locked}
+                    {...node}
                   />
                 );
+              case 'image': {
+                return (
+                  <Img
+                    key={node.id}
+                    isSelected={isSelected}
+                    selectOne={selectOnly}
+                    onDragEnd={move}
+                    draggable={!locked}
+                    {...node}
+                  />
+                );
+              }
               default:
                 return null;
             }
           })}
-          <SelectionTransformer />
+          <SelectionTransformer layerId='layer-1' />
         </Layer>
       </CanvasStage>
     </>

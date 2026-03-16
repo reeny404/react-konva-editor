@@ -10,4 +10,4 @@ dist
 *.config.js
 
 # etc
-src/mocks/**
+/public/mocks/**

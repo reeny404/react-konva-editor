@@ -1,6 +1,6 @@
 import { useImage } from '@/hooks/useImage';
 import type { Color } from '@/types/style';
-import { replaceSvgFillStroke } from '@/utils/replaceSvgFillStroke';
+import { replaceSvgFillStroke } from '@/utils/svg';
 import { useEffect, useRef, useState } from 'react';
 
 /** 로딩 중 useImage에 넘길 1x1 투명 PNG (빈 SVG 사용하니 로딩 동안 깜빡여서..) */

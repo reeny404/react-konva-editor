@@ -4,16 +4,16 @@ import { SelectionTransformer } from '@/components/SelectionTransformer';
 import useCanvasStage from '@/hooks/useCanvasStage';
 import { useDocumentStore } from '@/stores/documentStore';
 import { useSelectionStore } from '@/stores/selectionStore';
+import { getNodesInRenderOrder } from '@/stores/selectors/documentSelectors';
 import { CanvasStage } from '@/ui/CanvasStage';
-import { getAllNodesFromLayers } from '@/utils/nodeUtils';
 import type Konva from 'konva';
 import { Layer, Rect, Text } from 'react-konva';
 
 export default function Canvas() {
   const { containerRef, stageSize } = useCanvasStage();
 
-  const layers = useDocumentStore((state) => state.doc.layers);
-  const nodes = getAllNodesFromLayers(layers);
+  const doc = useDocumentStore((state) => state.doc);
+  const nodes = getNodesInRenderOrder(doc);
   const selectedIds = useSelectionStore((state) => state.selectedIds);
 
   const handleStageClick = (e: Konva.KonvaEventObject<MouseEvent>) => {
@@ -74,7 +74,7 @@ export default function Canvas() {
             />
           );
         })}
-        <SelectionTransformer />
+        <SelectionTransformer layerId='layer-1' />
       </Layer>
     </CanvasStage>
   );

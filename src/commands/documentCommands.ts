@@ -1,8 +1,8 @@
 import { executeCommand } from '@/commands/history';
-import { documentStore } from '@/stores/documentStore';
-import type { NodeId, SceneNode } from '@/types/node';
+import { useDocumentStore } from '@/stores/documentStore';
+import type { CanvasNode, NodeId } from '@/types/node';
 
-export interface DocumentCommands<T extends SceneNode = SceneNode> {
+export interface DocumentCommands<T extends CanvasNode = CanvasNode> {
   patchNode(id: NodeId, next: Partial<T>): void;
   addNode(node: T): void;
   removeNode(id: NodeId): void;
@@ -10,17 +10,17 @@ export interface DocumentCommands<T extends SceneNode = SceneNode> {
 
 export const documentCommands: DocumentCommands = {
   patchNode(id, next) {
-    const state = documentStore.getState();
-    const prev = state.getNodeById(id);
+    const state = useDocumentStore.getState();
+    const prev = state.getNode(id);
     if (!prev) {
       return;
     }
 
     const prevValues = Object.keys(next).reduce((acc, key) => {
-      const k = key as keyof SceneNode;
+      const k = key as keyof CanvasNode;
       (acc as Record<string, unknown>)[k] = prev[k];
       return acc;
-    }, {} as Partial<SceneNode>);
+    }, {} as Partial<CanvasNode>);
 
     executeCommand({
       do: () => state.updateNode(id, next),
@@ -30,19 +30,19 @@ export const documentCommands: DocumentCommands = {
 
   addNode(node) {
     executeCommand({
-      do: () => documentStore.getState().addNode(node),
-      undo: () => documentStore.getState().removeNode(node.id),
+      do: () => useDocumentStore.getState().addNode(node),
+      undo: () => useDocumentStore.getState().removeNode(node.id),
     });
   },
 
   removeNode(id) {
-    const node = documentStore.getState().getNodeById(id);
+    const node = useDocumentStore.getState().getNode(id);
     if (!node) {
       return;
     }
     executeCommand({
-      do: () => documentStore.getState().removeNode(id),
-      undo: () => documentStore.getState().addNode(node),
+      do: () => useDocumentStore.getState().removeNode(id),
+      undo: () => useDocumentStore.getState().addNode(node),
     });
   },
 };

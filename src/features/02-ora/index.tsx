@@ -3,9 +3,9 @@ import { SelectionTransformer } from '@/components/SelectionTransformer';
 import useCanvasStage from '@/hooks/useCanvasStage';
 import { useDocumentStore } from '@/stores/documentStore';
 import { useSelectionStore } from '@/stores/selectionStore';
-import type { SceneNode } from '@/types/node';
+import { getNodesInRenderOrder } from '@/stores/selectors/documentSelectors';
+import type { CanvasNode } from '@/types/node';
 import { CanvasStage } from '@/ui/CanvasStage';
-import { getAllNodesFromLayers } from '@/utils/nodeUtils';
 import type Konva from 'konva';
 import type { KonvaPointerEvent } from 'konva/lib/PointerEvents';
 import { Group, Layer, Rect, Text } from 'react-konva';
@@ -21,8 +21,8 @@ export default function Canvas() {
     onMouseMove,
     onMouseUp,
   } = useDrawing();
-  const layers = useDocumentStore((state) => state.doc.layers);
-  const nodes = getAllNodesFromLayers(layers);
+  const doc = useDocumentStore((state) => state.doc);
+  const nodes = getNodesInRenderOrder(doc);
   const selectedIds = useSelectionStore((state) => state.selectedIds);
 
   const handleMouseDown = (e: KonvaPointerEvent) => {
@@ -33,16 +33,16 @@ export default function Canvas() {
   };
 
   const rootNodes = nodes.filter(
-    (n) => !(n as SceneNode & { parentId?: string }).parentId,
+    (n) => !(n as CanvasNode & { parentId?: string }).parentId,
   );
 
-  const renderNode = (node: SceneNode & { parentId?: string }) => {
+  const renderNode = (node: CanvasNode & { parentId?: string }) => {
     if (node.type !== 'rect') {
       return null;
     }
 
     const children = nodes.filter(
-      (n) => (n as SceneNode & { parentId?: string }).parentId === node.id,
+      (n) => (n as CanvasNode & { parentId?: string }).parentId === node.id,
     );
     const isGroup = children.length > 0;
     const isSelected = selectedIds.includes(node.id);
@@ -152,7 +152,10 @@ export default function Canvas() {
             dash={[4, 4]}
           />
         )}
-        <SelectionTransformer applyPatch={documentCommands.patchNode} />
+        <SelectionTransformer
+          layerId='layer-1'
+          applyPatch={documentCommands.patchNode}
+        />
       </Layer>
     </CanvasStage>
   );

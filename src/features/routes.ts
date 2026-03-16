@@ -9,7 +9,7 @@ import type { ComponentType } from 'react';
  */
 function getFeatureRoutes() {
   return Object.entries(
-    import.meta.glob<{ default: ComponentType }>(['@/features/*/Canvas.tsx'], {
+    import.meta.glob<{ default: ComponentType }>(['@/features/*/index.tsx'], {
       eager: true,
       import: 'default',
     }),
@@ -28,7 +28,7 @@ function getFeatureRoutes() {
       };
     })
     .filter((item) => !!item)
-    .sort((a, b) => a.folder.localeCompare(b.folder));
+    .sort((a, b) => b.folder.localeCompare(a.folder)); // 내림차순 정렬
 }
 
 export const routes = getFeatureRoutes();
