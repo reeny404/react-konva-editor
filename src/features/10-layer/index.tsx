@@ -9,7 +9,8 @@ import { Circle, Group, Layer, Rect } from 'react-konva';
 
 import { useDocumentStore } from '@/stores/documentStore';
 import { useSelectionStore } from '@/stores/selectionStore';
-import type { ImageNode, SceneNode } from '@/types/node';
+import { getHydratedLayers } from '@/stores/selectors/documentSelectors';
+import type { CanvasNode, ImageNode } from '@/types/node';
 
 import { selectionCommands } from '@/commands/selectionCommands';
 import { documentCommands } from './commands/documentCommands';
@@ -20,9 +21,10 @@ const CANVAS_SIZE = { width: 3000, height: 3000 };
 export default function Canvas() {
   const { containerRef, stageSize } = useCanvasStage();
 
-  const layers = useDocumentStore((state) => state.doc.layers);
+  const doc = useDocumentStore((state) => state.doc);
+  const layers = getHydratedLayers(doc);
   const orderedLayers = [...layers].reverse();
-  const activeLayerId = useDocumentStore((state) => state.activeLayerId);
+  const activeLayerId = doc.activeLayerId;
   const selectedIds = useSelectionStore((state) => state.selectedIds);
 
   const handleStageClick = (e: Konva.KonvaEventObject<MouseEvent>) => {
@@ -147,7 +149,7 @@ export default function Canvas() {
 
               return (
                 <Group key={layer.id} listening={!layer.locked}>
-                  {layer.nodes.map((node: SceneNode) => {
+                  {layer.nodes.map((node: CanvasNode) => {
                     const isSelected = selectedIds.includes(node.id);
                     const isLocked = layer.locked;
 
@@ -246,7 +248,7 @@ export default function Canvas() {
               );
             })}
 
-            <SelectionTransformer />
+            <SelectionTransformer layerId='layer-1' />
           </Layer>
         </CanvasStage>
       </div>

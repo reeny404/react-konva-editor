@@ -24,5 +24,4 @@ export type SvgNode = BaseNode<'svg'> & {
   url: string;
 };
 
-export type SceneNode = RectNode | CircleNode | ImageNode | SvgNode;
-export type TreeNode = SceneNode & { parentId?: NodeId };
+export type CanvasNode = RectNode | CircleNode | ImageNode | SvgNode;

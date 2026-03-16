@@ -1,13 +1,17 @@
 import type { DocumentCommands } from '@/commands/documentCommands';
 import { executeCommand } from '@/commands/history';
-import { documentStore } from '@/stores/documentStore';
-import type { TreeNode } from '@/types/node';
-import { getAllDescendants, getAllNodesFromLayers } from '@/utils/nodeUtils';
+import { getAllDescendants } from '@/features/02-ora/utils/nodeUtils';
+import { useDocumentStore } from '@/stores/documentStore';
+import { getNodesInRenderOrder } from '@/stores/selectors/documentSelectors';
+import type { CanvasNode, NodeId } from '@/types/node';
+
+type TreeNode = CanvasNode & { parentId?: NodeId };
+
 /** rect 기능 + 부모 이동 시 자식이 함께 이동하는 documentCommands */
 export const documentCommands: DocumentCommands<TreeNode> = {
   patchNode(id, next) {
-    const state = documentStore.getState();
-    const prev = state.getNodeById(id);
+    const state = useDocumentStore.getState();
+    const prev = state.getNode(id);
     if (!prev) {
       return;
     }
@@ -30,20 +34,20 @@ export const documentCommands: DocumentCommands<TreeNode> = {
 
   addNode(node) {
     executeCommand({
-      do: () => documentStore.getState().addNode(node),
-      undo: () => documentStore.getState().removeNode(node.id),
+      do: () => useDocumentStore.getState().addNode(node),
+      undo: () => useDocumentStore.getState().removeNode(node.id),
     });
   },
 
   removeNode(id) {
     //부모 삭제시 자식도 삭제 (아직 삭제 구현은 하지 않음)
-    const state = documentStore.getState();
-    const node = state.getNodeById(id);
+    const state = useDocumentStore.getState();
+    const node = state.getNode(id);
     if (!node) {
       return;
     }
 
-    const allNodes = getAllNodesFromLayers(state.doc.layers);
+    const allNodes = getNodesInRenderOrder(state.doc);
     const descendants = getAllDescendants(allNodes, id);
 
     executeCommand({

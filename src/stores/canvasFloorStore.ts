@@ -1,5 +1,5 @@
 import type { Size } from '@/types/geometry';
-import { createStore, createStoreHook } from './createStore';
+import { create } from 'zustand';
 
 export type CanvasFloor = {
   size: Size;
@@ -24,12 +24,7 @@ type CanvasFloorStoreState = {
  *
  * @deprecated
  */
-export const canvasFloorStore = createStore<CanvasFloorStoreState>((set) => ({
+export const useCanvasFloorStore = create<CanvasFloorStoreState>()((set) => ({
   floor: DEFAULT_FLOOR,
   setCanvasFloor: (floor) => set((state) => ({ ...state, floor })),
 }));
-
-/**
- * @deprecated
- */
-export const useCanvasFloorStore = createStoreHook(canvasFloorStore);

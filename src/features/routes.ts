@@ -28,7 +28,7 @@ function getFeatureRoutes() {
       };
     })
     .filter((item) => !!item)
-    .sort((a, b) => a.folder.localeCompare(b.folder));
+    .sort((a, b) => b.folder.localeCompare(a.folder)); // 내림차순 정렬
 }
 
 export const routes = getFeatureRoutes();
