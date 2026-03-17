@@ -1,84 +1,89 @@
 import { documentCommands } from '@/commands/documentCommands';
-import type { CanvasNode } from '@/types/node';
+import { useSelectionStore } from '@/stores/selectionStore';
+import type { CanvasNode as CanvasNodeType } from '@/types/node';
 import type { KonvaEventObject } from 'konva/lib/Node';
+import { useCallback } from 'react';
 import { Circle, Group, Rect } from 'react-konva';
-import { useSelection } from '../hooks/useSelection';
 import Img from './Image';
 import Svg from './Svg';
 
-export function CanvasNodeRenderer({
+export function CanvasNode({
   node,
   readonly,
 }: {
-  node: CanvasNode;
+  node: CanvasNodeType;
   readonly: boolean;
 }) {
-  const { selectOnly, isSelected } = useSelection();
-
-  const locked = readonly || Boolean(node.locked);
-  const selectNode = () => selectOnly(node.id);
+  const selectOnly = useSelectionStore((state) => state.selectOnly);
+  const selectNode = useCallback(() => selectOnly(node.id), [node.id]);
   const moveNode = (e: KonvaEventObject<DragEvent>) =>
     documentCommands.patchNode(node.id, {
       x: e.target.x(),
       y: e.target.y(),
     });
 
-  switch (node.type) {
-    case 'rect':
+  const { type, locked, ...props } = node;
+  const isLocked = readonly || Boolean(locked);
+
+  switch (type) {
+    case 'group': {
+      return (
+        <Group key={node.id}>
+          {node.children.map((child) => (
+            <CanvasNode key={child.id} node={child} readonly={readonly} />
+          ))}
+        </Group>
+      );
+    }
+
+    case 'rect': {
       return (
         <Rect
           key={node.id}
           onClick={selectNode}
           onDragEnd={moveNode}
-          draggable={!locked}
-          {...node}
+          draggable={!isLocked}
+          {...props}
         />
       );
-    case 'circle':
+    }
+
+    case 'circle': {
       return (
         <Circle
           key={node.id}
           onClick={selectNode}
           onDragEnd={moveNode}
-          draggable={!locked}
-          {...node}
+          draggable={!isLocked}
+          {...props}
         />
       );
-    case 'svg':
+    }
+
+    case 'svg': {
       return (
         <Svg
           key={node.id}
-          isSelected={isSelected}
-          selectOne={selectOnly}
+          onClick={selectNode}
           onDragEnd={moveNode}
-          draggable={!locked}
-          {...node}
-        />
-      );
-    case 'image': {
-      return (
-        <Img
-          key={node.id}
-          isSelected={isSelected}
-          selectOne={selectOnly}
-          onDragEnd={moveNode}
-          draggable={!locked}
+          draggable={!isLocked}
           {...node}
         />
       );
     }
-    case 'group':
+
+    case 'image': {
       return (
-        <Group key={node.id} listening={!locked}>
-          {node.children.map((child) => (
-            <CanvasNodeRenderer
-              key={child.id}
-              node={child}
-              readonly={readonly}
-            />
-          ))}
-        </Group>
+        <Img
+          key={node.id}
+          onClick={selectNode}
+          onDragEnd={moveNode}
+          draggable={!isLocked}
+          {...node}
+        />
       );
+    }
+
     default:
       return null;
   }

@@ -1,5 +1,5 @@
 import type { CanvasDocument } from '@/types/document';
-import type { CanvasNode, NodeId } from '@/types/node';
+import { NodeType, type CanvasNode, type NodeId } from '@/types/node';
 import { create } from 'zustand';
 
 type DocumentStoreState = {
@@ -16,7 +16,7 @@ const DEFAULT_DOCUMENT: CanvasDocument = {
   nodes: {
     'rect-1': {
       id: 'rect-1',
-      type: 'rect',
+      type: NodeType.Rect,
       name: 'Rect 1',
       x: 120,
       y: 90,
@@ -33,7 +33,9 @@ export const useDocumentStore = create<DocumentStoreState>()((set, get) => ({
   doc: DEFAULT_DOCUMENT,
 
   setDocument: (doc) => set({ doc }),
-  getNode: (id) => (id ? get().doc.nodes[id] : undefined),
+  getNode: (id) => {
+    return id ? get().doc.nodes[id] : undefined;
+  },
   addNode: (node) => {
     if (get().getNode(node.id)) {
       return;

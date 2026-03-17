@@ -2,8 +2,15 @@ import type { Position, Size } from './geometry';
 import type { Color } from './style';
 
 export type NodeId = string;
+export enum NodeType {
+  Rect = 'rect',
+  Circle = 'circle',
+  Image = 'image',
+  Svg = 'svg',
+  Group = 'group',
+}
 
-type BaseNode<T extends string> = {
+type BaseNode<T extends NodeType> = {
   id: NodeId;
   type: T;
   name: string;
@@ -14,19 +21,19 @@ type BaseNode<T extends string> = {
   Size &
   Position;
 
-type RectNode = BaseNode<'rect'>;
-type CircleNode = BaseNode<'circle'>;
-export type ImageNode = Omit<BaseNode<'image'>, 'fill' | 'stroke'> & {
+export type RectNode = BaseNode<NodeType.Rect>;
+type CircleNode = BaseNode<NodeType.Circle>;
+export type ImageNode = Omit<BaseNode<NodeType.Image>, 'fill' | 'stroke'> & {
   url: string;
 };
 
-export type SvgNode = BaseNode<'svg'> & {
+export type SvgNode = BaseNode<NodeType.Svg> & {
   url: string;
 };
 
-export type GroupNode = BaseNode<'group'> & {
-  visible: boolean;
+export type GroupNode = BaseNode<NodeType.Group> & {
   children: CanvasNode[];
+  visible?: boolean;
 };
 
 export type CanvasNode =

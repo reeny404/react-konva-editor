@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { useDocumentStore } from './documentStore';
 import { useLayerStore } from './layerStore';
+import { NodeType } from '@/types/node';
 
 const resetStores = () => {
   useDocumentStore.setState({
@@ -126,7 +127,7 @@ describe('useLayerStore', () => {
 
     layerStore.addNode('layer-1', {
       id: 'node-1',
-      type: 'rect',
+      type: NodeType.Rect,
       name: 'Rect 1',
       x: 0,
       y: 0,
@@ -160,7 +161,7 @@ describe('useLayerStore', () => {
 
     layerStore.addNode('layer-1', {
       id: 'node-1',
-      type: 'rect',
+      type: NodeType.Rect,
       name: 'Rect 1',
       x: 0,
       y: 0,

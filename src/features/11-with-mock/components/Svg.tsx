@@ -1,9 +1,12 @@
 import { useSvgImage } from '@/hooks/useSvgImage';
 import type { SvgNode } from '@/types/node';
+import type { KonvaEventObject } from 'konva/lib/Node';
 import { Image } from 'react-konva';
 import type { DraggableNode, SelectableNode } from '../type';
 
-type SvgImageProps = Omit<SvgNode, 'type'> & SelectableNode & DraggableNode;
+type SvgImageProps = Omit<SvgNode, 'type' | 'selectOne'> &
+  SelectableNode &
+  DraggableNode;
 
 export default function Svg({
   url,
@@ -12,8 +15,7 @@ export default function Svg({
   y = 0,
   fill,
   stroke,
-  isSelected,
-  selectOne,
+  onClick,
   ...props
 }: SvgImageProps) {
   const [image] = useSvgImage(url, { fill, stroke });
@@ -22,9 +24,10 @@ export default function Svg({
     return null;
   }
 
-  const selectedStyle = isSelected?.(id)
-    ? { stroke: '#111827', strokeWidth: 3 }
-    : {};
+  const handleClick = (e: KonvaEventObject<MouseEvent>) => {
+    e.cancelBubble = true;
+    onClick();
+  };
 
   return (
     <Image
@@ -32,15 +35,8 @@ export default function Svg({
       image={image}
       x={x}
       y={y}
-      onClick={(e) => {
-        e.cancelBubble = true;
-        selectOne(id);
-      }}
-      onDragStart={(e) => {
-        e.cancelBubble = true;
-        selectOne(id);
-      }}
-      {...selectedStyle}
+      onClick={handleClick}
+      onDragStart={handleClick}
       {...props}
     />
   );

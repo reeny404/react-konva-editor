@@ -1,4 +1,4 @@
-import type { SvgNode } from '@/types/node';
+import { NodeType, type SvgNode } from '@/types/node';
 import { v4 as uuid } from 'uuid';
 
 export function createCustomImageNode(
@@ -7,7 +7,7 @@ export function createCustomImageNode(
 ): SvgNode {
   return {
     id: uuid(),
-    type: 'svg',
+    type: NodeType.Svg,
     name,
     x: 0,
     y: 0,
