@@ -13,8 +13,17 @@ export const documentCommands: DocumentCommands = {
   loadDocument({ nodes }) {
     clearHistory();
 
+    const nodeList = Object.values(nodes)
+      .map((node) => {
+        if (node.type === 'group') {
+          return node.children;
+        }
+        return [node];
+      })
+      .flat();
+
     useDocumentStore.getState().setDocument({
-      nodes: Object.fromEntries(nodes.map((node) => [node.id, node])),
+      nodes: Object.fromEntries(nodeList.map((node) => [node.id, node])),
     });
   },
 

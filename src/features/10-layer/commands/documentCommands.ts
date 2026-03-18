@@ -3,7 +3,7 @@ import { executeCommand } from '@/commands/history';
 import { useDocumentStore } from '@/stores/documentStore';
 import { useLayerStore } from '@/stores/layerStore';
 import type { LayerId } from '@/types/layer';
-import type { CanvasNode } from '@/types/node';
+import { NodeType, type CanvasNode } from '@/types/node';
 
 /**
  * 10-layer 피처 테스트를 위한 확장 명령
@@ -22,7 +22,7 @@ export const documentCommands = {
     const id = `rect-${Date.now()}`;
     const node: CanvasNode = {
       id,
-      type: 'rect',
+      type: NodeType.Rect,
       name: `Rect ${totalNodes + 1}`,
       x: 100,
       y: 100,

@@ -1,6 +1,11 @@
 import { layerCommands } from '@/commands/layerCommands'; // 새로 만든 layerCommands 사용
 import { useLayerStore } from '@/stores/layerStore'; // LayerStore 사용
-import type { NodeId, PolygonNode, PolygonPoint } from '@/types/node';
+import {
+  NodeType,
+  type NodeId,
+  type PolygonNode,
+  type PolygonPoint,
+} from '@/types/node';
 import { v4 as uuidv4 } from 'uuid';
 import { usePolygonToolStore } from '../stores/polygonToolStore';
 import {
@@ -17,7 +22,7 @@ function getNextPolygonName() {
   const state = useLayerStore.getState();
   const allNodes = state.getAllNodes();
   const polygonCount = allNodes.filter(
-    (node) => node.type === 'polygon',
+    (node) => node.type === NodeType.Polygon,
   ).length;
 
   return `Polygon ${polygonCount + 1}`;
@@ -28,7 +33,7 @@ function getPolygonNode(nodeId: NodeId) {
     .getState()
     .getAllNodes()
     .find((n) => n.id === nodeId);
-  if (!node || node.type !== 'polygon') {
+  if (!node || node.type !== NodeType.Polygon) {
     return null;
   }
   return node;
@@ -38,7 +43,7 @@ function generatePolygonNode(points: PolygonPoint[]): PolygonNode {
   const box = getBoundingBox(points);
   return {
     id: uuidv4(),
-    type: 'polygon',
+    type: NodeType.Polygon,
     name: getNextPolygonName(),
     x: box.minX,
     y: box.minY,

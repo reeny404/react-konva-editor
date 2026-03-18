@@ -9,6 +9,6 @@ type SelectionStoreState = {
 
 export const useSelectionStore = create<SelectionStoreState>()((set) => ({
   selectedIds: [],
-  selectOnly: (id) => set((state) => ({ ...state, selectedIds: [id] })),
-  clearSelection: () => set((state) => ({ ...state, selectedIds: [] })),
+  selectOnly: (id) => set({ selectedIds: [id] }),
+  clearSelection: () => set({ selectedIds: [] }),
 }));

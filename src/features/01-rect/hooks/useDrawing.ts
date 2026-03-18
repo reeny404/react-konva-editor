@@ -3,6 +3,7 @@ import { getRelativePointerPosition } from '@/utils/coordinate';
 import type { KonvaPointerEvent } from 'konva/lib/PointerEvents';
 import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import { NodeType } from '@/types/node';
 import { documentCommands } from '../commands/documentCommands';
 
 export function useDrawing() {
@@ -65,7 +66,7 @@ export function useDrawing() {
     if (Math.abs(tempRect.w) > 5 && Math.abs(tempRect.h) > 5) {
       documentCommands.addNode({
         id: uuidv4(),
-        type: 'rect',
+        type: NodeType.Rect,
         name: `Rectangle ${latestCount + 1}`,
         parentId: latestCount > 0 ? nodes[latestCount - 1].id : undefined, //테스트 용
         // 음수 방향(왼쪽/위쪽) 드래그 대응 로직

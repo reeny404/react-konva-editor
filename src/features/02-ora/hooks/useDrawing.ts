@@ -3,6 +3,7 @@ import { getRelativePointerPosition } from '@/utils/coordinate';
 import type { KonvaPointerEvent } from 'konva/lib/PointerEvents';
 import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import { NodeType } from '@/types/node';
 import { documentCommands } from '../commands/documentCommands';
 
 export function useDrawing() {
@@ -66,7 +67,7 @@ export function useDrawing() {
 
       documentCommands.addNode({
         id: uuidv4(),
-        type: 'rect',
+        type: NodeType.Rect,
         name: `Rectangle ${latestCount + 1}`,
         parentId: parent?.id,
         x: parent ? absX - parent.x : absX,
