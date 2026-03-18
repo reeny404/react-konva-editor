@@ -8,7 +8,12 @@ export enum NodeType {
   Image = 'image',
   Svg = 'svg',
   Group = 'group',
+  Polygon = 'polygon',
 }
+export type PolygonPoint = {
+  x: number;
+  y: number;
+};
 
 type BaseNode<T extends NodeType> = {
   id: NodeId;
@@ -27,6 +32,11 @@ export type ImageNode = Omit<BaseNode<NodeType.Image>, 'fill' | 'stroke'> & {
   url: string;
 };
 
+export type PolygonNode = BaseNode<NodeType.Polygon> & {
+  points: PolygonPoint[];
+  strokeWidth: number;
+};
+
 export type SvgNode = BaseNode<NodeType.Svg> & {
   url: string;
 };
@@ -39,6 +49,7 @@ export type GroupNode = BaseNode<NodeType.Group> & {
 export type CanvasNode =
   | RectNode
   | CircleNode
+  | PolygonNode
   | ImageNode
   | SvgNode
   | GroupNode;
