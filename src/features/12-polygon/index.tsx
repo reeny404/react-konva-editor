@@ -18,8 +18,6 @@ export default function Canvas() {
   const { polygons, draft, rectDraft, activeTool, mode } = usePolygonAdapter();
 
   const handleMouseDown = (e: KonvaPointerEvent) => {
-    console.log('mouseDown target:', e.target);
-    console.log('isStage:', e.target === e.target.getStage());
     if (e.target !== e.target.getStage()) {
       return;
     }
