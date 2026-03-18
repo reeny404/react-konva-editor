@@ -16,6 +16,8 @@ type LayerStoreState = {
   removeLayer: (id: LayerId) => void;
   reorderLayer: (fromIndex: number, toIndex: number) => void;
 
+  getNode: (layerId: LayerId, nodeId: NodeId) => CanvasNode | undefined;
+  getAllNodes: () => CanvasNode[];
   addNode: (layerId: LayerId, node: CanvasNode) => void;
   removeNode: (layerId: LayerId, nodeId: NodeId) => void;
   patchNode: (
@@ -27,9 +29,18 @@ type LayerStoreState = {
 
 export const useLayerStore = create<LayerStoreState>()((set, get) => ({
   doc: {
-    activeLayerId: null,
-    layers: [],
-    layerMapper: {},
+    activeLayerId: 'layer-1',
+    layers: [
+      {
+        id: 'layer-1',
+        name: 'Layer 1',
+        visible: true,
+        locked: false,
+      },
+    ],
+    layerMapper: {
+      'layer-1': [],
+    },
   },
 
   setActiveLayer: (id) =>
@@ -119,6 +130,24 @@ export const useLayerStore = create<LayerStoreState>()((set, get) => ({
       };
     }),
 
+  //레이어에 속한 노드인지 확인 후 반환
+  getNode: (layerId, nodeId) => {
+    const state = get();
+    const layerNodes = state.doc.layerMapper[layerId];
+    if (!layerNodes || !layerNodes.includes(nodeId)) {
+      return undefined;
+    }
+    return useDocumentStore.getState().getNode(nodeId);
+  },
+
+  getAllNodes: () => {
+    const state = get();
+    const allNodeIds = Object.values(state.doc.layerMapper).flat();
+    return allNodeIds
+      .map((id) => useDocumentStore.getState().getNode(id))
+      .filter((node): node is CanvasNode => node !== undefined);
+  },
+
   addNode: (layerId, node) => {
     useDocumentStore.getState().addNode(node);
     set((state) => {
@@ -127,7 +156,7 @@ export const useLayerStore = create<LayerStoreState>()((set, get) => ({
           ...state.doc,
           layerMapper: {
             ...state.doc.layerMapper,
-            [layerId]: [...state.doc.layerMapper[layerId], node.id],
+            [layerId]: [...(state.doc.layerMapper[layerId] || []), node.id],
           },
         },
       };
@@ -142,7 +171,7 @@ export const useLayerStore = create<LayerStoreState>()((set, get) => ({
           ...state.doc,
           layerMapper: {
             ...state.doc.layerMapper,
-            [layerId]: state.doc.layerMapper[layerId].filter(
+            [layerId]: (state.doc.layerMapper[layerId] || []).filter(
               (id) => id !== nodeId,
             ),
           },
@@ -153,18 +182,5 @@ export const useLayerStore = create<LayerStoreState>()((set, get) => ({
 
   patchNode: (layerId, nodeId, patch) => {
     useDocumentStore.getState().updateNode(nodeId, patch);
-    set((state) => {
-      return {
-        doc: {
-          ...state.doc,
-          layerMapper: {
-            ...state.doc.layerMapper,
-            [layerId]: state.doc.layerMapper[layerId].filter(
-              (id) => id !== nodeId,
-            ),
-          },
-        },
-      };
-    });
   },
 }));
