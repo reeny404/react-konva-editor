@@ -1,4 +1,4 @@
-import type { CanvasNode } from '@/types/node';
+import { NodeType, type CanvasNode } from '@/types/node';
 import React from 'react';
 
 type PropertyInputProps = {
@@ -144,6 +144,21 @@ export default function CanvasNodeProperties({
           </>
         )}
       </div>
+      {selectedNode &&
+        (selectedNode.type === NodeType.Road ||
+          selectedNode.type === NodeType.Polygon) && (
+          <div className='grid grid-cols-2 gap-2 text-xs'>
+            <PropertyInput
+              label='Stroke Width'
+              type='number'
+              value={selectedNode.strokeWidth}
+              disabled={!selectedNode}
+              onUpdate={(val) =>
+                updateSelectedNode({ strokeWidth: Number(val) })
+              }
+            />
+          </div>
+        )}
     </div>
   );
 }

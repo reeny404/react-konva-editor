@@ -9,6 +9,7 @@ export enum NodeType {
   Svg = 'svg',
   Group = 'group',
   Polygon = 'polygon',
+  Road = 'road',
 }
 export type PolygonPoint = {
   x: number;
@@ -37,6 +38,12 @@ export type PolygonNode = BaseNode<NodeType.Polygon> & {
   strokeWidth: number;
 };
 
+export type RoadNode = BaseNode<NodeType.Road> & {
+  points: PolygonPoint[];
+  strokeWidth: number;
+  closed?: boolean;
+};
+
 export type SvgNode = BaseNode<NodeType.Svg> & {
   url: string;
 };
@@ -50,6 +57,7 @@ export type CanvasNode =
   | RectNode
   | CircleNode
   | PolygonNode
+  | RoadNode
   | ImageNode
   | SvgNode
   | GroupNode;
