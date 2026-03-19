@@ -1,7 +1,7 @@
 import { useDocumentStore } from '@/stores/documentStore';
 import { useLayerStore } from '@/stores/layerStore';
 import { useSelectionStore } from '@/stores/selectionStore';
-import type { PolygonNode, PolygonPoint } from '@/types/node';
+import type { Point, PolygonNode } from '@/types/node';
 import { useMemo } from 'react';
 import { usePolygonToolStore } from '../stores/polygonToolStore';
 import { flattenPoints, getPolygonEdges } from '../utils/polygonUtils';
@@ -16,8 +16,8 @@ export interface PolygonViewModel extends PolygonNode {
   isEditing: boolean;
   flattenedPoints: number[];
   edges?: Array<{
-    start: PolygonPoint;
-    end: PolygonPoint;
+    start: Point;
+    end: Point;
     edgeIndex: number;
     insertIndex: number;
   }>;

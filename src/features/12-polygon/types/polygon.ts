@@ -1,5 +1,5 @@
 // @/types/polygon.ts
-import type { NodeId, PolygonPoint } from '@/types/node';
+import type { NodeId, Point } from '@/types/node';
 
 export type RectDraft = {
   isDrawing: boolean;
@@ -11,8 +11,8 @@ export type RectDraft = {
 
 export type PolygonDraft = {
   isDrawing: boolean;
-  points: PolygonPoint[];
-  previewPoint: PolygonPoint | null;
+  points: Point[];
+  previewPoint: Point | null;
   isHoveringStartPoint: boolean;
 };
 

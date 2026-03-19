@@ -1,7 +1,7 @@
-import type { PolygonPoint } from '@/types/node';
+import type { Point } from '@/types/node';
 import type { PolygonDraft } from '../types/polygon';
 
-export function getBoundingBox(points: PolygonPoint[]) {
+export function getBoundingBox(points: Point[]) {
   const xs = points.map((p) => p.x);
   const ys = points.map((p) => p.y);
 
@@ -20,7 +20,7 @@ export function rectToPolygonPoints(
   y: number,
   width: number,
   height: number,
-): PolygonPoint[] {
+): Point[] {
   const left = width >= 0 ? x : x + width;
   const top = height >= 0 ? y : y + height;
   const w = Math.abs(width);
@@ -35,7 +35,7 @@ export function rectToPolygonPoints(
 }
 
 export function toLocalPoints(
-  points: PolygonPoint[],
+  points: Point[],
   originX: number,
   originY: number,
 ) {
@@ -45,17 +45,14 @@ export function toLocalPoints(
   }));
 }
 
-export function appendPolygonPoint(
-  points: PolygonPoint[],
-  point: PolygonPoint,
-) {
+export function appendPolygonPoint(points: Point[], point: Point) {
   return [...points, point];
 }
 
 export function insertPolygonPointAt(
-  points: PolygonPoint[],
+  points: Point[],
   index: number,
-  point: PolygonPoint,
+  point: Point,
 ) {
   const nextPoints = [...points];
   nextPoints.splice(index, 0, point);
@@ -63,9 +60,9 @@ export function insertPolygonPointAt(
 }
 
 export function replacePolygonPointAt(
-  points: PolygonPoint[],
+  points: Point[],
   index: number,
-  point: PolygonPoint,
+  point: Point,
 ) {
   return points.map((p, i) => (i === index ? point : p));
 }
@@ -79,11 +76,11 @@ export function createEmptyPolygonDraft(): PolygonDraft {
   };
 }
 
-export function flattenPoints(points: PolygonPoint[]) {
+export function flattenPoints(points: Point[]) {
   return points.flatMap((point) => [point.x, point.y]);
 }
 
-export function getPolygonEdges(points: PolygonPoint[]) {
+export function getPolygonEdges(points: Point[]) {
   return points.map((point, index) => {
     const nextIndex = (index + 1) % points.length;
     return {
