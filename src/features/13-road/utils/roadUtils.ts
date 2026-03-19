@@ -1,4 +1,4 @@
-import type { Point } from '@/types/node';
+import type { PolygonPoint } from '@/types/node';
 import type { RoadDraft } from '../types/road';
 
 export function createEmptyRoadDraft(): RoadDraft {
@@ -9,11 +9,11 @@ export function createEmptyRoadDraft(): RoadDraft {
   };
 }
 
-export function flattenPoints(points: Point[]): number[] {
+export function flattenPoints(points: PolygonPoint[]): number[] {
   return points.flatMap((p) => [p.x, p.y]);
 }
 
-export function getBoundingBox(points: Point[]) {
+export function getBoundingBox(points: PolygonPoint[]) {
   if (points.length === 0) {
     return { minX: 0, minY: 0, width: 0, height: 0 };
   }
@@ -30,10 +30,10 @@ export function getBoundingBox(points: Point[]) {
 }
 
 export function toLocalPoints(
-  points: Point[],
+  points: PolygonPoint[],
   originX: number,
   originY: number,
-): Point[] {
+): PolygonPoint[] {
   return points.map((p) => ({ x: p.x - originX, y: p.y - originY }));
 }
 
@@ -42,7 +42,7 @@ export function toLocalPoints(
  * - closed=false: 열린 라인 (Road) → 마지막-첫점 연결 없음
  * - closed=true : 닫힌 폴리곤처럼 처리
  */
-export function getRoadEdges(points: Point[], closed = false) {
+export function getRoadEdges(points: PolygonPoint[], closed = false) {
   const len = closed ? points.length : points.length - 1;
   return Array.from({ length: len }, (_, i) => {
     const next = (i + 1) % points.length;

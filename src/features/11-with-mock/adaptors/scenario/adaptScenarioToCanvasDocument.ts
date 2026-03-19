@@ -1,10 +1,9 @@
 import type { DocumentCommands } from '@/commands/documentCommands';
 import BOX_ICON from '@/icons/box.svg';
 import type { Size } from '@/types/geometry';
-import type { CanvasNode } from '@/types/node';
-import { v4 as uuid } from 'uuid';
-import { LOCKED_DEFAULT } from '../../constant';
+import { type CanvasNode } from '@/types/node';
 import {
+  createGroupNode,
   createImageNode,
   createRectNode,
   createSvgNode,
@@ -104,137 +103,142 @@ export function adaptScenarioToCanvasDocument(
 
   const bg = scenario.backgroundImage;
   if (bg?.visible) {
-    const rect = boundsToRect(
-      safeBounds(bg, fallbackBounds),
-      transform,
-      canvasHeight,
-    );
     scenarioChildNodes.push(
       createImageNode({
-        id: uuid(),
         name: 'Background Image',
         rotation: 0,
         url: '/mocks/background.png',
-        locked: bg.lock ?? false,
-        ...rect,
+        locked: Boolean(bg.lock),
+        ...boundsToRect(
+          safeBounds(bg, fallbackBounds),
+          transform,
+          canvasHeight,
+        ),
       }),
     );
   }
 
-  const mainRacks = scenario.mainRacks?.items ?? [];
-  for (const rack of mainRacks) {
-    if (rack.visible === false) {
+  const batteryLimit = scenario.batteryLimit;
+  scenarioChildNodes.push(
+    createRectNode({
+      name: 'Battery Limit',
+      rotation: 0,
+      opacity: 0.2,
+      fill: '#FFFFFF',
+      stroke: '#000000',
+      locked: Boolean(batteryLimit?.lock),
+      ...boundsToRect(
+        safeBounds(batteryLimit, fallbackBounds),
+        transform,
+        canvasHeight,
+      ),
+    }),
+  );
+
+  const mprLayer = scenario.mainRacks;
+  for (const mpr of mprLayer?.items ?? []) {
+    if (mpr.visible === false) {
       continue;
     }
-    const locked = !!(scenario.mainRacks?.lock ?? rack.lock);
-    const rect = boundsToRect(
-      safeBounds(rack, fallbackBounds),
-      transform,
-      canvasHeight,
-    );
+    const isLockedMpr = Boolean(mprLayer?.lock || mpr.lock);
+
     scenarioChildNodes.push(
       createRectNode({
-        id: uuid(),
-        name: rack.rackNumber,
-        rotation: rack.rotation ?? 0,
-        opacity: rack.opacity ?? 100,
+        name: mpr.rackNumber,
+        rotation: mpr.rotation ?? 0,
+        opacity: mpr.opacity ?? 0.5,
         fill: '#DBEAFE',
         stroke: '#9CA3AF',
-        locked,
-        ...rect,
+        locked: isLockedMpr,
+        ...boundsToRect(
+          safeBounds(mpr, fallbackBounds),
+          transform,
+          canvasHeight,
+        ),
       }),
     );
 
-    rack.equipments?.forEach((equipment) => {
-      const equipmentRect = boundsToRect(
-        safeBounds(equipment, fallbackBounds),
-        transform,
-        canvasHeight,
-      );
+    mpr.equipments?.forEach((equipment) => {
       scenarioChildNodes.push(
         createSvgNode({
-          id: uuid(),
           name: equipment.equipmentTag,
           rotation: equipment.equipmentRotation ?? 0,
           fill: '#66FFCC',
           stroke: '#337F66',
           url: BOX_ICON,
-          locked,
-          ...equipmentRect,
+          locked: isLockedMpr,
+          ...boundsToRect(
+            safeBounds(equipment, fallbackBounds),
+            transform,
+            canvasHeight,
+          ),
         }),
       );
     });
   }
 
-  nodes.push(createGroup('Scenario', scenarioChildNodes));
+  nodes.push(createGroupNode('Scenario', scenarioChildNodes));
 
   for (const subarea of subareas) {
     const subareaChildNodes: CanvasNode[] = [];
 
-    const rect = boundsToRect(
-      safeBounds(subarea, fallbackBounds),
-      transform,
-      canvasHeight,
-    );
     subareaChildNodes.push(
       createRectNode({
-        id: subarea._id,
         name: subarea.name,
         rotation: 0,
-        ...rect,
         fill: subarea.color ?? '#F9CDD2',
         stroke: '#9CA3AF',
-        opacity: subarea.opacity ?? 100,
+        opacity: subarea.opacity ?? 0.5,
         locked: !!subarea.lock,
+        ...boundsToRect(
+          safeBounds(subarea, fallbackBounds),
+          transform,
+          canvasHeight,
+        ),
       }),
     );
 
-    const subRacks = subarea.subRacks?.items ?? [];
-    for (const rack of subRacks) {
-      if (rack.visible === false) {
+    const subRackLayer = subarea.subRacks;
+    for (const spr of subRackLayer?.items ?? []) {
+      if (spr.visible === false) {
         continue;
       }
-      const locked = !!(subarea.subRacks?.lock ?? rack.lock);
-      const rect = boundsToRect(
-        safeBounds(rack, fallbackBounds),
-        transform,
-        canvasHeight,
-      );
       subareaChildNodes.push(
         createRectNode({
-          id: uuid(),
-          name: rack.rackNumber,
-          rotation: rack.rotation ?? 0,
-          ...rect,
-          opacity: rack.opacity ?? 100,
-          fill: rack.color ?? '#EDE9FE',
+          name: spr.rackNumber,
+          rotation: spr.rotation ?? 0,
+          opacity: spr.opacity ?? 0.5,
+          fill: spr.color ?? '#EDE9FE',
           stroke: '#9CA3AF',
-          locked,
+          locked: Boolean(subRackLayer?.lock || spr.lock),
+          ...boundsToRect(
+            safeBounds(spr, fallbackBounds),
+            transform,
+            canvasHeight,
+          ),
         }),
       );
     }
 
-    const buildings = subarea.buildings?.items ?? [];
-    for (const building of buildings) {
+    const buildingLayer = subarea.buildings;
+    for (const building of buildingLayer?.items ?? []) {
       if (building.visible === false) {
         continue;
       }
-      const locked = !!(subarea.buildings?.lock ?? building.lock);
-      const buildingRect = boundsToRect(
-        safeBounds(building, fallbackBounds),
-        transform,
-        canvasHeight,
-      );
+      const isLockedBuilding = Boolean(buildingLayer?.lock || building.lock);
       subareaChildNodes.push(
         createRectNode({
-          id: uuid(),
           name: building.name,
           rotation: building.rotation ?? 0,
-          ...buildingRect,
-          opacity: building.opacity ?? 100,
+          opacity: building.opacity ?? 0.5,
           fill: building.color ?? '#FFEDD5',
           stroke: '#9CA3AF',
-          locked,
+          locked: isLockedBuilding,
+          ...boundsToRect(
+            safeBounds(building, fallbackBounds),
+            transform,
+            canvasHeight,
+          ),
         }),
       );
     }
@@ -244,31 +248,10 @@ export function adaptScenarioToCanvasDocument(
     // structures
     // process flows
 
-    nodes.push(createGroup(subarea.name, subareaChildNodes));
+    nodes.push(createGroupNode(subarea.name, subareaChildNodes));
   }
 
   return {
     nodes,
-  };
-}
-
-/**
- * TODO GroupNode 속성 점검 필요
- */
-function createGroup(name: string, nodes: CanvasNode[]): CanvasNode {
-  return {
-    id: uuid(),
-    type: 'group',
-    name,
-    visible: true,
-    locked: LOCKED_DEFAULT,
-    children: nodes,
-    rotation: 0,
-    fill: '#FFFFFF',
-    stroke: '#000000',
-    width: 0,
-    height: 0,
-    x: 0,
-    y: 0,
   };
 }

@@ -1,6 +1,11 @@
 import { layerCommands } from '@/commands/layerCommands';
 import { useLayerStore } from '@/stores/layerStore';
-import type { NodeId, Point, RoadNode } from '@/types/node';
+import {
+  NodeType,
+  type NodeId,
+  type PolygonPoint,
+  type RoadNode,
+} from '@/types/node';
 import { v4 as uuidv4 } from 'uuid';
 import { useRoadToolStore } from '../stores/roadToolStore';
 import {
@@ -11,7 +16,7 @@ import {
 
 function getNextRoadName() {
   const allNodes = useLayerStore.getState().getAllNodes();
-  const count = allNodes.filter((n) => n.type === 'road').length;
+  const count = allNodes.filter((n) => n.type === NodeType.Road).length;
   return `Road ${count + 1}`;
 }
 
@@ -20,7 +25,7 @@ function getRoadNode(nodeId: NodeId): RoadNode | null {
     .getState()
     .getAllNodes()
     .find((n) => n.id === nodeId);
-  return node?.type === 'road' ? node : null;
+  return node?.type === NodeType.Road ? node : null;
 }
 
 function getActiveLayerId(): string | null {
@@ -32,11 +37,11 @@ function getActiveLayerId(): string | null {
   return layers.length > 0 ? layers[layers.length - 1].id : null;
 }
 
-function buildRoadNode(points: Point[]): RoadNode {
+function buildRoadNode(points: PolygonPoint[]): RoadNode {
   const box = getBoundingBox(points);
   return {
     id: uuidv4(),
-    type: 'road',
+    type: NodeType.Road,
     name: getNextRoadName(),
     x: box.minX,
     y: box.minY,
@@ -60,7 +65,7 @@ export const roadCommands = {
     });
   },
 
-  appendPoint(point: Point) {
+  appendPoint(point: PolygonPoint) {
     const { mode, draft } = useRoadToolStore.getState();
     if (mode.type !== 'drawing-road') {
       return;
@@ -70,7 +75,7 @@ export const roadCommands = {
     });
   },
 
-  updatePreviewPoint(point: Point) {
+  updatePreviewPoint(point: PolygonPoint) {
     const { mode, draft } = useRoadToolStore.getState();
     if (mode.type !== 'drawing-road') {
       return;
@@ -120,7 +125,7 @@ export const roadCommands = {
     useRoadToolStore.setState({ mode: { type: 'idle' } });
   },
 
-  insertVertex(nodeId: NodeId, insertIndex: number, point: Point) {
+  insertVertex(nodeId: NodeId, insertIndex: number, point: PolygonPoint) {
     const node = getRoadNode(nodeId);
     if (!node) {
       return;
@@ -134,7 +139,7 @@ export const roadCommands = {
     }
   },
 
-  moveVertex(nodeId: NodeId, index: number, point: Point) {
+  moveVertex(nodeId: NodeId, index: number, point: PolygonPoint) {
     const node = getRoadNode(nodeId);
     if (!node) {
       return;

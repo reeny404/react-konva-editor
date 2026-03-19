@@ -1,11 +1,11 @@
-import type { NodeId, Point } from '@/types/node';
+import type { NodeId, PolygonPoint } from '@/types/node';
 
 export type RoadToolType = 'road-click';
 
 export type RoadDraft = {
   isDrawing: boolean;
-  points: Point[];
-  previewPoint: Point | null;
+  points: PolygonPoint[];
+  previewPoint: PolygonPoint | null;
 };
 
 export type RoadEditorMode =

@@ -1,7 +1,7 @@
 import { useDocumentStore } from '@/stores/documentStore';
 import { useLayerStore } from '@/stores/layerStore';
 import { useSelectionStore } from '@/stores/selectionStore';
-import type { Point, PolygonNode } from '@/types/node';
+import { NodeType, type PolygonNode, type PolygonPoint } from '@/types/node';
 import { useMemo } from 'react';
 import { usePolygonToolStore } from '../stores/polygonToolStore';
 import { flattenPoints, getPolygonEdges } from '../utils/polygonUtils';
@@ -16,8 +16,8 @@ export interface PolygonViewModel extends PolygonNode {
   isEditing: boolean;
   flattenedPoints: number[];
   edges?: Array<{
-    start: Point;
-    end: Point;
+    start: PolygonPoint;
+    end: PolygonPoint;
     edgeIndex: number;
     insertIndex: number;
   }>;
@@ -39,7 +39,7 @@ export function usePolygonAdapter() {
 
     return allNodeIds
       .map((id) => documentNodes[id])
-      .filter((node): node is PolygonNode => node?.type === 'polygon') //그 아이디로 실제 node 가져와 polygon만 꺼냄
+      .filter((node): node is PolygonNode => node?.type === NodeType.Polygon) //그 아이디로 실제 node 가져와 polygon만 꺼냄
       .map((node): PolygonViewModel => {
         const isEditing =
           mode.type === 'editing-polygon' && mode.nodeId === node.id;

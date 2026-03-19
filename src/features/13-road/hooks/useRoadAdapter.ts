@@ -1,7 +1,7 @@
 import { useDocumentStore } from '@/stores/documentStore';
 import { useLayerStore } from '@/stores/layerStore';
 import { useSelectionStore } from '@/stores/selectionStore';
-import type { Point, RoadNode } from '@/types/node';
+import { NodeType, type PolygonPoint, type RoadNode } from '@/types/node';
 import { useMemo } from 'react';
 import { useRoadToolStore } from '../stores/roadToolStore';
 import { flattenPoints, getRoadEdges } from '../utils/roadUtils';
@@ -11,15 +11,15 @@ export interface RoadViewModel extends RoadNode {
   isEditing: boolean;
   flattenedPoints: number[];
   edges?: Array<{
-    start: Point;
-    end: Point;
+    start: PolygonPoint;
+    end: PolygonPoint;
     edgeIndex: number;
     insertIndex: number;
   }>;
 }
 
 export interface DraftViewModel {
-  points: Point[];
+  points: PolygonPoint[];
   flattenedPoints: number[];
   isDrawing: boolean;
   canFinish: boolean;
@@ -39,7 +39,7 @@ export function useRoadAdapter() {
 
     return allIds
       .map((id) => documentNodes[id])
-      .filter((node): node is RoadNode => node?.type === 'road')
+      .filter((node): node is RoadNode => node?.type === NodeType.Road)
       .map((node): RoadViewModel => {
         const isEditing =
           mode.type === 'editing-road' && mode.nodeId === node.id;

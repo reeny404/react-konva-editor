@@ -1,6 +1,11 @@
 import { layerCommands } from '@/commands/layerCommands'; // 새로 만든 layerCommands 사용
 import { useLayerStore } from '@/stores/layerStore'; // LayerStore 사용
-import type { NodeId, Point, PolygonNode } from '@/types/node';
+import {
+  NodeType,
+  type NodeId,
+  type PolygonNode,
+  type PolygonPoint,
+} from '@/types/node';
 import { v4 as uuidv4 } from 'uuid';
 import { usePolygonToolStore } from '../stores/polygonToolStore';
 import {
@@ -17,7 +22,7 @@ function getNextPolygonName() {
   const state = useLayerStore.getState();
   const allNodes = state.getAllNodes();
   const polygonCount = allNodes.filter(
-    (node) => node.type === 'polygon',
+    (node) => node.type === NodeType.Polygon,
   ).length;
 
   return `Polygon ${polygonCount + 1}`;
@@ -28,17 +33,17 @@ function getPolygonNode(nodeId: NodeId) {
     .getState()
     .getAllNodes()
     .find((n) => n.id === nodeId);
-  if (!node || node.type !== 'polygon') {
+  if (!node || node.type !== NodeType.Polygon) {
     return null;
   }
   return node;
 }
 
-function generatePolygonNode(points: Point[]): PolygonNode {
+function generatePolygonNode(points: PolygonPoint[]): PolygonNode {
   const box = getBoundingBox(points);
   return {
     id: uuidv4(),
-    type: 'polygon',
+    type: NodeType.Polygon,
     name: getNextPolygonName(),
     x: box.minX,
     y: box.minY,
@@ -64,7 +69,7 @@ export const polygonCommands = {
   },
 
   // 방법 1: 사각형 그려서 polygon 그리는 방식
-  startRectDrawing(point: Point) {
+  startRectDrawing(point: PolygonPoint) {
     usePolygonToolStore.setState({
       draft: createEmptyPolygonDraft(),
       rectDraft: {
@@ -78,7 +83,7 @@ export const polygonCommands = {
     });
   },
 
-  updateRectDraft(point: Point) {
+  updateRectDraft(point: PolygonPoint) {
     const state = usePolygonToolStore.getState();
 
     if (state.mode.type !== 'drawing-polygon-from-rect' || !state.rectDraft) {
@@ -146,7 +151,7 @@ export const polygonCommands = {
     }));
   },
 
-  appendPoint(point: Point) {
+  appendPoint(point: PolygonPoint) {
     const state = usePolygonToolStore.getState();
     const { draft, mode } = state;
 
@@ -162,7 +167,7 @@ export const polygonCommands = {
     });
   },
 
-  updatePreviewPoint(point: Point) {
+  updatePreviewPoint(point: PolygonPoint) {
     const state = usePolygonToolStore.getState();
     const { draft, mode } = state;
 
@@ -240,7 +245,7 @@ export const polygonCommands = {
     });
   },
 
-  insertVertex(nodeId: NodeId, insertIndex: number, point: Point) {
+  insertVertex(nodeId: NodeId, insertIndex: number, point: PolygonPoint) {
     const node = getPolygonNode(nodeId);
     if (!node) {
       return;
@@ -254,7 +259,7 @@ export const polygonCommands = {
     }
   },
 
-  moveVertex(nodeId: NodeId, vertexIndex: number, point: Point) {
+  moveVertex(nodeId: NodeId, vertexIndex: number, point: PolygonPoint) {
     const node = getPolygonNode(nodeId);
     if (!node) {
       return;

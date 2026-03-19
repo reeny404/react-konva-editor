@@ -1,64 +1,28 @@
 import useCanvasStage from '@/hooks/useCanvasStage';
+import type { Position, Size } from '@/types/geometry';
+import type { PolygonShape } from '@/types/shape';
 import { CanvasStage } from '@/ui/CanvasStage';
+import { clamp } from '@/utils/number';
+import { isRectInsidePolygon } from '@/utils/validator/overlap';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Layer, Line, Rect, Text } from 'react-konva';
 
-type Position = { x: number; y: number };
-type AreaRect = { x: number; y: number; width: number; height: number };
-
-type PolygonArea = Position[];
-
-const RECT_ALLOWED_AREA: AreaRect = { x: 100, y: 100, width: 400, height: 400 };
+const RECT_ALLOWED_AREA: Size & Position = {
+  x: 100,
+  y: 100,
+  width: 400,
+  height: 400,
+};
 const RECT_SIZE = { width: 90, height: 70 };
 const POLY_RECT_SIZE = { width: 80, height: 60 };
 
-const ALLOWED_POLYGON: PolygonArea = [
+const ALLOWED_POLYGON: PolygonShape = [
   { x: 760, y: 130 },
   { x: 1040, y: 100 },
   { x: 1180, y: 320 },
   { x: 980, y: 520 },
   { x: 700, y: 430 },
 ];
-
-function clamp(value: number, min: number, max: number) {
-  return Math.max(min, Math.min(value, max));
-}
-
-function isPointInPolygon(point: Position, polygon: PolygonArea) {
-  let inside = false;
-
-  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-    const xi = polygon[i].x;
-    const yi = polygon[i].y;
-    const xj = polygon[j].x;
-    const yj = polygon[j].y;
-
-    const intersect =
-      yi > point.y !== yj > point.y &&
-      point.x < ((xj - xi) * (point.y - yi)) / (yj - yi) + xi;
-
-    if (intersect) {
-      inside = !inside;
-    }
-  }
-
-  return inside;
-}
-
-function isRectInsidePolygon(
-  pos: Position,
-  size: { width: number; height: number },
-  polygon: PolygonArea,
-) {
-  const corners: Position[] = [
-    { x: pos.x, y: pos.y },
-    { x: pos.x + size.width, y: pos.y },
-    { x: pos.x + size.width, y: pos.y + size.height },
-    { x: pos.x, y: pos.y + size.height },
-  ];
-
-  return corners.every((corner) => isPointInPolygon(corner, polygon));
-}
 
 export default function Canvas() {
   const { containerRef, stageSize } = useCanvasStage();

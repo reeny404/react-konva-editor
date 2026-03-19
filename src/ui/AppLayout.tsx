@@ -1,7 +1,7 @@
 import { documentCommands } from '@/commands/documentCommands';
 import { redoCommand, undoCommand } from '@/commands/history';
 import { selectionCommands } from '@/commands/selectionCommands';
-import { PropertyInput } from '@/components/right-panel/PropertyInput';
+import CanvasNodeProperties from '@/components/right-panel/NodeProperties';
 import { layerCommands } from '@/features/10-layer/commands/layerCommands';
 import { routes } from '@/features/routes';
 import { useSelectedNode } from '@/hooks/useSelectedNode';
@@ -147,130 +147,13 @@ export default function AppLayout() {
         role='RightPanel'
         className='w-80 shrink-0 space-y-4 border-l border-slate-200 bg-white p-4'
       >
-        <PropertySection
-          selectedNode={selectedNode}
-          updateSelectedNode={updateSelectedNode}
-        />
+        <SectionCard title='Properties'>
+          <CanvasNodeProperties
+            selectedNode={selectedNode}
+            updateSelectedNode={updateSelectedNode}
+          />
+        </SectionCard>
       </aside>
-    </div>
-  );
-}
-
-function PropertySection({
-  selectedNode,
-  updateSelectedNode,
-}: {
-  selectedNode: CanvasNode | null;
-  updateSelectedNode: (patch: Partial<CanvasNode>) => void;
-}) {
-  if (!selectedNode || selectedNode.type === 'group') {
-    return null;
-  }
-
-  return (
-    <SectionCard title='Properties'>
-      <div className='space-y-3 text-sm'>
-        <div>
-          <p className='text-xs text-slate-500'>선택 객체</p>
-          <p className='font-medium text-slate-800'>
-            {selectedNode?.name ?? '선택 없음'}
-          </p>
-        </div>
-
-        <div className='grid grid-cols-2 gap-2 text-xs'>
-          <Property
-            label='X'
-            type='number'
-            value={selectedNode ? Math.round(selectedNode.x) : ''}
-            disabled={!selectedNode}
-            onUpdate={(val) => updateSelectedNode({ x: Number(val) })}
-          />
-          <Property
-            label='Y'
-            type='number'
-            value={selectedNode ? Math.round(selectedNode.y) : ''}
-            disabled={!selectedNode}
-            onUpdate={(val) => updateSelectedNode({ y: Number(val) })}
-          />
-        </div>
-
-        <div className='grid grid-cols-2 gap-2 text-xs'>
-          <Property
-            label='Width'
-            type='number'
-            value={selectedNode ? Math.round(selectedNode.width) : ''}
-            disabled={!selectedNode}
-            onUpdate={(val) => updateSelectedNode({ width: Number(val) })}
-          />
-          <Property
-            label='Height'
-            type='number'
-            value={selectedNode ? Math.round(selectedNode.height) : ''}
-            disabled={!selectedNode}
-            onUpdate={(val) => updateSelectedNode({ height: Number(val) })}
-          />
-        </div>
-
-        <div className='grid grid-cols-2 gap-2 text-xs'>
-          <Property
-            label='Opacity'
-            type='number'
-            value={selectedNode?.opacity ?? 100}
-            disabled={!selectedNode}
-            onUpdate={(val) => updateSelectedNode({ opacity: Number(val) })}
-          />
-          <Property
-            label='Rotation'
-            type='number'
-            value={selectedNode?.rotation ?? 0}
-            disabled={!selectedNode}
-            onUpdate={(val) => updateSelectedNode({ rotation: Number(val) })}
-          />
-        </div>
-
-        <div className='grid grid-cols-2 gap-2 text-xs'>
-          {selectedNode.type !== 'image' && (
-            <>
-              <Property
-                label='Fill'
-                type='color'
-                value={selectedNode?.fill ?? '#000000'}
-                disabled={!selectedNode}
-                onUpdate={(val) => updateSelectedNode({ fill: String(val) })}
-              />
-              <Property
-                label='Stroke'
-                type='color'
-                value={selectedNode?.stroke ?? '#000000'}
-                disabled={!selectedNode}
-                onUpdate={(val) => updateSelectedNode({ stroke: String(val) })}
-              />
-            </>
-          )}
-        </div>
-
-        {(selectedNode.type === 'road' || selectedNode.type === 'polygon') && (
-          <div className='grid grid-cols-2 gap-2 text-xs'>
-            <Property
-              label='Stroke Width'
-              type='number'
-              value={selectedNode.strokeWidth}
-              disabled={!selectedNode}
-              onUpdate={(val) =>
-                updateSelectedNode({ strokeWidth: Number(val) })
-              }
-            />
-          </div>
-        )}
-      </div>
-    </SectionCard>
-  );
-}
-
-function Property(props: Parameters<typeof PropertyInput>[0]) {
-  return (
-    <div className='rounded-lg bg-slate-100 px-3 py-2'>
-      <PropertyInput {...props} />
     </div>
   );
 }

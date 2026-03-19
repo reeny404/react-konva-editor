@@ -1,5 +1,7 @@
 import { documentCommands } from '@/commands/documentCommands';
 import Button from '@/components/Button';
+import { useCanvasNodes } from '@/hooks/useCanvasNodes';
+import { useLoading } from '@/hooks/useLoading';
 import type { Size } from '@/types/geometry';
 import { FileError } from '@/utils/file';
 import { useEffect, useState } from 'react';
@@ -24,6 +26,10 @@ export default function Container() {
     },
   });
 
+  const nodes = useCanvasNodes();
+
+  const { loading, startLoading, stopLoading } = useLoading();
+
   useEffect(() => {
     return () => {
       documentCommands.loadDocument({
@@ -33,6 +39,8 @@ export default function Container() {
   }, []);
 
   const handleLoadMock = async () => {
+    startLoading();
+
     try {
       setMockError(null);
 
@@ -52,18 +60,19 @@ export default function Container() {
       }
 
       setMockError('알 수 없는 오류로 mock 데이터를 불러오지 못했습니다.');
+    } finally {
+      stopLoading();
     }
   };
 
   return (
     <>
       <div className='flex flex-wrap items-center gap-2 border-b border-slate-200 p-2'>
-        <Button onClick={handleLoadMock}>Mock 데이터 로드</Button>
+        <Button onClick={handleLoadMock} disabled={loading}>
+          load mock
+        </Button>
 
-        <Button
-          className={readonly ? 'bg-slate-300' : ''}
-          onClick={() => setReadonly((prev) => !prev)}
-        >
+        <Button onClick={() => setReadonly((prev) => !prev)}>
           Locked: {readonly ? 'ON' : 'OFF'}
         </Button>
       </div>
@@ -77,6 +86,7 @@ export default function Container() {
           canvasSize={metadata.canvasSize}
           cellSize={metadata.cellSize}
           readonly={readonly}
+          nodes={nodes}
         />
       )}
     </>
