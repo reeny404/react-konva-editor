@@ -1,6 +1,6 @@
 import { layerCommands } from '@/commands/layerCommands'; // 새로 만든 layerCommands 사용
 import { useLayerStore } from '@/stores/layerStore'; // LayerStore 사용
-import type { NodeId, PolygonNode, PolygonPoint } from '@/types/node';
+import type { NodeId, Point, PolygonNode } from '@/types/node';
 import { v4 as uuidv4 } from 'uuid';
 import { usePolygonToolStore } from '../stores/polygonToolStore';
 import {
@@ -34,7 +34,7 @@ function getPolygonNode(nodeId: NodeId) {
   return node;
 }
 
-function generatePolygonNode(points: PolygonPoint[]): PolygonNode {
+function generatePolygonNode(points: Point[]): PolygonNode {
   const box = getBoundingBox(points);
   return {
     id: uuidv4(),
@@ -64,7 +64,7 @@ export const polygonCommands = {
   },
 
   // 방법 1: 사각형 그려서 polygon 그리는 방식
-  startRectDrawing(point: PolygonPoint) {
+  startRectDrawing(point: Point) {
     usePolygonToolStore.setState({
       draft: createEmptyPolygonDraft(),
       rectDraft: {
@@ -78,7 +78,7 @@ export const polygonCommands = {
     });
   },
 
-  updateRectDraft(point: PolygonPoint) {
+  updateRectDraft(point: Point) {
     const state = usePolygonToolStore.getState();
 
     if (state.mode.type !== 'drawing-polygon-from-rect' || !state.rectDraft) {
@@ -146,7 +146,7 @@ export const polygonCommands = {
     }));
   },
 
-  appendPoint(point: PolygonPoint) {
+  appendPoint(point: Point) {
     const state = usePolygonToolStore.getState();
     const { draft, mode } = state;
 
@@ -162,7 +162,7 @@ export const polygonCommands = {
     });
   },
 
-  updatePreviewPoint(point: PolygonPoint) {
+  updatePreviewPoint(point: Point) {
     const state = usePolygonToolStore.getState();
     const { draft, mode } = state;
 
@@ -240,7 +240,7 @@ export const polygonCommands = {
     });
   },
 
-  insertVertex(nodeId: NodeId, insertIndex: number, point: PolygonPoint) {
+  insertVertex(nodeId: NodeId, insertIndex: number, point: Point) {
     const node = getPolygonNode(nodeId);
     if (!node) {
       return;
@@ -254,7 +254,7 @@ export const polygonCommands = {
     }
   },
 
-  moveVertex(nodeId: NodeId, vertexIndex: number, point: PolygonPoint) {
+  moveVertex(nodeId: NodeId, vertexIndex: number, point: Point) {
     const node = getPolygonNode(nodeId);
     if (!node) {
       return;

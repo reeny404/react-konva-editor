@@ -248,6 +248,20 @@ function PropertySection({
             </>
           )}
         </div>
+
+        {(selectedNode.type === 'road' || selectedNode.type === 'polygon') && (
+          <div className='grid grid-cols-2 gap-2 text-xs'>
+            <Property
+              label='Stroke Width'
+              type='number'
+              value={selectedNode.strokeWidth}
+              disabled={!selectedNode}
+              onUpdate={(val) =>
+                updateSelectedNode({ strokeWidth: Number(val) })
+              }
+            />
+          </div>
+        )}
       </div>
     </SectionCard>
   );

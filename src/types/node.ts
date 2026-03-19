@@ -3,7 +3,7 @@ import type { Color } from './style';
 
 export type NodeId = string;
 
-export type PolygonPoint = {
+export type Point = {
   x: number;
   y: number;
 };
@@ -26,8 +26,14 @@ export type ImageNode = Omit<BaseNode<'image'>, 'fill' | 'stroke'> & {
 };
 
 export type PolygonNode = BaseNode<'polygon'> & {
-  points: PolygonPoint[];
+  points: Point[];
   strokeWidth: number;
+};
+
+export type RoadNode = BaseNode<'road'> & {
+  points: Point[];
+  strokeWidth: number;
+  closed?: boolean;
 };
 
 export type SvgNode = BaseNode<'svg'> & {
@@ -43,6 +49,7 @@ export type CanvasNode =
   | RectNode
   | CircleNode
   | PolygonNode
+  | RoadNode
   | ImageNode
   | SvgNode
   | GroupNode;

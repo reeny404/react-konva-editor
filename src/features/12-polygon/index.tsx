@@ -159,7 +159,7 @@ export default function Canvas() {
                   stroke={
                     node.isSelected ? '#111827' : (node.stroke ?? '#38bdf8')
                   }
-                  strokeWidth={node.isSelected ? 3 : node.strokeWidth}
+                  strokeWidth={node.strokeWidth}
                   lineJoin='round'
                   onClick={(e) => {
                     e.cancelBubble = true;
