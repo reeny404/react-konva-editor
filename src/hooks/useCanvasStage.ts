@@ -10,7 +10,18 @@ function useCanvasStage() {
       return;
     }
 
-    setStageSize({ width: element.clientWidth, height: element.clientHeight });
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const { width, height } = entry.contentRect;
+        setStageSize({ width, height });
+      }
+    });
+
+    observer.observe(element);
+
+    return () => {
+      observer.disconnect();
+    };
   }, []);
 
   return { containerRef, stageSize };
