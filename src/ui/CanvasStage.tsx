@@ -17,7 +17,7 @@ export function CanvasStage({ containerRef, children, ...props }: Props) {
     <div
       ref={containerRef}
       role='canvas-stage'
-      className='size-full bg-slate-50'
+      className='h-full w-full bg-slate-50'
     >
       <Stage {...props}>{children}</Stage>
     </div>

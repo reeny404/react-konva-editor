@@ -3,11 +3,16 @@ import { redoCommand, undoCommand } from '@/commands/history';
 import { selectionCommands } from '@/commands/selectionCommands';
 import CanvasNodeProperties from '@/components/right-panel/NodeProperties';
 import { layerCommands } from '@/features/10-layer/commands/layerCommands';
+import { nodeLineCommands } from '@/features/14-node-line/commands/nodeLineCommands';
 import { routes } from '@/features/routes';
 import { useSelectedNode } from '@/hooks/useSelectedNode';
 import { useDocumentStore } from '@/stores/documentStore';
 import { useLayerStore } from '@/stores/layerStore';
-import type { CanvasNode } from '@/types/node';
+import {
+  NodeType,
+  type CanvasNode,
+  type ConnectorLineNode,
+} from '@/types/node';
 import { NavLink, Outlet } from 'react-router-dom';
 import SectionCard from './SectionCard';
 
@@ -16,12 +21,23 @@ export default function AppLayout() {
   const getLayer = useLayerStore((state) => state.getLayer);
   const { activeLayerId, layerMapper } = useLayerStore((state) => state.doc);
   const selectedNode = useSelectedNode();
+
   const updateSelectedNode = (patch: Partial<CanvasNode>) => {
     if (!selectedNode) {
       return;
     }
+    //커넥터 노드인경우 nodeLineCommands 명령어로 패치
+    if (selectedNode.type === NodeType.ConnectorLine) {
+      nodeLineCommands.patchConnector(
+        selectedNode.id,
+        patch as Partial<ConnectorLineNode>,
+      );
+      return;
+    }
+
     documentCommands.patchNode(selectedNode.id, patch);
   };
+
   return (
     <div className='flex h-screen w-screen overflow-hidden bg-slate-100'>
       <aside

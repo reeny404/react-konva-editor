@@ -2,6 +2,7 @@ import type { Position, Size } from './geometry';
 import type { Color } from './style';
 
 export type NodeId = string;
+
 export enum NodeType {
   Rect = 'rect',
   Circle = 'circle',
@@ -10,11 +11,15 @@ export enum NodeType {
   Group = 'group',
   Polygon = 'polygon',
   Road = 'road',
+  ConnectorLine = 'connector-line',
 }
+
 export type PolygonPoint = {
   x: number;
   y: number;
 };
+
+export type ConnectorLineStyle = 'straight' | 'orthogonal' | 'curved';
 
 type BaseNode<T extends NodeType> = {
   id: NodeId;
@@ -28,7 +33,9 @@ type BaseNode<T extends NodeType> = {
   Position;
 
 export type RectNode = BaseNode<NodeType.Rect>;
+
 type CircleNode = BaseNode<NodeType.Circle>;
+
 export type ImageNode = Omit<BaseNode<NodeType.Image>, 'fill' | 'stroke'> & {
   url: string;
 };
@@ -42,6 +49,21 @@ export type RoadNode = BaseNode<NodeType.Road> & {
   points: PolygonPoint[];
   strokeWidth: number;
   closed?: boolean;
+};
+
+export type ConnectorLineNode = Omit<
+  BaseNode<NodeType.ConnectorLine>,
+  'fill'
+> & {
+  nodeIds: NodeId[];
+  lineStyle: ConnectorLineStyle;
+  stroke: string;
+  strokeWidth: number;
+  tension?: number; // 0 ~ 1
+  dash?: number[];
+  selectable?: boolean;
+  visible?: boolean;
+  tooltip?: string;
 };
 
 export type SvgNode = BaseNode<NodeType.Svg> & {
@@ -58,6 +80,7 @@ export type CanvasNode =
   | CircleNode
   | PolygonNode
   | RoadNode
+  | ConnectorLineNode
   | ImageNode
   | SvgNode
   | GroupNode;
